@@ -1,97 +1,611 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PB Getiri Simülatörü</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PB Allocation Engine – Roadshow</title>
 
-<style>
-body{
-font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-background:#f4f6fb;
-margin:0;
-padding:20px;
-color:#0f1c2e;
-}
-h1{text-align:center;margin-bottom:20px;}
-.card{
-background:white;
-padding:20px;
-border-radius:14px;
-box-shadow:0 8px 20px rgba(0,0,0,0.06);
-max-width:700px;
-margin:auto;
-}
-label{display:block;margin-top:15px;font-size:14px;}
-input,select{
-width:100%;
-padding:10px;
-margin-top:5px;
-border-radius:10px;
-border:1px solid #ddd;
-font-size:14px;
-}
-button{
-margin-top:20px;
-width:100%;
-padding:12px;
-border:none;
-border-radius:12px;
-background:#102a43;
-color:white;
-font-size:15px;
-}
-.result{
-margin-top:25px;
-background:#f9fafc;
-padding:15px;
-border-radius:12px;
-font-size:15px;
-}
-</style>
+  <meta name="theme-color" content="#0b1a2a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --ink:#0b1a2a; --muted:#5b6777;
+      --line:#e6e9f2; --accent:#c8a33a; --accent2:#123a63;
+      --danger:#9b1c1c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      background:var(--bg); color:var(--ink);
+    }
+    header{
+      padding:16px 14px 10px;
+      background:linear-gradient(180deg,#fff 0%, #f6f7fb 100%);
+      border-bottom:1px solid var(--line);
+      position:sticky; top:0; z-index:10;
+    }
+    h1{margin:0; font-size:16px; letter-spacing:.2px}
+    .sub{margin-top:6px; color:var(--muted); font-size:12.5px; line-height:1.35}
+    .wrap{max-width:1120px; margin:0 auto; padding:12px 12px 26px}
+    .grid{display:grid; grid-template-columns:1fr; gap:12px}
+    @media (min-width: 980px){ .grid{grid-template-columns: 420px 1fr;} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      box-shadow:0 6px 18px rgba(12,26,43,.06);
+    }
+    .card h2{margin:0 0 10px; font-size:13px; color:var(--accent2); letter-spacing:.2px}
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    input:focus, select:focus{
+      border-color: rgba(18,58,99,.35);
+      box-shadow: 0 0 0 4px rgba(18,58,99,.08);
+    }
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+    .btns{display:flex; gap:10px; margin-top:12px}
+    button{
+      border:none; border-radius:12px; padding:12px 12px; font-size:14px; cursor:pointer;
+      flex:1;
+    }
+    .primary{background:var(--accent2); color:#fff}
+    .ghost{background:#fff; border:1px solid var(--line); color:var(--ink)}
+    .danger{background:rgba(155,28,28,.08); border:1px solid rgba(155,28,28,.22); color:var(--danger)}
+    .small{font-size:12px; color:var(--muted); margin-top:8px; line-height:1.35}
+    .pill{
+      display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px;
+      background: rgba(200,163,58,.12); color:#6a5207; border:1px solid rgba(200,163,58,.25);
+    }
+    table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
+    th, td{padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
+    th{font-size:12px; color:var(--muted); font-weight:600}
+    .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+    .kpi .box{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff}
+    .kpi .t{color:var(--muted); font-size:12px}
+    .kpi .v{margin-top:6px; font-size:16px; font-weight:750; letter-spacing:.2px}
+    .note{
+      margin-top:12px; font-size:12px; color:var(--muted); line-height:1.45;
+      border-top:1px dashed var(--line); padding-top:10px;
+    }
+    canvas{
+      width:100%; height:260px; border-radius:14px; border:1px solid var(--line); background:#fff;
+    }
+    .watermark{
+      position:fixed; right:10px; bottom:10px;
+      font-size:11px; color:rgba(11,26,42,.40);
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(230,233,242,.9);
+      padding:6px 10px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
+    .mutedLine{margin-top:6px; font-size:12px; color:var(--muted)}
+  </style>
 </head>
 
 <body>
+<header>
+  <h1>PB Allocation Engine <span class="pill">Roadshow</span></h1>
+  <div class="sub">
+    Müşteri varlığı → alokasyon → ürün/vade/oran → günlük/yıllık hesap → toplam portföy.
+    <br><b>Uyarı:</b> Senaryo analizidir; yatırım tavsiyesi değildir. Gerçek getiriler piyasa koşullarına göre değişir.
+  </div>
+</header>
 
-<h1>PB Getiri Simülatörü</h1>
+<div class="wrap">
+  <div class="grid">
 
-<div class="card">
+    <!-- LEFT -->
+    <div class="card">
+      <h2>1) Müşteri Varlığı ve Raporlama</h2>
 
-<label>Yatırım Tutarı</label>
-<input type="number" id="amount" value="1000000">
+      <label>Toplam Varlık</label>
+      <input id="total_amount" type="text" inputmode="decimal" value="1,000,000" />
 
-<label>Vade (Ay)</label>
-<select id="months">
-<option value="3">3</option>
-<option value="6">6</option>
-<option value="12" selected>12</option>
-</select>
+      <div class="row">
+        <div>
+          <label>Toplam Varlık Para Birimi</label>
+          <select id="total_ccy">
+            <option value="USD" selected>USD</option>
+            <option value="TL">TL</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
+        <div>
+          <label>Rapor Para Birimi (Toplamları hangi para biriminde göstereyim?)</label>
+          <select id="report_ccy">
+            <option value="TL" selected>TL</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
+      </div>
 
-<label>Yıllık Getiri Oranı (%)</label>
-<input type="number" id="rate" value="35">
+      <h2 style="margin-top:14px;">2) Kur (Otomatik + Manuel)</h2>
 
-<button onclick="calculate()">Hesapla</button>
+      <div class="row">
+        <div>
+          <label>USD/TRY</label>
+          <input id="usdtry" type="number" step="0.0001" value="0" />
+        </div>
+        <div>
+          <label>EUR/TRY</label>
+          <input id="eurtry" type="number" step="0.0001" value="0" />
+        </div>
+      </div>
 
-<div class="result" id="output"></div>
+      <div class="btns">
+        <button class="ghost" id="btn_rates">Kurları İnternetten Çek</button>
+        <button class="ghost" id="btn_use_manual">Manuel Kur Kullan</button>
+      </div>
+      <div class="small">
+        Not: İnternet yoksa manuel gir. İnternet varsa “Kurları İnternetten Çek” kullan.
+      </div>
+      <div id="rate_status" class="mutedLine"></div>
 
+      <h2 style="margin-top:14px;">3) Alokasyon (Yüzde ile)</h2>
+      <div class="small">
+        Yüzdeler 100 olmak zorunda değil; sistem otomatik normalize eder (toplam %100’e tamamlar).
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Mevduat (Vadesiz) %</label>
+          <input id="p_demand" type="number" step="1" value="0" />
+        </div>
+        <div>
+          <label>Vadeli Mevduat %</label>
+          <input id="p_time" type="number" step="1" value="35" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Yatırım Fonu %</label>
+          <input id="p_fund" type="number" step="1" value="35" />
+        </div>
+        <div>
+          <label>Sukuk %</label>
+          <input id="p_sukuk" type="number" step="1" value="30" />
+        </div>
+      </div>
+
+      <div class="btns">
+        <button class="primary" id="btn_calc">Hesapla</button>
+        <button class="danger" id="btn_reset">Sıfırla</button>
+      </div>
+
+      <div class="note">
+        <b>İmza:</b> Ekranın sağ altındaki “Adem Soyer | PB Roadshow Tool” ibaresi senin yaptığını belli eder.
+        İstersen isim/ünvan kısmını değiştirebilirsin (kodun en altındaki watermark satırı).
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card">
+      <h2>Ürün Parametreleri ve Sonuçlar <span class="pill" id="pillInfo">hazır</span></h2>
+
+      <div class="small">
+        Her ürün için ayrı <b>para birimi</b>, <b>vade</b> ve <b>hesaplama tipi</b> seçebilirsin.
+        Roadshow’da oranları hızlıca güncellersin.
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Ürün</th>
+            <th>Para Birimi</th>
+            <th>Oran (Yıllık %)</th>
+            <th>Vade</th>
+            <th>Hesap</th>
+            <th>Anapara</th>
+            <th>Vade Sonu</th>
+            <th>Net Kazanç</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <div class="kpi">
+        <div class="box">
+          <div class="t">Toplam Portföy (Rapor Para Birimi)</div>
+          <div class="v" id="kpi_total">-</div>
+        </div>
+        <div class="box">
+          <div class="t">Net Kazanç (Rapor Para Birimi)</div>
+          <div class="v" id="kpi_gain">-</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <canvas id="chart" width="1100" height="300"></canvas>
+        <div class="small">Grafik: Ürün bazında net kazanç (rapor para birimi)</div>
+      </div>
+
+      <div class="note">
+        <b>Compliance Notu:</b> Bu araç “senaryo / simülasyon” amaçlıdır. “Garantili getiri” izlenimi verecek
+        şekilde kullanılmamalıdır. Gerçekleşen getiri ürün koşulları, piyasa ve maliyetlere göre değişebilir.
+      </div>
+
+      <div id="warn" class="inlineWarn"></div>
+    </div>
+
+  </div>
 </div>
 
+<div class="watermark">Adem Soyer | PB Roadshow Tool</div>
+
 <script>
-function calculate(){
-let amount=parseFloat(document.getElementById("amount").value);
-let months=parseFloat(document.getElementById("months").value);
-let rate=parseFloat(document.getElementById("rate").value)/100;
+  // ---------- Parsing / Formatting ----------
+  function parseAmount(str){
+    if(!str) return 0;
+    let s = String(str).trim().replace(/\s/g,'');
+    // remove thousand separators (.,,)
+    if(s.includes(',') && s.includes('.')) s = s.replace(/[.,]/g,'');
+    else s = s.replace(/,/g,'').replace(/\./g,'');
+    const n = Number(s);
+    return isFinite(n) ? n : 0;
+  }
 
-let final=amount*(1+rate*(months/12));
-let gain=final-amount;
+  function fmtMoney(n, ccy){
+    const opts = { maximumFractionDigits: 2 };
+    const abs = Math.abs(n);
+    // for big numbers, drop decimals
+    const use0 = abs >= 100000 ? { maximumFractionDigits: 0 } : opts;
+    try{
+      return new Intl.NumberFormat('tr-TR', use0).format(n) + ' ' + ccy;
+    }catch(e){
+      return (use0.maximumFractionDigits===0 ? Math.round(n) : n).toLocaleString('tr-TR') + ' ' + ccy;
+    }
+  }
 
-document.getElementById("output").innerHTML=
-"<b>Vade Sonu Tutar:</b> "+
-final.toLocaleString("tr-TR")+" TL<br><br>"+
-"<b>Net Kazanç:</b> "+
-gain.toLocaleString("tr-TR")+" TL";
-}
+  function pct(x){ return (Number(x)||0).toFixed(2) + '%'; }
+  function clamp(x){ return Math.max(0, Number(x)||0); }
+
+  // ---------- FX ----------
+  // We'll work with USD/TRY and EUR/TRY, and derive cross rates if needed.
+  function getFx(){
+    const usdtry = Number(document.getElementById('usdtry').value)||0;
+    const eurtry = Number(document.getElementById('eurtry').value)||0;
+    return { usdtry, eurtry };
+  }
+
+  function fxRate(from, to){
+    if(from === to) return 1;
+    const { usdtry, eurtry } = getFx();
+
+    // require base rates if converting involves TRY
+    const needTryRates = (from==='USD' || from==='EUR' || to==='USD' || to==='EUR');
+    if(needTryRates && (usdtry<=0 || eurtry<=0)){
+      return null;
+    }
+
+    // Convert from -> TRY -> to
+    const toTRY = (ccy)=>{
+      if(ccy==='TL') return 1;
+      if(ccy==='USD') return usdtry;
+      if(ccy==='EUR') return eurtry;
+      return null;
+    }
+    const fromTRY = (ccy)=>{
+      if(ccy==='TL') return 1;
+      if(ccy==='USD') return 1/usdtry;
+      if(ccy==='EUR') return 1/eurtry;
+      return null;
+    }
+
+    const a = toTRY(from);
+    const b = fromTRY(to);
+    if(a==null || b==null) return null;
+    return a*b;
+  }
+
+  async function fetchRates(){
+    const status = document.getElementById('rate_status');
+    status.textContent = 'Kurlar çekiliyor…';
+    try{
+      // Using a public endpoint; if blocked, manual entry still works.
+      const res = await fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-store' });
+      if(!res.ok) throw new Error('rate fetch failed');
+      const data = await res.json();
+      const usdTry = data?.rates?.TRY;
+      if(!usdTry) throw new Error('USDTRY missing');
+
+      const res2 = await fetch('https://open.er-api.com/v6/latest/EUR', { cache: 'no-store' });
+      if(!res2.ok) throw new Error('rate fetch failed');
+      const data2 = await res2.json();
+      const eurTry = data2?.rates?.TRY;
+      if(!eurTry) throw new Error('EURTRY missing');
+
+      document.getElementById('usdtry').value = Number(usdTry).toFixed(4);
+      document.getElementById('eurtry').value = Number(eurTry).toFixed(4);
+      status.textContent = 'Kurlar güncellendi (internet).';
+    } catch (e){
+      status.textContent = 'Kurlar çekilemedi. Manuel girip devam edebilirsin.';
+    }
+  }
+
+  // ---------- Product math ----------
+  // Methods:
+  //  - SIMPLE: P*(1+r*t)
+  //  - DAILY_COMPOUND: P*(1+r/365)^days
+  function fvSimple(P, annualPct, days){
+    const r = (Number(annualPct)||0)/100;
+    return P * (1 + r * (days/365));
+  }
+  function fvDailyCompound(P, annualPct, days){
+    const r = (Number(annualPct)||0)/100;
+    return P * Math.pow(1 + r/365, days);
+  }
+
+  function daysFromInput(vType, vVal){
+    const n = clamp(vVal);
+    if(vType==='DAYS') return n;
+    // months
+    return n * 30; // roadshow approximation
+  }
+
+  // ---------- Chart ----------
+  function drawBarChart(canvas, labels, values){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const padL = 70, padR = 20, padT = 20, padB = 50;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    // axes
+    ctx.strokeStyle = '#e6e9f2';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + chartH);
+    ctx.lineTo(padL + chartW, padT + chartH);
+    ctx.stroke();
+
+    const maxV = Math.max(...values.map(v=>Math.abs(v)), 1);
+    const barGap = 16;
+    const barW = (chartW - barGap*(values.length+1)) / values.length;
+
+    // grid + ticks
+    const ticks = 4;
+    ctx.fillStyle = '#5b6777';
+    ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial';
+    for(let i=0;i<=ticks;i++){
+      const y = padT + chartH - (chartH * i / ticks);
+      ctx.strokeStyle = 'rgba(230,233,242,.9)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(padL + chartW, y);
+      ctx.stroke();
+
+      const tickVal = Math.round(maxV * i / ticks);
+      ctx.fillText(tickVal.toLocaleString('tr-TR'), 10, y+4);
+    }
+
+    // bars
+    for(let i=0;i<values.length;i++){
+      const v = values[i];
+      const h = (Math.abs(v) / maxV) * chartH;
+      const x = padL + barGap + i*(barW + barGap);
+      const y = padT + chartH - h;
+
+      // bar fill
+      ctx.fillStyle = (v>=0) ? 'rgba(18,58,99,.88)' : 'rgba(155,28,28,.70)';
+      ctx.fillRect(x, y, barW, h);
+
+      // accent top line
+      ctx.fillStyle = 'rgba(200,163,58,.95)';
+      ctx.fillRect(x, y, barW, 4);
+
+      // label
+      ctx.fillStyle = '#0b1a2a';
+      ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial';
+      const lab = labels[i];
+      const labX = x + barW/2 - (ctx.measureText(lab).width/2);
+      ctx.fillText(lab, labX, padT + chartH + 28);
+    }
+  }
+
+  // ---------- Build rows UI dynamically ----------
+  function buildRows(){
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+
+    const products = [
+      { key:'demand', label:'Mevduat (Vadesiz)', defaultCcy:'TL', defaultRate:0, defaultVType:'DAYS', defaultV:0, defaultMethod:'SIMPLE' },
+      { key:'time',   label:'Vadeli Mevduat',    defaultCcy:'TL', defaultRate:35, defaultVType:'DAYS', defaultV:32, defaultMethod:'DAILY_COMPOUND' },
+      { key:'fund',   label:'Yatırım Fonu',      defaultCcy:'TL', defaultRate:42, defaultVType:'DAYS', defaultV:32, defaultMethod:'DAILY_COMPOUND' },
+      { key:'sukuk',  label:'Sukuk',             defaultCcy:'USD',defaultRate:6,  defaultVType:'MONTHS', defaultV:12, defaultMethod:'SIMPLE' },
+    ];
+
+    for(const p of products){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><b>${p.label}</b></td>
+        <td>
+          <select id="ccy_${p.key}">
+            <option value="TL"${p.defaultCcy==='TL'?' selected':''}>TL</option>
+            <option value="USD"${p.defaultCcy==='USD'?' selected':''}>USD</option>
+            <option value="EUR"${p.defaultCcy==='EUR'?' selected':''}>EUR</option>
+          </select>
+        </td>
+        <td><input id="rate_${p.key}" type="number" step="0.01" value="${p.defaultRate}"></td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <select id="vtype_${p.key}" style="flex:1;">
+              <option value="DAYS"${p.defaultVType==='DAYS'?' selected':''}>Gün</option>
+              <option value="MONTHS"${p.defaultVType==='MONTHS'?' selected':''}>Ay</option>
+            </select>
+            <input id="v_${p.key}" type="number" step="1" value="${p.defaultV}" style="flex:1;">
+          </div>
+        </td>
+        <td>
+          <select id="method_${p.key}">
+            <option value="SIMPLE"${p.defaultMethod==='SIMPLE'?' selected':''}>Basit</option>
+            <option value="DAILY_COMPOUND"${p.defaultMethod==='DAILY_COMPOUND'?' selected':''}>Günlük</option>
+          </select>
+        </td>
+        <td id="p_${p.key}">-</td>
+        <td id="fv_${p.key}">-</td>
+        <td id="g_${p.key}">-</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  // ---------- Core calc ----------
+  function calc(){
+    const warn = document.getElementById('warn');
+    warn.textContent = '';
+
+    const totalAmount = parseAmount(document.getElementById('total_amount').value);
+    const totalCcy = document.getElementById('total_ccy').value;
+    const reportCcy = document.getElementById('report_ccy').value;
+
+    // allocation percents
+    let pDemand = clamp(document.getElementById('p_demand').value);
+    let pTime   = clamp(document.getElementById('p_time').value);
+    let pFund   = clamp(document.getElementById('p_fund').value);
+    let pSukuk  = clamp(document.getElementById('p_sukuk').value);
+
+    const sumP = pDemand + pTime + pFund + pSukuk;
+    if(sumP <= 0){
+      warn.textContent = 'Alokasyon yüzdeleri boş. En az bir ürün için yüzde gir.';
+      return;
+    }
+
+    // normalize to 100
+    const nDemand = pDemand/sumP;
+    const nTime   = pTime/sumP;
+    const nFund   = pFund/sumP;
+    const nSukuk  = pSukuk/sumP;
+
+    const items = [
+      { key:'demand', name:'Mevduat (Vadesiz)', share:nDemand },
+      { key:'time',   name:'Vadeli Mevduat',    share:nTime   },
+      { key:'fund',   name:'Yatırım Fonu',      share:nFund   },
+      { key:'sukuk',  name:'Sukuk',             share:nSukuk  },
+    ];
+
+    // Split principal amounts in TOTAL_CCY first
+    // Then, if product currency differs, convert using fx.
+    let totalFV_report = 0;
+    let totalP_report = 0;
+    let totalGain_report = 0;
+
+    const chartLabels = [];
+    const chartValues = [];
+
+    for(const it of items){
+      const prodCcy = document.getElementById(`ccy_${it.key}`).value;
+      const rate = Number(document.getElementById(`rate_${it.key}`).value)||0;
+      const vType = document.getElementById(`vtype_${it.key}`).value;
+      const vVal  = Number(document.getElementById(`v_${it.key}`).value)||0;
+      const method = document.getElementById(`method_${it.key}`).value;
+
+      const P_totalCcy = totalAmount * it.share;
+
+      // Convert principal from total currency to product currency (if needed)
+      const r1 = fxRate(totalCcy, prodCcy);
+      if(r1 === null){
+        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “Kurları İnternetten Çek” kullan.';
+        return;
+      }
+      const P_prodCcy = P_totalCcy * r1;
+
+      const days = daysFromInput(vType, vVal);
+
+      let FV_prodCcy = P_prodCcy;
+      if(it.key === 'demand'){
+        // vadesiz: rate 0 default; still allow rate if user enters
+        FV_prodCcy = (method==='DAILY_COMPOUND') ? fvDailyCompound(P_prodCcy, rate, days) : fvSimple(P_prodCcy, rate, days);
+      } else {
+        FV_prodCcy = (method==='DAILY_COMPOUND') ? fvDailyCompound(P_prodCcy, rate, days) : fvSimple(P_prodCcy, rate, days);
+      }
+
+      const G_prodCcy = FV_prodCcy - P_prodCcy;
+
+      // Convert to report currency for totals & chart
+      const r2 = fxRate(prodCcy, reportCcy);
+      if(r2 === null){
+        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “Kurları İnternetten Çek” kullan.';
+        return;
+      }
+      const P_rep = P_prodCcy * r2;
+      const FV_rep = FV_prodCcy * r2;
+      const G_rep = G_prodCcy * r2;
+
+      // render row
+      document.getElementById(`p_${it.key}`).textContent  = fmtMoney(P_prodCcy, prodCcy);
+      document.getElementById(`fv_${it.key}`).textContent = fmtMoney(FV_prodCcy, prodCcy);
+      document.getElementById(`g_${it.key}`).textContent  = fmtMoney(G_prodCcy, prodCcy);
+
+      totalP_report += P_rep;
+      totalFV_report += FV_rep;
+      totalGain_report += G_rep;
+
+      chartLabels.push(it.key==='demand'?'Vadesiz':it.key==='time'?'Vadeli':it.key==='fund'?'Fon':'Sukuk');
+      chartValues.push(G_rep);
+    }
+
+    document.getElementById('kpi_total').textContent = fmtMoney(totalFV_report, reportCcy);
+    document.getElementById('kpi_gain').textContent  = fmtMoney(totalGain_report, reportCcy);
+    document.getElementById('pillInfo').textContent  = `Toplam: ${fmtMoney(totalAmount, totalCcy)} → Rapor: ${reportCcy}`;
+
+    drawBarChart(document.getElementById('chart'), chartLabels, chartValues);
+  }
+
+  function resetAll(){
+    document.getElementById('total_amount').value = '1,000,000';
+    document.getElementById('total_ccy').value = 'USD';
+    document.getElementById('report_ccy').value = 'TL';
+
+    document.getElementById('usdtry').value = '0';
+    document.getElementById('eurtry').value = '0';
+
+    document.getElementById('p_demand').value = '0';
+    document.getElementById('p_time').value = '35';
+    document.getElementById('p_fund').value = '35';
+    document.getElementById('p_sukuk').value = '30';
+
+    buildRows();
+    document.getElementById('warn').textContent = '';
+    document.getElementById('rate_status').textContent = '';
+    document.getElementById('pillInfo').textContent = 'hazır';
+    document.getElementById('kpi_total').textContent = '-';
+    document.getElementById('kpi_gain').textContent = '-';
+    const ctx = document.getElementById('chart').getContext('2d');
+    ctx.clearRect(0,0,1100,300);
+  }
+
+  document.getElementById('btn_calc').addEventListener('click', calc);
+  document.getElementById('btn_reset').addEventListener('click', resetAll);
+  document.getElementById('btn_rates').addEventListener('click', fetchRates);
+  document.getElementById('btn_use_manual').addEventListener('click', ()=>{
+    const { usdtry, eurtry } = getFx();
+    const st = document.getElementById('rate_status');
+    if(usdtry>0 && eurtry>0) st.textContent = 'Manuel kur kullanılıyor.';
+    else st.textContent = 'Manuel kur eksik: USD/TRY ve EUR/TRY gir.';
+  });
+
+  // init
+  buildRows();
 </script>
-
 </body>
 </html>
