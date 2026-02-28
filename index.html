@@ -54,23 +54,13 @@
       box-shadow: 0 0 0 4px rgba(18,58,99,.08);
     }
 
-    .topbar{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:stretch;
-    }
-    .topcol{
-      flex:1;
-      min-width:260px;
-    }
+    .topbar{display:flex; gap:12px; flex-wrap:wrap; align-items:stretch;}
+    .topcol{flex:1; min-width:260px;}
     .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
     .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
 
     .btns{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
-    button{
-      border:none; border-radius:12px; padding:12px 12px; font-size:14px; cursor:pointer;
-    }
+    button{border:none; border-radius:12px; padding:12px 12px; font-size:14px; cursor:pointer;}
     .primary{background:var(--accent2); color:#fff}
     .ghost{background:#fff; border:1px solid var(--line); color:var(--ink)}
     .danger{background:rgba(155,28,28,.08); border:1px solid rgba(155,28,28,.22); color:var(--danger)}
@@ -103,17 +93,14 @@
     .kpi .t{color:var(--muted); font-size:12px}
     .kpi .v{margin-top:6px; font-size:18px; font-weight:780; letter-spacing:.2px}
 
-    canvas{
-      width:100%; height:260px; border-radius:14px; border:1px solid var(--line); background:#fff;
-    }
+    canvas{width:100%; height:260px; border-radius:14px; border:1px solid var(--line); background:#fff;}
 
     .watermark{
       position:fixed; right:10px; bottom:10px;
       font-size:11px; color:rgba(11,26,42,.40);
       background:rgba(255,255,255,.75);
       border:1px solid rgba(230,233,242,.9);
-      padding:6px 10px;
-      border-radius:999px;
+      padding:6px 10px; border-radius:999px;
       backdrop-filter: blur(6px);
     }
     .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
@@ -125,7 +112,6 @@
       font-size:12px;
     }
 
-    /* Column widths */
     .wAmt{min-width:140px}
     .wCcy{min-width:100px}
     .wProd{min-width:150px}
@@ -135,37 +121,24 @@
     .wTax{min-width:160px}
     .wBtn{min-width:70px}
 
-    .taxWrap{
-      display:flex; gap:8px; align-items:center;
-    }
-    .taxWrap label{
-      display:flex; gap:6px; align-items:center;
-      margin:0; font-size:12px; color:var(--muted);
-      white-space:nowrap;
-    }
-    .taxWrap input[type="checkbox"]{
-      width:auto; padding:0; margin:0;
-      transform: translateY(1px);
-    }
+    .taxWrap{display:flex; gap:8px; align-items:center;}
+    .taxWrap label{display:flex; gap:6px; align-items:center; margin:0; font-size:12px; color:var(--muted); white-space:nowrap;}
+    .taxWrap input[type="checkbox"]{width:auto; padding:0; margin:0; transform: translateY(1px);}
   </style>
 </head>
 
 <body>
 <header>
   <h1>PB Allocation Engine <span class="pill">Roadshow</span></h1>
-  <div class="sub">
-    Toplam varlık → satır bazında alokasyon (tutar) → hedef para birimi → ürün/vade/oran/stopaj → otomatik kur → sonuç.
-  </div>
+  <div class="sub">Toplam varlık → alokasyon → ürün/vade/oran/stopaj → kur → sonuç.</div>
 </header>
 
 <div class="wrap">
 
-  <!-- ÜST YATAY BAR -->
   <div class="card">
     <div class="topbar">
       <div class="topcol">
         <h2>1) Müşteri Varlığı</h2>
-
         <label>Toplam Varlık</label>
         <input id="total_amount" type="text" inputmode="decimal" value="1,000,000" />
 
@@ -190,8 +163,7 @@
       </div>
 
       <div class="topcol">
-        <h2>2) Kurlar (Trunçgil)</h2>
-
+        <h2>2) Kurlar</h2>
         <div class="row3">
           <div>
             <label>Altın (gram/TRY)</label>
@@ -208,11 +180,11 @@
         </div>
 
         <div class="btns">
-          <button class="ghost" id="btn_rates">USD/EUR/Altın Kurlarını Çek</button>
+          <button class="ghost" id="btn_rates">Kurları Çek</button>
           <button class="ghost" id="btn_use_manual">Manuel Kur Kullan</button>
         </div>
         <div id="rate_status" class="mutedLine"></div>
-        <div class="small">Not: Kur çekme Trunçgil üzerinden yapılır. Çekilemezse manuel girip devam edebilirsin.</div>
+        <div class="small">Önce Trunçgil denenir; tarayıcı engellerse USD/EUR için alternatif kaynağa düşer.</div>
       </div>
 
       <div class="topcol">
@@ -221,18 +193,14 @@
           <button class="primary" id="btn_calc" style="flex:1;">Hesapla</button>
           <button class="danger" id="btn_reset" style="flex:1;">Sıfırla</button>
         </div>
-        <div class="small">
-          Senaryo seçince alokasyon tutarları <b>toplam varlığın tamamını</b> otomatik dağıtır.
-        </div>
+        <div class="small">Senaryo seçince toplam varlığın %100’ü dağıtılır.</div>
       </div>
     </div>
   </div>
 
-  <!-- ALOKASYON -->
   <div class="card" style="margin-top:12px;">
     <h2>Alokasyon (Tutar Bazlı) <span class="pill" id="pillInfo">hazır</span></h2>
 
-    <!-- Headline -->
     <div class="kpi" style="grid-template-columns:1fr; margin-top:12px;">
       <div class="box">
         <div class="t">Headline – Toplam Net Kazanç (Rapor PB)</div>
@@ -240,16 +208,15 @@
       </div>
     </div>
 
-    <!-- Risk badges -->
     <div id="risk_badges" class="small" style="margin-top:8px;"></div>
 
     <div class="btns" style="margin-top:10px;">
       <button class="ghost" id="btn_add">+ Satır Ekle</button>
-      <button class="ghost" id="btn_s1">Senaryo 1 (Dengeli)</button>
-      <button class="ghost" id="btn_s2">Senaryo 2 (Koruma)</button>
-      <button class="ghost" id="btn_s3">Senaryo 3 (Büyüme)</button>
-      <button class="ghost" id="btn_s4">Senaryo 4 (FX Hedge)</button>
-      <button class="ghost" id="btn_s5">Senaryo 5 (DPM Ağırlıklı)</button>
+      <button class="ghost" id="btn_s1">Senaryo 1</button>
+      <button class="ghost" id="btn_s2">Senaryo 2</button>
+      <button class="ghost" id="btn_s3">Senaryo 3</button>
+      <button class="ghost" id="btn_s4">Senaryo 4</button>
+      <button class="ghost" id="btn_s5">Senaryo 5</button>
     </div>
 
     <div class="tableWrap">
@@ -297,7 +264,7 @@
 
     <div style="margin-top:12px;">
       <canvas id="chart" width="1200" height="300"></canvas>
-      <div class="small">Grafik: Satır bazında net kazanç (rapor para birimi)</div>
+      <div class="small">Grafik: Satır bazında net kazanç (rapor PB)</div>
     </div>
 
     <div id="warn" class="inlineWarn"></div>
@@ -308,7 +275,7 @@
 <div class="watermark">Adem Soyer</div>
 
 <script>
-  // ---------- Parsing / Formatting ----------
+  // ---- Helpers
   function parseAmount(str){
     if(!str) return 0;
     let s = String(str).trim().replace(/\s/g,'');
@@ -320,24 +287,21 @@
   function fmtMoney(n, ccy){
     const abs = Math.abs(n);
     const opts = abs >= 100000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 2 };
-    try{
-      return new Intl.NumberFormat('tr-TR', opts).format(n) + ' ' + ccy;
-    }catch(e){
-      return (opts.maximumFractionDigits===0 ? Math.round(n) : n).toLocaleString('tr-TR') + ' ' + ccy;
-    }
+    return new Intl.NumberFormat('tr-TR', opts).format(n) + ' ' + ccy;
   }
   function clamp(x){ return Math.max(0, Number(x)||0); }
 
-  // ---------- FX ----------
+  // ---- FX
   function getFx(){
-    const usdtry = Number(document.getElementById('usdtry').value)||0;
-    const eurtry = Number(document.getElementById('eurtry').value)||0;
-    return { usdtry, eurtry };
+    return {
+      usdtry: Number(document.getElementById('usdtry').value)||0,
+      eurtry: Number(document.getElementById('eurtry').value)||0
+    };
   }
   function fxRate(from, to){
     if(from === to) return 1;
     const { usdtry, eurtry } = getFx();
-    if((usdtry<=0 || eurtry<=0)) return null;
+    if(usdtry<=0 || eurtry<=0) return null;
 
     const toTRY = (ccy)=>{
       if(ccy==='TL') return 1;
@@ -357,37 +321,52 @@
     return a*b;
   }
 
-  // ---------- Rates fetch (Trunçgil) ----------
+  // ---- Rate fetch (Trunçgil + fallback)
   async function fetchRatesAll(){
     const status = document.getElementById('rate_status');
-    status.textContent = 'Trunçgil kurları çekiliyor…';
+    status.textContent = 'Kurlar çekiliyor…';
+
+    // 1) Try Trunçgil (may fail due to CORS)
     try{
       const res = await fetch('https://finans.truncgil.com/v4/today.json', { cache:'no-store' });
-      if(!res.ok) throw new Error('truncgil fetch failed');
-      const data = await res.json();
-
-      // Conservative: Selling, fallback Buying
-      const usd = data?.USD?.Selling ?? data?.USD?.Buying;
-      const eur = data?.EUR?.Selling ?? data?.EUR?.Buying;
-      const gra = data?.GRA?.Selling ?? data?.GRA?.Buying; // gram altın TRY
-
-      if(!usd || !eur) throw new Error('USD/EUR missing');
-
-      document.getElementById('usdtry').value = Number(usd).toFixed(4);
-      document.getElementById('eurtry').value = Number(eur).toFixed(4);
-
-      if(gra){
-        document.getElementById('xautry_g').value = Number(gra).toFixed(2);
-        status.textContent = 'USD/EUR/Altın kurları güncellendi (Trunçgil).';
-      }else{
-        status.textContent = 'USD/EUR güncellendi (Trunçgil). Altın gelmedi; manuel gir.';
+      if(res.ok){
+        const data = await res.json();
+        const usd = data?.USD?.Selling ?? data?.USD?.Buying;
+        const eur = data?.EUR?.Selling ?? data?.EUR?.Buying;
+        const gra = data?.GRA?.Selling ?? data?.GRA?.Buying;
+        if(usd && eur){
+          document.getElementById('usdtry').value = Number(usd).toFixed(4);
+          document.getElementById('eurtry').value = Number(eur).toFixed(4);
+          if(gra) document.getElementById('xautry_g').value = Number(gra).toFixed(2);
+          status.textContent = 'Trunçgil: USD/EUR/Altın güncellendi.';
+          return;
+        }
       }
-    } catch(e){
+    }catch(e){
+      // ignore, go fallback
+    }
+
+    // 2) Fallback: open.er-api for USD/EUR (works with CORS)
+    try{
+      const r = await fetch('https://open.er-api.com/v6/latest/TRY', { cache:'no-store' });
+      if(!r.ok) throw new Error('fallback failed');
+      const j = await r.json();
+      // TRY base => USD = 1/ (USDTRY). But we want USDTRY, so invert
+      const usd = j?.rates?.USD;
+      const eur = j?.rates?.EUR;
+      if(usd && eur){
+        document.getElementById('usdtry').value = (1/Number(usd)).toFixed(4);
+        document.getElementById('eurtry').value = (1/Number(eur)).toFixed(4);
+        status.textContent = 'Trunçgil engellendi. USD/EUR alternatif kaynaktan güncellendi. Altın manuel.';
+        return;
+      }
+      throw new Error('rates missing');
+    }catch(e2){
       status.textContent = 'Kurlar çekilemedi. Manuel girip devam edebilirsin.';
     }
   }
 
-  // ---------- Product math ----------
+  // ---- Math
   function fvSimple(P, annualPct, days){
     const r = (Number(annualPct)||0)/100;
     return P * (1 + r * (days/365));
@@ -401,7 +380,7 @@
     return (vType==='DAYS') ? n : (n * 30.4375);
   }
 
-  // ---------- Stopaj suggestion (Auto) ----------
+  // ---- Stopaj (Auto)
   function suggestTaxPct(prod, targetCcy, vType, vVal){
     const days = daysFromInput(vType, vVal);
     if(prod === 'TERM'){
@@ -413,7 +392,7 @@
     return 0;
   }
 
-  // ---------- Chart ----------
+  // ---- Chart
   function drawBarChart(canvas, labels, values){
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
@@ -433,7 +412,7 @@
 
     const maxV = Math.max(...values.map(v=>Math.abs(v)), 1);
     const barGap = 16;
-    const barW = (chartW - barGap*(values.length+1)) / values.length;
+    const barW = (chartW - barGap*(values.length+1)) / Math.max(values.length,1);
 
     const ticks = 4;
     ctx.fillStyle = '#5b6777';
@@ -470,7 +449,7 @@
     }
   }
 
-  // ---------- Allocation rows ----------
+  // ---- Rows
   const PRODUCT_OPTIONS = [
     { val:'TERM', label:'Vadeli Mevduat' },
     { val:'FUND', label:'Yatırım Fonu' },
@@ -525,8 +504,7 @@
 
   function addRow(preset={}){
     const id = String(Math.random()).slice(2,8);
-    const body = document.getElementById('allocBody');
-    body.insertAdjacentHTML('beforeend', rowTemplate(id));
+    document.getElementById('allocBody').insertAdjacentHTML('beforeend', rowTemplate(id));
 
     if(preset.amt != null) document.getElementById(`amt_${id}`).value = preset.amt;
     if(preset.ccy) document.getElementById(`ccy_${id}`).value = preset.ccy;
@@ -543,39 +521,39 @@
   }
 
   function removeRow(id){
-    const tr = document.querySelector(\`tr[data-id="\${id}"]\`);
+    const tr = document.querySelector(`tr[data-id="${id}"]`);
     if(tr) tr.remove();
   }
 
   function applyDefaultsByProduct(id){
-    const prod = document.getElementById(\`prod_\${id}\`).value;
-    const rateEl = document.getElementById(\`rate_\${id}\`);
-    const vEl    = document.getElementById(\`v_\${id}\`);
-    const vTypeEl= document.getElementById(\`vtype_\${id}\`);
-    const methodEl=document.getElementById(\`method_\${id}\`);
+    const prod = document.getElementById(`prod_${id}`).value;
+    const rateEl = document.getElementById(`rate_${id}`);
+    const vEl = document.getElementById(`v_${id}`);
+    const vTypeEl = document.getElementById(`vtype_${id}`);
+    const methodEl = document.getElementById(`method_${id}`);
 
     const r = Number(rateEl.value)||0;
 
     if(prod==='TERM'){
       if(r===0) rateEl.value = 35;
       methodEl.value = 'DAILY_COMPOUND';
-      if((Number(vEl.value)||0)===0) { vTypeEl.value='DAYS'; vEl.value = 32; }
-    } else if(prod==='FUND'){
+      if((Number(vEl.value)||0)===0){ vTypeEl.value='DAYS'; vEl.value=32; }
+    }else if(prod==='FUND'){
       if(r===0) rateEl.value = 42;
       methodEl.value = 'DAILY_COMPOUND';
-      if((Number(vEl.value)||0)===0) { vTypeEl.value='DAYS'; vEl.value = 32; }
-    } else if(prod==='SUKUK'){
+      if((Number(vEl.value)||0)===0){ vTypeEl.value='DAYS'; vEl.value=32; }
+    }else if(prod==='SUKUK'){
       if(r===0) rateEl.value = 38;
       methodEl.value = 'SIMPLE';
-      if((Number(vEl.value)||0)===0) { vTypeEl.value='MONTHS'; vEl.value = 12; }
-    } else if(prod==='DPM'){
+      if((Number(vEl.value)||0)===0){ vTypeEl.value='MONTHS'; vEl.value=12; }
+    }else if(prod==='DPM'){
       if(r===0) rateEl.value = 18;
       methodEl.value = 'DAILY_COMPOUND';
-      if((Number(vEl.value)||0)===0) { vTypeEl.value='DAYS'; vEl.value = 180; }
+      if((Number(vEl.value)||0)===0){ vTypeEl.value='DAYS'; vEl.value=180; }
     }
   }
 
-  // ---------- Core calc ----------
+  // ---- Calc
   function calc(){
     const warn = document.getElementById('warn');
     warn.textContent = '';
@@ -584,19 +562,13 @@
     const totalCcy = document.getElementById('total_ccy').value;
     const reportCcy = document.getElementById('report_ccy').value;
 
-    if(totalAmount <= 0){
-      warn.textContent = 'Toplam varlık boş veya 0. Tutar gir.';
-      return;
-    }
+    if(totalAmount <= 0){ warn.textContent = 'Toplam varlık 0 olamaz.'; return; }
 
     const rows = Array.from(document.querySelectorAll('#allocBody tr'));
-    if(rows.length === 0){
-      warn.textContent = 'En az 1 alokasyon satırı ekle.';
-      return;
-    }
+    if(rows.length === 0){ warn.textContent = 'En az 1 satır ekle.'; return; }
 
     if(fxRate('USD','TL') === null){
-      warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya kurları çek.';
+      warn.textContent = 'Kur eksik: USD/TRY ve EUR/TRY gir veya kurları çek.';
       return;
     }
 
@@ -613,38 +585,32 @@
     for(const tr of rows){
       const id = tr.getAttribute('data-id');
 
-      const amtBase = clamp(document.getElementById(\`amt_\${id}\`).value);
-      const targetCcy = document.getElementById(\`ccy_\${id}\`).value;
-      const prod = document.getElementById(\`prod_\${id}\`).value;
-      const rate = Number(document.getElementById(\`rate_\${id}\`).value)||0;
-      const vType= document.getElementById(\`vtype_\${id}\`).value;
-      const vVal = Number(document.getElementById(\`v_\${id}\`).value)||0;
-      const method = document.getElementById(\`method_\${id}\`).value;
+      const amtBase = clamp(document.getElementById(`amt_${id}`).value);
+      const targetCcy = document.getElementById(`ccy_${id}`).value;
+      const prod = document.getElementById(`prod_${id}`).value;
+      const rate = Number(document.getElementById(`rate_${id}`).value)||0;
+      const vType = document.getElementById(`vtype_${id}`).value;
+      const vVal = Number(document.getElementById(`v_${id}`).value)||0;
+      const method = document.getElementById(`method_${id}`).value;
 
-      const taxAuto = document.getElementById(\`taxAuto_\${id}\`)?.checked ?? false;
-      let taxPct = Number(document.getElementById(\`tax_\${id}\`).value)||0;
+      const taxAuto = document.getElementById(`taxAuto_${id}`)?.checked ?? false;
+      let taxPct = Number(document.getElementById(`tax_${id}`).value)||0;
       if(taxAuto){
         taxPct = suggestTaxPct(prod, targetCcy, vType, vVal);
-        document.getElementById(\`tax_\${id}\`).value = taxPct;
+        document.getElementById(`tax_${id}`).value = taxPct;
       }
 
       usedTotalCcy += amtBase;
 
       const r1 = fxRate(totalCcy, targetCcy);
-      if(r1 === null){
-        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya kurları çek.';
-        return;
-      }
+      if(r1 === null){ warn.textContent='Kur dönüşümü yapılamadı.'; return; }
       const P_target = amtBase * r1;
 
       const rP = fxRate(targetCcy, reportCcy);
-      if(rP === null){
-        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya kurları çek.';
-        return;
-      }
+      if(rP === null){ warn.textContent='Kur dönüşümü yapılamadı.'; return; }
       const P_rep = P_target * rP;
       totalPrincipalReport += P_rep;
-      byProductReport[prod] = (byProductReport[prod] || 0) + P_rep;
+      byProductReport[prod] = (byProductReport[prod]||0) + P_rep;
 
       const days = daysFromInput(vType, vVal);
 
@@ -657,179 +623,149 @@
       const netGain_target = grossGain_target - tax_target;
       const netFV_target = P_target + netGain_target;
 
-      const r2 = fxRate(targetCcy, reportCcy);
-      const FV_rep = netFV_target * r2;
-      const netGain_rep = netGain_target * r2;
+      const FV_rep = netFV_target * rP;
+      const netGain_rep = netGain_target * rP;
 
       totalFV_report += FV_rep;
       totalNetGain_report += netGain_rep;
 
-      document.getElementById(\`p_\${id}\`).textContent  = fmtMoney(P_target, targetCcy);
-      document.getElementById(\`fv_\${id}\`).textContent = fmtMoney(netFV_target, targetCcy);
-      document.getElementById(\`net_\${id}\`).textContent= fmtMoney(netGain_target, targetCcy);
+      document.getElementById(`p_${id}`).textContent  = fmtMoney(P_target, targetCcy);
+      document.getElementById(`fv_${id}`).textContent = fmtMoney(netFV_target, targetCcy);
+      document.getElementById(`net_${id}`).textContent= fmtMoney(netGain_target, targetCcy);
 
       const prodLabel = (prod==='TERM'?'Vadeli':prod==='FUND'?'Fon':prod==='SUKUK'?'Sukuk':'DPM');
-      chartLabels.push(\`\${prodLabel}-\${targetCcy}\`);
+      chartLabels.push(`${prodLabel}-${targetCcy}`);
       chartValues.push(netGain_rep);
     }
 
     document.getElementById('kpi_used').textContent = fmtMoney(usedTotalCcy, totalCcy);
-    const left = totalAmount - usedTotalCcy;
-    document.getElementById('kpi_left').textContent = fmtMoney(left, totalCcy);
-
-    if(usedTotalCcy > totalAmount + 1e-9){
-      warn.textContent = 'Alokasyon tutarları toplamı, toplam varlığı aşıyor. Satır tutarlarını düşür.';
-    }
+    document.getElementById('kpi_left').textContent = fmtMoney(totalAmount - usedTotalCcy, totalCcy);
 
     document.getElementById('kpi_total').textContent = fmtMoney(totalFV_report, reportCcy);
-    document.getElementById('kpi_gain').textContent  = fmtMoney(totalNetGain_report, reportCcy);
+    document.getElementById('kpi_gain').textContent = fmtMoney(totalNetGain_report, reportCcy);
     document.getElementById('headline_gain').textContent = fmtMoney(totalNetGain_report, reportCcy);
-    document.getElementById('pillInfo').textContent  = \`Toplam: \${fmtMoney(totalAmount, totalCcy)} → Rapor: \${reportCcy}\`;
+
+    document.getElementById('pillInfo').textContent = `Toplam: ${fmtMoney(totalAmount,totalCcy)} → Rapor: ${reportCcy}`;
 
     const nameMap = { TERM:'Vadeli', FUND:'Fon', SUKUK:'Sukuk', DPM:'DPM' };
     const badgeEl = document.getElementById('risk_badges');
-    if(totalPrincipalReport > 0){
+    if(totalPrincipalReport>0){
       const items = Object.keys(byProductReport)
-        .map(k => ({ k, v: byProductReport[k] }))
-        .filter(x => x.v > 0)
+        .map(k=>({k,v:byProductReport[k]}))
+        .filter(x=>x.v>0)
         .sort((a,b)=>b.v-a.v)
-        .map(x => \`<span class="pill">\${nameMap[x.k]}: \${(x.v/totalPrincipalReport*100).toFixed(1)}%</span>\`)
+        .map(x=>`<span class="pill">${nameMap[x.k]}: ${(x.v/totalPrincipalReport*100).toFixed(1)}%</span>`)
         .join(' ');
-      badgeEl.innerHTML = \`<div class="mutedLine">Risk/Dağılım (ürün bazlı):</div> \${items}\`;
+      badgeEl.innerHTML = `<div class="mutedLine">Risk/Dağılım (ürün bazlı):</div> ${items}`;
     }else{
-      badgeEl.textContent = '';
+      badgeEl.textContent='';
     }
 
     drawBarChart(document.getElementById('chart'), chartLabels, chartValues);
   }
 
-  // ---------- Scenarios (allocate 100%) ----------
+  // ---- Scenarios
   function applyScenario(weights){
     const totalAmount = parseAmount(document.getElementById('total_amount').value);
     const totalCcy = document.getElementById('total_ccy').value;
-
-    const body = document.getElementById('allocBody');
-    body.innerHTML = '';
+    document.getElementById('allocBody').innerHTML='';
 
     const sum = weights.reduce((a,x)=>a+(x.w||0),0) || 1;
     const norm = weights.map(x=>({ ...x, w:(x.w||0)/sum }));
 
     let allocated = 0;
     for(let i=0;i<norm.length;i++){
-      const item = norm[i];
-      let amt = (i === norm.length-1) ? (totalAmount - allocated) : (totalAmount * item.w);
+      const it = norm[i];
+      let amt = (i===norm.length-1) ? (totalAmount-allocated) : (totalAmount*it.w);
       amt = Math.max(0, amt);
       allocated += amt;
 
       addRow({
         amt: Number(amt.toFixed(2)),
-        ccy: item.ccy,
-        prod: item.prod,
-        rate: item.rate,
-        vtype: item.vtype,
-        v: item.v,
-        method: item.method,
-        tax: item.tax ?? 0,
-        taxAuto: item.taxAuto ?? true
+        ccy: it.ccy, prod: it.prod, rate: it.rate,
+        vtype: it.vtype, v: it.v, method: it.method,
+        taxAuto: it.taxAuto ?? true, tax: it.tax ?? 0
       });
     }
-
     document.getElementById('kpi_used').textContent = fmtMoney(totalAmount, totalCcy);
     document.getElementById('kpi_left').textContent = fmtMoney(0, totalCcy);
   }
 
-  function scenario1(){
-    applyScenario([
-      { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
-      { w:0.25, ccy:'TL',  prod:'FUND',  rate:42, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-      { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.25, ccy:'USD', prod:'DPM',   rate:10, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    ]);
-  }
-  function scenario2(){
-    applyScenario([
-      { w:0.40, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
-      { w:0.30, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.10, ccy:'USD', prod:'DPM',   rate:10, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    ]);
-  }
-  function scenario3(){
-    applyScenario([
-      { w:0.20, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
-      { w:0.40, ccy:'TL',  prod:'FUND',  rate:45, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-      { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.20, ccy:'USD', prod:'DPM',   rate:12, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    ]);
-  }
-  function scenario4(){
-    applyScenario([
-      { w:0.30, ccy:'USD', prod:'SUKUK', rate:7,  vtype:'MONTHS', v:12, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.30, ccy:'EUR', prod:'SUKUK', rate:6,  vtype:'MONTHS', v:12, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, vtype:'DAYS',   v:32, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    ]);
-  }
-  function scenario5(){
-    applyScenario([
-      { w:0.50, ccy:'USD', prod:'DPM',   rate:12, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-      { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-      { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
-    ]);
-  }
+  function scenario1(){ applyScenario([
+    { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
+    { w:0.25, ccy:'TL',  prod:'FUND',  rate:42, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.25, ccy:'USD', prod:'DPM',   rate:10, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+  ]);}
 
-  // ---------- Reset ----------
+  function scenario2(){ applyScenario([
+    { w:0.40, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
+    { w:0.30, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.10, ccy:'USD', prod:'DPM',   rate:10, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+  ]);}
+
+  function scenario3(){ applyScenario([
+    { w:0.20, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
+    { w:0.40, ccy:'TL',  prod:'FUND',  rate:45, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.20, ccy:'USD', prod:'DPM',   rate:12, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+  ]);}
+
+  function scenario4(){ applyScenario([
+    { w:0.30, ccy:'USD', prod:'SUKUK', rate:7,  vtype:'MONTHS', v:12, method:'SIMPLE', taxAuto:false, tax:0 },
+    { w:0.30, ccy:'EUR', prod:'SUKUK', rate:6,  vtype:'MONTHS', v:12, method:'SIMPLE', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12, method:'SIMPLE', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, vtype:'DAYS',   v:32, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+  ]);}
+
+  function scenario5(){ applyScenario([
+    { w:0.50, ccy:'USD', prod:'DPM',   rate:12, vtype:'DAYS',   v:180, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, vtype:'MONTHS', v:12,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, vtype:'DAYS',   v:32,  method:'DAILY_COMPOUND', taxAuto:true },
+  ]);}
+
+  // ---- Reset & Wire
   function resetAll(){
-    document.getElementById('total_amount').value = '1,000,000';
-    document.getElementById('total_ccy').value = 'USD';
-    document.getElementById('report_ccy').value = 'TL';
-
-    document.getElementById('xautry_g').value = '0';
-    document.getElementById('usdtry').value = '0';
-    document.getElementById('eurtry').value = '0';
-
-    document.getElementById('rate_status').textContent = '';
-    document.getElementById('warn').textContent = '';
-    document.getElementById('pillInfo').textContent = 'hazır';
-
-    document.getElementById('headline_gain').textContent = '-';
-    document.getElementById('risk_badges').textContent = '';
-
-    document.getElementById('kpi_used').textContent = '-';
-    document.getElementById('kpi_left').textContent = '-';
-    document.getElementById('kpi_total').textContent = '-';
-    document.getElementById('kpi_gain').textContent = '-';
-
-    const body = document.getElementById('allocBody');
-    body.innerHTML = '';
-    addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0, taxAuto:true });
-    addRow({ amt:0, ccy:'TL', prod:'FUND', rate:42, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0, taxAuto:false });
-
+    document.getElementById('total_amount').value='1,000,000';
+    document.getElementById('total_ccy').value='USD';
+    document.getElementById('report_ccy').value='TL';
+    document.getElementById('xautry_g').value='0';
+    document.getElementById('usdtry').value='0';
+    document.getElementById('eurtry').value='0';
+    document.getElementById('rate_status').textContent='';
+    document.getElementById('warn').textContent='';
+    document.getElementById('pillInfo').textContent='hazır';
+    document.getElementById('headline_gain').textContent='-';
+    document.getElementById('risk_badges').textContent='';
+    document.getElementById('kpi_used').textContent='-';
+    document.getElementById('kpi_left').textContent='-';
+    document.getElementById('kpi_total').textContent='-';
+    document.getElementById('kpi_gain').textContent='-';
+    document.getElementById('allocBody').innerHTML='';
+    addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', taxAuto:true });
+    addRow({ amt:0, ccy:'TL', prod:'FUND', rate:42, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', taxAuto:false, tax:0 });
     const ctx = document.getElementById('chart').getContext('2d');
     ctx.clearRect(0,0,1200,300);
   }
 
-  // ---------- Wire up ----------
   document.getElementById('btn_calc').addEventListener('click', calc);
   document.getElementById('btn_reset').addEventListener('click', resetAll);
   document.getElementById('btn_rates').addEventListener('click', fetchRatesAll);
-
   document.getElementById('btn_use_manual').addEventListener('click', ()=>{
     const { usdtry, eurtry } = getFx();
-    const st = document.getElementById('rate_status');
-    if(usdtry>0 && eurtry>0) st.textContent = 'Manuel kur kullanılıyor.';
-    else st.textContent = 'Manuel kur eksik: USD/TRY ve EUR/TRY gir.';
+    document.getElementById('rate_status').textContent =
+      (usdtry>0 && eurtry>0) ? 'Manuel kur kullanılıyor.' : 'Manuel kur eksik: USD/TRY ve EUR/TRY gir.';
   });
 
-  document.getElementById('btn_add').addEventListener('click', ()=>addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0, taxAuto:true }));
+  document.getElementById('btn_add').addEventListener('click', ()=>addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', taxAuto:true }));
   document.getElementById('btn_s1').addEventListener('click', scenario1);
   document.getElementById('btn_s2').addEventListener('click', scenario2);
   document.getElementById('btn_s3').addEventListener('click', scenario3);
   document.getElementById('btn_s4').addEventListener('click', scenario4);
   document.getElementById('btn_s5').addEventListener('click', scenario5);
 
-  // init
   resetAll();
 </script>
 </body>
