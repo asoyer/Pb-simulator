@@ -9,10 +9,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <!-- (İkonu sonra ekleyeceğiz) -->
-  <!-- <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
-  <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-
   <style>
     :root{
       --bg:#f6f7fb; --card:#ffffff; --ink:#0b1a2a; --muted:#5b6777;
@@ -62,6 +58,7 @@
     .topcol{flex:1; min-width:260px;}
     .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
     .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+    .row4{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px}
 
     .btns{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
     .btns.scroller{flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px}
@@ -89,7 +86,7 @@
     table{
       width:100%;
       border-collapse:collapse;
-      min-width:1280px;
+      min-width:1200px; /* biraz düştü */
       font-size:13px;
     }
     th, td{padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
@@ -115,22 +112,22 @@
 
     .miniBtn{padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:12px;}
 
-    .wAmt{min-width:140px}
-    .wCcy{min-width:110px}
+    /* Daraltılmış kolonlar */
+    .wAmt{min-width:110px}
     .wProd{min-width:160px}
-    .wRate{min-width:110px}
-    .wCalc{min-width:220px}
-    .wTax{min-width:160px}
+    .wCcy{min-width:105px}
+    .wRate{min-width:90px}
+    .wCalc{min-width:190px}
+    .wTax{min-width:120px}
     .wBtn{min-width:70px}
 
     .taxWrap{display:flex; gap:8px; align-items:center;}
     .taxWrap label{display:flex; gap:6px; align-items:center; margin:0; font-size:12px; color:var(--muted); white-space:nowrap;}
     .taxWrap input[type="checkbox"]{width:auto; padding:0; margin:0; transform: translateY(1px);}
 
-    /* Mobilde okunabilirlik: satırları kart gibi göster */
     @media (max-width: 860px){
-      table{min-width: 980px;}
       .kpi{grid-template-columns:1fr;}
+      table{min-width:1060px;}
     }
   </style>
 </head>
@@ -139,13 +136,12 @@
 <header>
   <h1>PB Allocation Engine <span class="pill">Roadshow</span></h1>
   <div class="sub">
-    Başlangıç kurları + vade sonu kurları → Müşteri giriş para birimine geri dönüşte P/L.
+    Spot + Forward (faiz farkı) ile vade sonu kurlar → Giriş para birimine dönüşte Net P/L.
   </div>
 </header>
 
 <div class="wrap">
 
-  <!-- ÜST YATAY BAR -->
   <div class="card">
     <div class="topbar">
       <div class="topcol">
@@ -185,17 +181,17 @@
           </div>
           <div>
             <label>Global Vade</label>
-            <input id="tenor_val" type="number" step="1" value="32" />
+            <input id="tenor_val" type="number" step="1" value="183" />
           </div>
         </div>
 
         <div class="small">
-          Bu vade seçimi, eklediğin <b>tüm satırlara otomatik uygulanır</b>.
+          Vade bir kez seçilir → tüm satırlara otomatik uygulanır.
         </div>
       </div>
 
       <div class="topcol">
-        <h2>2) Başlangıç Kurları</h2>
+        <h2>2) Başlangıç Kurları (Spot)</h2>
 
         <div class="row3">
           <div>
@@ -217,43 +213,74 @@
           <button class="ghost" id="btn_use_manual">Manuel Kur Kullan</button>
         </div>
         <div id="rate_status" class="mutedLine"></div>
+
+        <div class="small">
+          Not: Trunçgil tarayıcıda engellenirse USD/EUR alternatif kaynaktan gelir; altın manuel kalabilir.
+        </div>
       </div>
 
       <div class="topcol">
-        <h2>3) Vade Sonu Kurları</h2>
+        <h2>3) Vade Sonu Kurları (Oto)</h2>
+
+        <div class="row">
+          <div>
+            <label>Vade Sonu Kur Modu</label>
+            <select id="end_mode">
+              <option value="SPOT" selected>Spot = Vade Sonu</option>
+              <option value="FWD">Forward (Faiz farkı)</option>
+              <option value="MANUAL">Manuel</option>
+            </select>
+          </div>
+          <div>
+            <label>Altın Beklenti (yıllık %)</label>
+            <input id="gold_exp" type="number" step="0.01" value="0" />
+          </div>
+        </div>
 
         <div class="row3">
           <div>
             <label>Altın (gram/TRY) – Vade Sonu</label>
-            <input id="xautry_g_end" type="number" step="0.01" value="" placeholder="boşsa = başlangıç" />
+            <input id="xautry_g_end" type="number" step="0.01" value="" placeholder="oto dolar" />
           </div>
           <div>
             <label>USD/TRY – Vade Sonu</label>
-            <input id="usdtry_end" type="number" step="0.0001" value="" placeholder="boşsa = başlangıç" />
+            <input id="usdtry_end" type="number" step="0.0001" value="" placeholder="oto dolar" />
           </div>
           <div>
             <label>EUR/TRY – Vade Sonu</label>
-            <input id="eurtry_end" type="number" step="0.0001" value="" placeholder="boşsa = başlangıç" />
+            <input id="eurtry_end" type="number" step="0.0001" value="" placeholder="oto dolar" />
+          </div>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label>TL faiz (yıllık %)</label>
+            <input id="rtl" type="number" step="0.01" value="45" />
+          </div>
+          <div>
+            <label>USD faiz (yıllık %)</label>
+            <input id="rusd" type="number" step="0.01" value="5" />
+          </div>
+          <div>
+            <label>EUR faiz (yıllık %)</label>
+            <input id="reur" type="number" step="0.01" value="3" />
           </div>
         </div>
 
         <div class="btns">
+          <button class="ghost" id="btn_fill_end" style="flex:1;">Vade Sonu Kurları Doldur</button>
           <button class="primary" id="btn_calc" style="flex:1;">Hesapla</button>
           <button class="danger" id="btn_reset" style="flex:1;">Sıfırla</button>
         </div>
 
-        <div class="small">
-          Mantık: Pozisyonlar <b>hedef para biriminde</b> büyür → vade sonunda <b>giriş para birimine</b> geri çevrilir → P/L.
-        </div>
+        <div class="small" id="end_note"></div>
       </div>
     </div>
   </div>
 
-  <!-- ALOKASYON -->
   <div class="card" style="margin-top:12px;">
     <h2>Alokasyon (Tutar Bazlı) <span class="pill" id="pillInfo">hazır</span></h2>
 
-    <!-- Headline -->
     <div class="kpi" style="grid-template-columns:1fr; margin-top:12px;">
       <div class="box">
         <div class="t">Headline – Net P/L (Giriş Para Birimi)</div>
@@ -277,9 +304,9 @@
       <table>
         <thead>
           <tr>
-            <th class="wAmt">Tutar (Giriş PB)</th>
-            <th class="wCcy">Hedef PB</th>
+            <th class="wAmt" id="hdr_amt">Tutar (Giriş PB)</th>
             <th class="wProd">Ürün</th>
+            <th class="wCcy">Hedef PB</th>
             <th class="wRate">Yıllık %</th>
             <th class="wCalc">Hesap</th>
             <th class="wTax">Stopaj</th>
@@ -317,7 +344,7 @@
 
     <div style="margin-top:12px;">
       <canvas id="chart" width="1200" height="300"></canvas>
-      <div class="small">Grafik: Satır bazında net kazanç (rapor PB)</div>
+      <div class="small">Grafik: Satır bazında net kazanç (rapor PB, vade sonu kurlarıyla)</div>
     </div>
 
     <div id="warn" class="inlineWarn"></div>
@@ -328,7 +355,7 @@
 <div class="watermark">Adem Soyer</div>
 
 <script>
-  // ---------- Helpers ----------
+  // -------- Helpers --------
   function parseAmount(str){
     if(!str) return 0;
     let s = String(str).trim().replace(/\s/g,'');
@@ -344,7 +371,21 @@
   }
   function clamp(x){ return Math.max(0, Number(x)||0); }
 
-  // ---------- Rates ----------
+  function setAmtHeader(){
+    const ccy = document.getElementById('total_ccy').value;
+    const hdr = document.getElementById('hdr_amt');
+    hdr.textContent = 'Tutar (Giriş PB – ' + ccy + ')';
+  }
+
+  // -------- Global tenor --------
+  function globalDays(){
+    const t = document.getElementById('tenor_type').value;
+    const v = Number(document.getElementById('tenor_val').value)||0;
+    const n = clamp(v);
+    return (t==='DAYS') ? n : (n*30.4375);
+  }
+
+  // -------- Rates (start/end) --------
   function getStartRates(){
     return {
       usdtry: Number(document.getElementById('usdtry').value)||0,
@@ -352,7 +393,13 @@
       xautry_g: Number(document.getElementById('xautry_g').value)||0
     };
   }
-  function getEndRates(){
+  function setEndRates(o){
+    if(o.xautry_g != null && isFinite(o.xautry_g)) document.getElementById('xautry_g_end').value = Number(o.xautry_g).toFixed(2);
+    if(o.usdtry != null && isFinite(o.usdtry)) document.getElementById('usdtry_end').value = Number(o.usdtry).toFixed(4);
+    if(o.eurtry != null && isFinite(o.eurtry)) document.getElementById('eurtry_end').value = Number(o.eurtry).toFixed(4);
+  }
+  function getEndRatesResolved(){
+    // manual end fields OR auto-filled ones (they are just inputs)
     const s = getStartRates();
     const usdtry_end = Number(document.getElementById('usdtry_end').value)||0;
     const eurtry_end = Number(document.getElementById('eurtry_end').value)||0;
@@ -364,20 +411,18 @@
     };
   }
 
-  // FX: supported currencies TL, USD, EUR, XAUg (gram altın)
+  // FX conversion uses TRY as bridge; supports TL, USD, EUR, XAUg
   function fxRate(from, to, when){ // when: 'start' | 'end'
     if(from === to) return 1;
 
-    const r = (when === 'end') ? getEndRates() : getStartRates();
-    const { usdtry, eurtry, xautry_g } = r;
+    const r = (when === 'end') ? getEndRatesResolved() : getStartRates();
+    const usdtry = r.usdtry, eurtry = r.eurtry, xautry_g = r.xautry_g;
 
-    // Require basics for conversions that need them
-    // TL<->USD/EUR needs usdtry/eurtry ; TL<->XAUg needs xautry_g
     const toTRY = (ccy)=>{
       if(ccy==='TL') return 1;
       if(ccy==='USD') return usdtry>0 ? usdtry : null;
       if(ccy==='EUR') return eurtry>0 ? eurtry : null;
-      if(ccy==='XAUg') return xautry_g>0 ? xautry_g : null; // 1 gram altın -> TRY
+      if(ccy==='XAUg') return xautry_g>0 ? xautry_g : null; // 1g -> TRY
       return null;
     };
     const fromTRY = (ccy)=>{
@@ -394,7 +439,7 @@
     return a*b;
   }
 
-  // ---------- Rate fetch (Trunçgil + fallback) ----------
+  // -------- Fetch spot rates (Trunçgil + fallback) --------
   async function fetchRatesAll(){
     const status = document.getElementById('rate_status');
     status.textContent = 'Kurlar çekiliyor…';
@@ -412,6 +457,7 @@
           document.getElementById('eurtry').value = Number(eur).toFixed(4);
           if(gra) document.getElementById('xautry_g').value = Number(gra).toFixed(2);
           status.textContent = 'Trunçgil: USD/EUR/Altın güncellendi.';
+          autoFillEndRates(); // mode’a göre end doldur
           return;
         }
       }
@@ -427,7 +473,8 @@
       if(usd && eur){
         document.getElementById('usdtry').value = (1/Number(usd)).toFixed(4);
         document.getElementById('eurtry').value = (1/Number(eur)).toFixed(4);
-        status.textContent = 'Trunçgil engellendi. USD/EUR alternatif kaynaktan güncellendi. Altın manuel.';
+        status.textContent = 'USD/EUR alternatif kaynaktan güncellendi. Altın manuel.';
+        autoFillEndRates();
         return;
       }
       throw new Error('rates missing');
@@ -436,15 +483,61 @@
     }
   }
 
-  // ---------- Global tenor ----------
-  function globalDays(){
-    const t = document.getElementById('tenor_type').value;
-    const v = Number(document.getElementById('tenor_val').value)||0;
-    const n = clamp(v);
-    return (t==='DAYS') ? n : (n*30.4375);
+  // -------- Forward logic for END rates --------
+  function autoFillEndRates(){
+    const mode = document.getElementById('end_mode').value;
+    const note = document.getElementById('end_note');
+    const s = getStartRates();
+    const days = globalDays();
+    const T = days/365;
+
+    // Basic validation
+    if(mode !== 'MANUAL'){
+      // For SPOT and FWD we at least need spot USD/EUR; gold optional
+      if(s.usdtry<=0 || s.eurtry<=0){
+        note.textContent = 'Not: Forward/Spot için önce USD/TRY ve EUR/TRY girilmeli ya da çekilmeli.';
+        return;
+      }
+    }
+
+    if(mode === 'MANUAL'){
+      note.textContent = 'Manuel mod: vade sonu kurları sen girersin.';
+      return;
+    }
+
+    if(mode === 'SPOT'){
+      // Copy spot -> end
+      setEndRates({
+        usdtry: s.usdtry,
+        eurtry: s.eurtry,
+        xautry_g: s.xautry_g>0 ? s.xautry_g : null
+      });
+      note.textContent = 'Spot = Vade Sonu: End kurlar spot ile aynı kabul edildi.';
+      return;
+    }
+
+    // Forward (Faiz farkı): F = S * (1+rTL*T)/(1+rFX*T)
+    const rTL = (Number(document.getElementById('rtl').value)||0)/100;
+    const rUSD = (Number(document.getElementById('rusd').value)||0)/100;
+    const rEUR = (Number(document.getElementById('reur').value)||0)/100;
+
+    const usdEnd = s.usdtry * ((1 + rTL*T) / (1 + rUSD*T));
+    const eurEnd = s.eurtry * ((1 + rTL*T) / (1 + rEUR*T));
+
+    // Gold: expectation (%) on TRY price (simple)
+    const gExp = (Number(document.getElementById('gold_exp').value)||0)/100;
+    const goldEnd = (s.xautry_g>0) ? (s.xautry_g * (1 + gExp*T)) : null;
+
+    setEndRates({
+      usdtry: usdEnd,
+      eurtry: eurEnd,
+      xautry_g: goldEnd
+    });
+
+    note.textContent = 'Forward modu: vade sonu USD/TRY ve EUR/TRY faiz farkı ile türetildi (proxy). Altın: beklenti % ile.';
   }
 
-  // ---------- Product math ----------
+  // -------- Product math --------
   function fvSimple(P, annualPct, days){
     const r = (Number(annualPct)||0)/100;
     return P * (1 + r * (days/365));
@@ -454,7 +547,7 @@
     return P * Math.pow(1 + r/365, days);
   }
 
-  // ---------- Stopaj suggestion (Auto) ----------
+  // -------- Stopaj suggestion (Auto) --------
   function suggestTaxPct(prod, targetCcy, days){
     if(prod === 'TERM'){
       if(targetCcy !== 'TL') return 25;
@@ -465,7 +558,7 @@
     return 0;
   }
 
-  // ---------- Chart ----------
+  // -------- Chart --------
   function drawBarChart(canvas, labels, values){
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
@@ -521,7 +614,7 @@
     }
   }
 
-  // ---------- Rows ----------
+  // -------- Rows --------
   const PRODUCT_OPTIONS = [
     { val:'TERM', label:'Vadeli Mevduat' },
     { val:'FUND', label:'Yatırım Fonu' },
@@ -530,65 +623,65 @@
   ];
 
   function rowTemplate(id){
-    const prodOpts = PRODUCT_OPTIONS.map(o=>`<option value="${o.val}">${o.label}</option>`).join('');
-    return `
-      <tr data-id="${id}">
-        <td class="wAmt"><input type="number" step="0.01" id="amt_${id}" value="0"></td>
-        <td class="wCcy">
-          <select id="ccy_${id}">
-            <option value="TL">TL</option>
-            <option value="USD" selected>USD</option>
-            <option value="EUR">EUR</option>
-            <option value="XAUg">Altın (gram)</option>
-          </select>
-        </td>
-        <td class="wProd"><select id="prod_${id}">${prodOpts}</select></td>
-        <td class="wRate"><input type="number" step="0.01" id="rate_${id}" value="0"></td>
-        <td class="wCalc">
-          <select id="method_${id}">
-            <option value="DAILY_COMPOUND" selected>Günlük (bileşik)</option>
-            <option value="SIMPLE">Basit</option>
-          </select>
-        </td>
-        <td class="wTax">
-          <div class="taxWrap">
-            <input type="number" step="0.01" id="tax_${id}" value="0" style="flex:1;">
-            <label><input type="checkbox" id="taxAuto_${id}" checked>Auto</label>
-          </div>
-        </td>
-        <td id="p_${id}">-</td>
-        <td id="fv_${id}">-</td>
-        <td id="net_${id}">-</td>
-        <td class="wBtn"><button class="miniBtn" onclick="removeRow('${id}')">Sil</button></td>
-      </tr>
-    `;
+    const prodOpts = PRODUCT_OPTIONS.map(o=>'<option value="'+o.val+'">'+o.label+'</option>').join('');
+    return ''+
+      '<tr data-id="'+id+'">'+
+        '<td class="wAmt"><input type="number" step="0.01" id="amt_'+id+'" value="0"></td>'+
+        '<td class="wProd"><select id="prod_'+id+'">'+prodOpts+'</select></td>'+
+        '<td class="wCcy">'+
+          '<select id="ccy_'+id+'">'+
+            '<option value="TL">TL</option>'+
+            '<option value="USD" selected>USD</option>'+
+            '<option value="EUR">EUR</option>'+
+            '<option value="XAUg">Altın</option>'+
+          '</select>'+
+        '</td>'+
+        '<td class="wRate"><input type="number" step="0.01" id="rate_'+id+'" value="0"></td>'+
+        '<td class="wCalc">'+
+          '<select id="method_'+id+'">'+
+            '<option value="DAILY_COMPOUND" selected>Günlük (bileşik)</option>'+
+            '<option value="SIMPLE">Basit</option>'+
+          '</select>'+
+        '</td>'+
+        '<td class="wTax">'+
+          '<div class="taxWrap">'+
+            '<input type="number" step="0.01" id="tax_'+id+'" value="0" style="flex:1;">'+
+            '<label><input type="checkbox" id="taxAuto_'+id+'" checked>Auto</label>'+
+          '</div>'+
+        '</td>'+
+        '<td id="p_'+id+'">-</td>'+
+        '<td id="fv_'+id+'">-</td>'+
+        '<td id="net_'+id+'">-</td>'+
+        '<td class="wBtn"><button class="miniBtn" onclick="removeRow(\''+id+'\')">Sil</button></td>'+
+      '</tr>';
   }
 
-  function addRow(preset={}){
+  function addRow(preset){
+    preset = preset || {};
     const id = String(Math.random()).slice(2,8);
     document.getElementById('allocBody').insertAdjacentHTML('beforeend', rowTemplate(id));
 
-    if(preset.amt != null) document.getElementById(`amt_${id}`).value = preset.amt;
-    if(preset.ccy) document.getElementById(`ccy_${id}`).value = preset.ccy;
-    if(preset.prod) document.getElementById(`prod_${id}`).value = preset.prod;
-    if(preset.rate != null) document.getElementById(`rate_${id}`).value = preset.rate;
-    if(preset.method) document.getElementById(`method_${id}`).value = preset.method;
-    if(preset.tax != null) document.getElementById(`tax_${id}`).value = preset.tax;
-    if(preset.taxAuto != null) document.getElementById(`taxAuto_${id}`).checked = preset.taxAuto;
+    if(preset.amt != null) document.getElementById('amt_'+id).value = preset.amt;
+    if(preset.ccy) document.getElementById('ccy_'+id).value = preset.ccy;
+    if(preset.prod) document.getElementById('prod_'+id).value = preset.prod;
+    if(preset.rate != null) document.getElementById('rate_'+id).value = preset.rate;
+    if(preset.method) document.getElementById('method_'+id).value = preset.method;
+    if(preset.tax != null) document.getElementById('tax_'+id).value = preset.tax;
+    if(preset.taxAuto != null) document.getElementById('taxAuto_'+id).checked = preset.taxAuto;
 
     applyDefaultsByProduct(id);
-    document.getElementById(`prod_${id}`).addEventListener('change', ()=>applyDefaultsByProduct(id));
+    document.getElementById('prod_'+id).addEventListener('change', function(){ applyDefaultsByProduct(id); });
   }
 
   function removeRow(id){
-    const tr = document.querySelector(`tr[data-id="${id}"]`);
+    const tr = document.querySelector('tr[data-id="'+id+'"]');
     if(tr) tr.remove();
   }
 
   function applyDefaultsByProduct(id){
-    const prod = document.getElementById(`prod_${id}`).value;
-    const rateEl = document.getElementById(`rate_${id}`);
-    const methodEl = document.getElementById(`method_${id}`);
+    const prod = document.getElementById('prod_'+id).value;
+    const rateEl = document.getElementById('rate_'+id);
+    const methodEl = document.getElementById('method_'+id);
     const r = Number(rateEl.value)||0;
 
     if(prod==='TERM'){
@@ -606,10 +699,13 @@
     }
   }
 
-  // ---------- Calc ----------
+  // -------- Calc --------
   function calc(){
     const warn = document.getElementById('warn');
     warn.textContent = '';
+
+    // ensure end rates auto if mode not manual
+    autoFillEndRates();
 
     const principalAmt = parseAmount(document.getElementById('total_amount').value);
     const principalCcy = document.getElementById('total_ccy').value;
@@ -620,41 +716,41 @@
     const rows = Array.from(document.querySelectorAll('#allocBody tr'));
     if(rows.length === 0){ warn.textContent = 'En az 1 satır ekle.'; return; }
 
-    // start rates needed depending on currencies used
-    // (we will check in fxRate calls)
     const days = globalDays();
     if(days <= 0){ warn.textContent = 'Global vade 0 olamaz.'; return; }
 
+    // Validate start and end conversions minimally by trying a conversion
+    // (fxRate will return null if missing needed inputs)
+    // For common case: need usd/eur spot for TL<->USD/EUR and gold spot for gold
+    // We'll detect per-row later.
+
     let usedPrincipal = 0;
 
-    // Dashboard totals (report currency, using START FX for principal and END? -> For dashboard we show end value in report ccy at end FX)
     let totalFV_report = 0;
     let totalNetGain_report = 0;
 
-    // Principal-currency P/L at END FX (this is the key)
     let totalEnd_principalCcy = 0;
 
     const chartLabels = [];
     const chartValues = [];
 
-    // risk weights (principal allocation) in report currency (START FX)
     const byProductReport = { TERM:0, FUND:0, SUKUK:0, DPM:0 };
     let totalPrincipalReport = 0;
 
     for(const tr of rows){
       const id = tr.getAttribute('data-id');
 
-      const amtBase = clamp(document.getElementById(`amt_${id}`).value); // in principal currency units
-      const targetCcy = document.getElementById(`ccy_${id}`).value;
-      const prod = document.getElementById(`prod_${id}`).value;
-      const rate = Number(document.getElementById(`rate_${id}`).value)||0;
-      const method = document.getElementById(`method_${id}`).value;
+      const amtBase = clamp(document.getElementById('amt_'+id).value);
+      const prod = document.getElementById('prod_'+id).value;
+      const targetCcy = document.getElementById('ccy_'+id).value;
+      const rate = Number(document.getElementById('rate_'+id).value)||0;
+      const method = document.getElementById('method_'+id).value;
 
-      const taxAuto = document.getElementById(`taxAuto_${id}`)?.checked ?? false;
-      let taxPct = Number(document.getElementById(`tax_${id}`).value)||0;
+      const taxAuto = (document.getElementById('taxAuto_'+id)?.checked) ? true : false;
+      let taxPct = Number(document.getElementById('tax_'+id).value)||0;
       if(taxAuto){
         taxPct = suggestTaxPct(prod, targetCcy, days);
-        document.getElementById(`tax_${id}`).value = taxPct;
+        document.getElementById('tax_'+id).value = taxPct;
       }
 
       usedPrincipal += amtBase;
@@ -662,12 +758,12 @@
       // principal -> target at START
       const r1 = fxRate(principalCcy, targetCcy, 'start');
       if(r1 === null){
-        warn.textContent = 'Başlangıç kurları eksik. USD/TRY, EUR/TRY, Altın/TRY kontrol et.';
+        warn.textContent = 'Başlangıç kurları eksik. (USD/TRY, EUR/TRY, Altın/TRY kontrol et.)';
         return;
       }
       const P_target = amtBase * r1;
 
-      // for risk badge: principal in report at START
+      // risk badge uses START report conversion
       const rP_start = fxRate(targetCcy, reportCcy, 'start');
       if(rP_start === null){
         warn.textContent = 'Başlangıç kurları eksik (rapor dönüşümü).';
@@ -677,7 +773,7 @@
       totalPrincipalReport += P_report_start;
       byProductReport[prod] = (byProductReport[prod]||0) + P_report_start;
 
-      // growth in target currency
+      // growth in target
       const FV_target_gross = (method === 'DAILY_COMPOUND')
         ? fvDailyCompound(P_target, rate, days)
         : fvSimple(P_target, rate, days);
@@ -687,10 +783,10 @@
       const netGain_target = grossGain_target - tax_target;
       const FV_target_net = P_target + netGain_target;
 
-      // convert END value back to PRINCIPAL currency at END FX (this is what client cares about)
+      // convert END value back to principal at END FX
       const rBack_end = fxRate(targetCcy, principalCcy, 'end');
       if(rBack_end === null){
-        warn.textContent = 'Vade sonu kurları eksik. (Boş bırakırsan başlangıç kullanır.)';
+        warn.textContent = 'Vade sonu kurları eksik. (Mode/Gold/Spot kontrol et.)';
         return;
       }
       const end_in_principal = FV_target_net * rBack_end;
@@ -708,12 +804,12 @@
       totalFV_report += FV_report_end;
       totalNetGain_report += netGain_report_end;
 
-      document.getElementById(`p_${id}`).textContent  = fmtMoney(P_target, targetCcy);
-      document.getElementById(`fv_${id}`).textContent = fmtMoney(FV_target_net, targetCcy);
-      document.getElementById(`net_${id}`).textContent= fmtMoney(netGain_target, targetCcy);
+      document.getElementById('p_'+id).textContent  = fmtMoney(P_target, targetCcy);
+      document.getElementById('fv_'+id).textContent = fmtMoney(FV_target_net, targetCcy);
+      document.getElementById('net_'+id).textContent= fmtMoney(netGain_target, targetCcy);
 
       const prodLabel = (prod==='TERM'?'Vadeli':prod==='FUND'?'Fon':prod==='SUKUK'?'Sukuk':'DPM');
-      chartLabels.push(`${prodLabel}-${targetCcy}`);
+      chartLabels.push(prodLabel+'-'+targetCcy);
       chartValues.push(netGain_report_end);
     }
 
@@ -727,26 +823,26 @@
     document.getElementById('kpi_total_report').textContent = fmtMoney(totalFV_report, reportCcy);
     document.getElementById('kpi_gain_report').textContent  = fmtMoney(totalNetGain_report, reportCcy);
 
-    // principal P/L
     const pl = totalEnd_principalCcy - principalAmt;
     document.getElementById('headline_pl').textContent = fmtMoney(pl, principalCcy);
 
-    const detail = `Başlangıç: ${fmtMoney(principalAmt, principalCcy)} → Vade Sonu: ${fmtMoney(totalEnd_principalCcy, principalCcy)} (Global vade: ${days.toFixed(0)} gün)`;
-    document.getElementById('headline_detail').textContent = detail;
+    document.getElementById('headline_detail').textContent =
+      'Başlangıç: '+fmtMoney(principalAmt, principalCcy)+' → Vade Sonu: '+fmtMoney(totalEnd_principalCcy, principalCcy)+
+      ' (Global vade: '+days.toFixed(0)+' gün)';
 
-    document.getElementById('pillInfo').textContent = `Principal: ${principalCcy} | Rapor: ${reportCcy}`;
+    document.getElementById('pillInfo').textContent = 'Principal: '+principalCcy+' | Rapor: '+reportCcy;
 
     // risk badges
     const nameMap = { TERM:'Vadeli', FUND:'Fon', SUKUK:'Sukuk', DPM:'DPM' };
     const badgeEl = document.getElementById('risk_badges');
     if(totalPrincipalReport > 0){
       const items = Object.keys(byProductReport)
-        .map(k => ({ k, v: byProductReport[k] }))
-        .filter(x => x.v > 0)
-        .sort((a,b)=>b.v-a.v)
-        .map(x => `<span class="pill">${nameMap[x.k]}: ${(x.v/totalPrincipalReport*100).toFixed(1)}%</span>`)
+        .map(function(k){ return {k:k, v:byProductReport[k]}; })
+        .filter(function(x){ return x.v > 0; })
+        .sort(function(a,b){ return b.v-a.v; })
+        .map(function(x){ return '<span class="pill">'+nameMap[x.k]+': '+(x.v/totalPrincipalReport*100).toFixed(1)+'%</span>'; })
         .join(' ');
-      badgeEl.innerHTML = `<div class="mutedLine">Risk/Dağılım (ürün bazlı, başlangıç kurlarıyla):</div> ${items}`;
+      badgeEl.innerHTML = '<div class="mutedLine">Risk/Dağılım (ürün bazlı, başlangıç kurlarıyla):</div> '+items;
     } else {
       badgeEl.textContent = '';
     }
@@ -754,14 +850,14 @@
     drawBarChart(document.getElementById('chart'), chartLabels, chartValues);
   }
 
-  // ---------- Scenarios (allocate 100%) ----------
+  // -------- Scenarios (allocate 100%) --------
   function applyScenario(weights){
     const totalAmount = parseAmount(document.getElementById('total_amount').value);
     const totalCcy = document.getElementById('total_ccy').value;
     document.getElementById('allocBody').innerHTML='';
 
-    const sum = weights.reduce((a,x)=>a+(x.w||0),0) || 1;
-    const norm = weights.map(x=>({ ...x, w:(x.w||0)/sum }));
+    const sum = weights.reduce(function(a,x){ return a+(x.w||0); }, 0) || 1;
+    const norm = weights.map(function(x){ return Object.assign({}, x, { w:(x.w||0)/sum }); });
 
     let allocated = 0;
     for(let i=0;i<norm.length;i++){
@@ -776,8 +872,8 @@
         prod: it.prod,
         rate: it.rate,
         method: it.method,
-        taxAuto: it.taxAuto ?? true,
-        tax: it.tax ?? 0
+        taxAuto: (it.taxAuto!=null) ? it.taxAuto : true,
+        tax: (it.tax!=null) ? it.tax : 0
       });
     }
 
@@ -790,7 +886,7 @@
       { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
       { w:0.25, ccy:'TL',  prod:'FUND',  rate:42, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
       { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.25, ccy:'USD', prod:'DPM',   rate:10, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+      { w:0.25, ccy:'USD', prod:'DPM',   rate:10, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
     ]);
   }
   function scenario2(){ // Koruma
@@ -798,7 +894,7 @@
       { w:0.40, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
       { w:0.30, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
       { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.10, ccy:'USD', prod:'DPM',   rate:10, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+      { w:0.10, ccy:'USD', prod:'DPM',   rate:10, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
     ]);
   }
   function scenario3(){ // Büyüme (Riskli)
@@ -806,7 +902,7 @@
       { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
       { w:0.45, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
       { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.20, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+      { w:0.20, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
     ]);
   }
   function scenario4(){ // FX Hedge
@@ -814,7 +910,7 @@
       { w:0.30, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
       { w:0.30, ccy:'EUR', prod:'SUKUK', rate:6,  method:'SIMPLE',         taxAuto:false, tax:0 },
       { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+      { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
     ]);
   }
   function scenario5(){ // DPM Ağırlıklı
@@ -822,25 +918,32 @@
       { w:0.50, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
       { w:0.20, ccy:'TL',  prod:'FUND',  rate:42, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
       { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-      { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
+      { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true }
     ]);
   }
 
-  // ---------- Reset ----------
+  // -------- Reset --------
   function resetAll(){
     document.getElementById('total_amount').value='1,000,000';
     document.getElementById('total_ccy').value='USD';
     document.getElementById('report_ccy').value='TL';
     document.getElementById('tenor_type').value='DAYS';
-    document.getElementById('tenor_val').value='32';
+    document.getElementById('tenor_val').value='183';
 
     document.getElementById('xautry_g').value='0';
     document.getElementById('usdtry').value='0';
     document.getElementById('eurtry').value='0';
 
+    document.getElementById('end_mode').value='SPOT';
+    document.getElementById('gold_exp').value='0';
+
     document.getElementById('xautry_g_end').value='';
     document.getElementById('usdtry_end').value='';
     document.getElementById('eurtry_end').value='';
+
+    document.getElementById('rtl').value='45';
+    document.getElementById('rusd').value='5';
+    document.getElementById('reur').value='3';
 
     document.getElementById('rate_status').textContent='';
     document.getElementById('warn').textContent='';
@@ -861,24 +964,47 @@
 
     const ctx = document.getElementById('chart').getContext('2d');
     ctx.clearRect(0,0,1200,300);
+
+    setAmtHeader();
+    document.getElementById('end_note').textContent = 'Spot = Vade Sonu: End kurlar spot ile aynı kabul edilir.';
   }
 
-  // ---------- Wire ----------
+  // -------- Wire --------
   document.getElementById('btn_calc').addEventListener('click', calc);
   document.getElementById('btn_reset').addEventListener('click', resetAll);
   document.getElementById('btn_rates').addEventListener('click', fetchRatesAll);
-  document.getElementById('btn_use_manual').addEventListener('click', ()=>{
+  document.getElementById('btn_fill_end').addEventListener('click', autoFillEndRates);
+
+  document.getElementById('btn_use_manual').addEventListener('click', function(){
     const s = getStartRates();
     const ok = (s.usdtry>0 && s.eurtry>0) || (s.xautry_g>0);
     document.getElementById('rate_status').textContent = ok ? 'Manuel kur kullanılıyor.' : 'Manuel kur eksik.';
+    autoFillEndRates();
   });
 
-  document.getElementById('btn_add').addEventListener('click', ()=>addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true }));
+  document.getElementById('btn_add').addEventListener('click', function(){
+    addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true });
+  });
+
   document.getElementById('btn_s1').addEventListener('click', scenario1);
   document.getElementById('btn_s2').addEventListener('click', scenario2);
   document.getElementById('btn_s3').addEventListener('click', scenario3);
   document.getElementById('btn_s4').addEventListener('click', scenario4);
   document.getElementById('btn_s5').addEventListener('click', scenario5);
+
+  // update amount header when principal changes
+  document.getElementById('total_ccy').addEventListener('change', function(){
+    setAmtHeader();
+  });
+
+  // if mode or tenor changes, refresh end rates (for forward)
+  document.getElementById('end_mode').addEventListener('change', autoFillEndRates);
+  document.getElementById('tenor_type').addEventListener('change', autoFillEndRates);
+  document.getElementById('tenor_val').addEventListener('input', autoFillEndRates);
+  document.getElementById('rtl').addEventListener('input', autoFillEndRates);
+  document.getElementById('rusd').addEventListener('input', autoFillEndRates);
+  document.getElementById('reur').addEventListener('input', autoFillEndRates);
+  document.getElementById('gold_exp').addEventListener('input', autoFillEndRates);
 
   resetAll();
 </script>
