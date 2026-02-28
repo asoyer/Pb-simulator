@@ -28,9 +28,10 @@
     }
     h1{margin:0; font-size:16px; letter-spacing:.2px}
     .sub{margin-top:6px; color:var(--muted); font-size:12.5px; line-height:1.35}
-    .wrap{max-width:1120px; margin:0 auto; padding:12px 12px 26px}
+    .wrap{max-width:1240px; margin:0 auto; padding:12px 12px 26px}
     .grid{display:grid; grid-template-columns:1fr; gap:12px}
-    @media (min-width: 980px){ .grid{grid-template-columns: 420px 1fr;} }
+    @media (min-width: 980px){ .grid{grid-template-columns: 440px 1fr;} }
+
     .card{
       background:var(--card);
       border:1px solid var(--line);
@@ -55,7 +56,7 @@
     }
     .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
     .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
-    .btns{display:flex; gap:10px; margin-top:12px}
+    .btns{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
     button{
       border:none; border-radius:12px; padding:12px 12px; font-size:14px; cursor:pointer;
       flex:1;
@@ -68,20 +69,20 @@
       display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px;
       background: rgba(200,163,58,.12); color:#6a5207; border:1px solid rgba(200,163,58,.25);
     }
+
     table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
     th, td{padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
     th{font-size:12px; color:var(--muted); font-weight:600}
+
     .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
     .kpi .box{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff}
     .kpi .t{color:var(--muted); font-size:12px}
     .kpi .v{margin-top:6px; font-size:16px; font-weight:750; letter-spacing:.2px}
-    .note{
-      margin-top:12px; font-size:12px; color:var(--muted); line-height:1.45;
-      border-top:1px dashed var(--line); padding-top:10px;
-    }
+
     canvas{
       width:100%; height:260px; border-radius:14px; border:1px solid var(--line); background:#fff;
     }
+
     .watermark{
       position:fixed; right:10px; bottom:10px;
       font-size:11px; color:rgba(11,26,42,.40);
@@ -91,8 +92,26 @@
       border-radius:999px;
       backdrop-filter: blur(6px);
     }
+
     .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
     .mutedLine{margin-top:6px; font-size:12px; color:var(--muted)}
+
+    /* Allocation table usability */
+    .wAmt{min-width:140px}
+    .wCcy{min-width:100px}
+    .wProd{min-width:140px}
+    .wRate{min-width:110px}
+    .wTenor{min-width:160px}
+    .wCalc{min-width:170px}
+    .wTax{min-width:110px}
+    .wBtn{min-width:70px}
+
+    .miniBtn{
+      padding:8px 10px; border-radius:10px;
+      border:1px solid var(--line); background:#fff; cursor:pointer;
+      font-size:12px;
+    }
+    .miniBtn:hover{border-color: rgba(18,58,99,.25);}
   </style>
 </head>
 
@@ -100,8 +119,7 @@
 <header>
   <h1>PB Allocation Engine <span class="pill">Roadshow</span></h1>
   <div class="sub">
-    Müşteri varlığı → alokasyon → ürün/vade/oran → günlük/yıllık hesap → toplam portföy.
-    <br><b>Uyarı:</b> Senaryo analizidir; yatırım tavsiyesi değildir. Gerçek getiriler piyasa koşullarına göre değişir.
+    Toplam varlık → satır bazında alokasyon (tutar) → hedef para birimi → ürün/vade/oran/stopaj → otomatik kur → sonuç.
   </div>
 </header>
 
@@ -110,7 +128,7 @@
 
     <!-- LEFT -->
     <div class="card">
-      <h2>1) Müşteri Varlığı ve Raporlama</h2>
+      <h2>1) Müşteri Varlığı</h2>
 
       <label>Toplam Varlık</label>
       <input id="total_amount" type="text" inputmode="decimal" value="1,000,000" />
@@ -125,7 +143,7 @@
           </select>
         </div>
         <div>
-          <label>Rapor Para Birimi (Toplamları hangi para biriminde göstereyim?)</label>
+          <label>Rapor Para Birimi</label>
           <select id="report_ccy">
             <option value="TL" selected>TL</option>
             <option value="USD">USD</option>
@@ -134,9 +152,13 @@
         </div>
       </div>
 
-      <h2 style="margin-top:14px;">2) Kur (Otomatik + Manuel)</h2>
+      <h2 style="margin-top:14px;">2) Kurlar (Altın / USD / EUR)</h2>
 
-      <div class="row">
+      <div class="row3">
+        <div>
+          <label>Altın (gram/TRY)</label>
+          <input id="xautry_g" type="number" step="0.01" value="0" />
+        </div>
         <div>
           <label>USD/TRY</label>
           <input id="usdtry" type="number" step="0.0001" value="0" />
@@ -148,96 +170,80 @@
       </div>
 
       <div class="btns">
-        <button class="ghost" id="btn_rates">Kurları İnternetten Çek</button>
+        <button class="ghost" id="btn_rates">USD/EUR Kurlarını Çek</button>
         <button class="ghost" id="btn_use_manual">Manuel Kur Kullan</button>
       </div>
-      <div class="small">
-        Not: İnternet yoksa manuel gir. İnternet varsa “Kurları İnternetten Çek” kullan.
-      </div>
       <div id="rate_status" class="mutedLine"></div>
-
-      <h2 style="margin-top:14px;">3) Alokasyon (Yüzde ile)</h2>
-      <div class="small">
-        Yüzdeler 100 olmak zorunda değil; sistem otomatik normalize eder (toplam %100’e tamamlar).
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Mevduat (Vadesiz) %</label>
-          <input id="p_demand" type="number" step="1" value="0" />
-        </div>
-        <div>
-          <label>Vadeli Mevduat %</label>
-          <input id="p_time" type="number" step="1" value="35" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Yatırım Fonu %</label>
-          <input id="p_fund" type="number" step="1" value="35" />
-        </div>
-        <div>
-          <label>Sukuk %</label>
-          <input id="p_sukuk" type="number" step="1" value="30" />
-        </div>
-      </div>
 
       <div class="btns">
         <button class="primary" id="btn_calc">Hesapla</button>
         <button class="danger" id="btn_reset">Sıfırla</button>
       </div>
 
-      <div class="note">
-        <b>İmza:</b> Ekranın sağ altındaki “Adem Soyer | PB Roadshow Tool” ibaresi senin yaptığını belli eder.
-        İstersen isim/ünvan kısmını değiştirebilirsin (kodun en altındaki watermark satırı).
+      <div class="small">
+        * Alokasyon tutarlarını sağdaki tabloda <b>Toplam varlığın para birimiyle</b> giriyorsun (örn: toplam USD ise satır tutarları USD).
+        Hedef para birimini satırda seçiyorsun; sistem otomatik çevirip hesaplıyor.
       </div>
     </div>
 
     <!-- RIGHT -->
     <div class="card">
-      <h2>Ürün Parametreleri ve Sonuçlar <span class="pill" id="pillInfo">hazır</span></h2>
+      <h2>Alokasyon (Tutar Bazlı) <span class="pill" id="pillInfo">hazır</span></h2>
 
       <div class="small">
-        Her ürün için ayrı <b>para birimi</b>, <b>vade</b> ve <b>hesaplama tipi</b> seçebilirsin.
-        Roadshow’da oranları hızlıca güncellersin.
+        Her satır: <b>Tutar (Toplam PB)</b> → <b>Hedef PB</b> → <b>Ürün</b> → <b>Oran / Vade / Hesap / Stopaj</b>.
+        Altındaki toplamlar rapor para biriminde hesaplanır.
+      </div>
+
+      <div class="btns" style="margin-top:10px;">
+        <button class="ghost" id="btn_add">+ Satır Ekle</button>
+        <button class="ghost" id="btn_sample">Örnek Senaryo Doldur</button>
       </div>
 
       <table>
         <thead>
           <tr>
-            <th>Ürün</th>
-            <th>Para Birimi</th>
-            <th>Oran (Yıllık %)</th>
-            <th>Vade</th>
-            <th>Hesap</th>
+            <th class="wAmt">Tutar (Toplam PB)</th>
+            <th class="wCcy">Hedef PB</th>
+            <th class="wProd">Ürün</th>
+            <th class="wRate">Yıllık %</th>
+            <th class="wTenor">Vade</th>
+            <th class="wCalc">Hesap</th>
+            <th class="wTax">Stopaj %</th>
             <th>Anapara</th>
             <th>Vade Sonu</th>
             <th>Net Kazanç</th>
+            <th class="wBtn"></th>
           </tr>
         </thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="allocBody"></tbody>
       </table>
 
       <div class="kpi">
         <div class="box">
-          <div class="t">Toplam Portföy (Rapor Para Birimi)</div>
+          <div class="t">Toplam Kullanılan Tutar (Toplam PB)</div>
+          <div class="v" id="kpi_used">-</div>
+        </div>
+        <div class="box">
+          <div class="t">Kalan Tutar (Toplam PB)</div>
+          <div class="v" id="kpi_left">-</div>
+        </div>
+      </div>
+
+      <div class="kpi">
+        <div class="box">
+          <div class="t">Portföy Toplamı (Rapor PB)</div>
           <div class="v" id="kpi_total">-</div>
         </div>
         <div class="box">
-          <div class="t">Net Kazanç (Rapor Para Birimi)</div>
+          <div class="t">Net Kazanç (Rapor PB)</div>
           <div class="v" id="kpi_gain">-</div>
         </div>
       </div>
 
       <div style="margin-top:12px;">
-        <canvas id="chart" width="1100" height="300"></canvas>
-        <div class="small">Grafik: Ürün bazında net kazanç (rapor para birimi)</div>
-      </div>
-
-      <div class="note">
-        <b>Compliance Notu:</b> Bu araç “senaryo / simülasyon” amaçlıdır. “Garantili getiri” izlenimi verecek
-        şekilde kullanılmamalıdır. Gerçekleşen getiri ürün koşulları, piyasa ve maliyetlere göre değişebilir.
+        <canvas id="chart" width="1200" height="300"></canvas>
+        <div class="small">Grafik: Satır bazında net kazanç (rapor para birimi)</div>
       </div>
 
       <div id="warn" class="inlineWarn"></div>
@@ -246,54 +252,45 @@
   </div>
 </div>
 
-<div class="watermark">Adem Soyer | PB Roadshow Tool</div>
+<div class="watermark">Adem Soyer</div>
 
 <script>
   // ---------- Parsing / Formatting ----------
   function parseAmount(str){
     if(!str) return 0;
     let s = String(str).trim().replace(/\s/g,'');
-    // remove thousand separators (.,,)
     if(s.includes(',') && s.includes('.')) s = s.replace(/[.,]/g,'');
     else s = s.replace(/,/g,'').replace(/\./g,'');
     const n = Number(s);
     return isFinite(n) ? n : 0;
   }
-
   function fmtMoney(n, ccy){
-    const opts = { maximumFractionDigits: 2 };
     const abs = Math.abs(n);
-    // for big numbers, drop decimals
-    const use0 = abs >= 100000 ? { maximumFractionDigits: 0 } : opts;
+    const opts = abs >= 100000 ? { maximumFractionDigits: 0 } : { maximumFractionDigits: 2 };
     try{
-      return new Intl.NumberFormat('tr-TR', use0).format(n) + ' ' + ccy;
+      return new Intl.NumberFormat('tr-TR', opts).format(n) + ' ' + ccy;
     }catch(e){
-      return (use0.maximumFractionDigits===0 ? Math.round(n) : n).toLocaleString('tr-TR') + ' ' + ccy;
+      return (opts.maximumFractionDigits===0 ? Math.round(n) : n).toLocaleString('tr-TR') + ' ' + ccy;
     }
   }
-
-  function pct(x){ return (Number(x)||0).toFixed(2) + '%'; }
   function clamp(x){ return Math.max(0, Number(x)||0); }
 
   // ---------- FX ----------
-  // We'll work with USD/TRY and EUR/TRY, and derive cross rates if needed.
   function getFx(){
     const usdtry = Number(document.getElementById('usdtry').value)||0;
     const eurtry = Number(document.getElementById('eurtry').value)||0;
     return { usdtry, eurtry };
   }
-
   function fxRate(from, to){
     if(from === to) return 1;
     const { usdtry, eurtry } = getFx();
 
-    // require base rates if converting involves TRY
-    const needTryRates = (from==='USD' || from==='EUR' || to==='USD' || to==='EUR');
-    if(needTryRates && (usdtry<=0 || eurtry<=0)){
+    // we derive cross via TRY
+    const need = (from==='USD'||from==='EUR'||to==='USD'||to==='EUR'||from==='TL'||to==='TL');
+    if(need && (usdtry<=0 || eurtry<=0)){
       return null;
     }
 
-    // Convert from -> TRY -> to
     const toTRY = (ccy)=>{
       if(ccy==='TL') return 1;
       if(ccy==='USD') return usdtry;
@@ -315,9 +312,8 @@
 
   async function fetchRates(){
     const status = document.getElementById('rate_status');
-    status.textContent = 'Kurlar çekiliyor…';
+    status.textContent = 'USD/EUR kurları çekiliyor…';
     try{
-      // Using a public endpoint; if blocked, manual entry still works.
       const res = await fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-store' });
       if(!res.ok) throw new Error('rate fetch failed');
       const data = await res.json();
@@ -332,16 +328,15 @@
 
       document.getElementById('usdtry').value = Number(usdTry).toFixed(4);
       document.getElementById('eurtry').value = Number(eurTry).toFixed(4);
-      status.textContent = 'Kurlar güncellendi (internet).';
+      status.textContent = 'USD/EUR kurları güncellendi (internet).';
     } catch (e){
       status.textContent = 'Kurlar çekilemedi. Manuel girip devam edebilirsin.';
     }
   }
 
   // ---------- Product math ----------
-  // Methods:
-  //  - SIMPLE: P*(1+r*t)
-  //  - DAILY_COMPOUND: P*(1+r/365)^days
+  // SIMPLE: P*(1+r*t)
+  // DAILY_COMPOUND: P*(1+r/365)^days
   function fvSimple(P, annualPct, days){
     const r = (Number(annualPct)||0)/100;
     return P * (1 + r * (days/365));
@@ -350,12 +345,9 @@
     const r = (Number(annualPct)||0)/100;
     return P * Math.pow(1 + r/365, days);
   }
-
   function daysFromInput(vType, vVal){
     const n = clamp(vVal);
-    if(vType==='DAYS') return n;
-    // months
-    return n * 30; // roadshow approximation
+    return (vType==='DAYS') ? n : (n * 30); // roadshow approx
   }
 
   // ---------- Chart ----------
@@ -368,7 +360,6 @@
     const chartW = W - padL - padR;
     const chartH = H - padT - padB;
 
-    // axes
     ctx.strokeStyle = '#e6e9f2';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -381,7 +372,6 @@
     const barGap = 16;
     const barW = (chartW - barGap*(values.length+1)) / values.length;
 
-    // grid + ticks
     const ticks = 4;
     ctx.fillStyle = '#5b6777';
     ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial';
@@ -398,22 +388,18 @@
       ctx.fillText(tickVal.toLocaleString('tr-TR'), 10, y+4);
     }
 
-    // bars
     for(let i=0;i<values.length;i++){
       const v = values[i];
       const h = (Math.abs(v) / maxV) * chartH;
       const x = padL + barGap + i*(barW + barGap);
       const y = padT + chartH - h;
 
-      // bar fill
       ctx.fillStyle = (v>=0) ? 'rgba(18,58,99,.88)' : 'rgba(155,28,28,.70)';
       ctx.fillRect(x, y, barW, h);
 
-      // accent top line
       ctx.fillStyle = 'rgba(200,163,58,.95)';
       ctx.fillRect(x, y, barW, 4);
 
-      // label
       ctx.fillStyle = '#0b1a2a';
       ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial';
       const lab = labels[i];
@@ -422,50 +408,111 @@
     }
   }
 
-  // ---------- Build rows UI dynamically ----------
-  function buildRows(){
-    const tbody = document.getElementById('tbody');
-    tbody.innerHTML = '';
+  // ---------- Allocation rows ----------
+  const PRODUCT_OPTIONS = [
+    { val:'TERM', label:'Vadeli Mevduat' },
+    { val:'FUND', label:'Yatırım Fonu' },
+    { val:'SUKUK', label:'Sukuk' },
+    { val:'DPM',  label:'DPM' }
+  ];
 
-    const products = [
-      { key:'demand', label:'Mevduat (Vadesiz)', defaultCcy:'TL', defaultRate:0, defaultVType:'DAYS', defaultV:0, defaultMethod:'SIMPLE' },
-      { key:'time',   label:'Vadeli Mevduat',    defaultCcy:'TL', defaultRate:35, defaultVType:'DAYS', defaultV:32, defaultMethod:'DAILY_COMPOUND' },
-      { key:'fund',   label:'Yatırım Fonu',      defaultCcy:'TL', defaultRate:42, defaultVType:'DAYS', defaultV:32, defaultMethod:'DAILY_COMPOUND' },
-      { key:'sukuk',  label:'Sukuk',             defaultCcy:'USD',defaultRate:6,  defaultVType:'MONTHS', defaultV:12, defaultMethod:'SIMPLE' },
-    ];
-
-    for(const p of products){
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><b>${p.label}</b></td>
-        <td>
-          <select id="ccy_${p.key}">
-            <option value="TL"${p.defaultCcy==='TL'?' selected':''}>TL</option>
-            <option value="USD"${p.defaultCcy==='USD'?' selected':''}>USD</option>
-            <option value="EUR"${p.defaultCcy==='EUR'?' selected':''}>EUR</option>
+  function rowTemplate(id){
+    const prodOpts = PRODUCT_OPTIONS.map(o=>`<option value="${o.val}">${o.label}</option>`).join('');
+    return `
+      <tr data-id="${id}">
+        <td class="wAmt"><input type="number" step="0.01" id="amt_${id}" value="0"></td>
+        <td class="wCcy">
+          <select id="ccy_${id}">
+            <option value="TL">TL</option>
+            <option value="USD" selected>USD</option>
+            <option value="EUR">EUR</option>
           </select>
         </td>
-        <td><input id="rate_${p.key}" type="number" step="0.01" value="${p.defaultRate}"></td>
-        <td>
+        <td class="wProd">
+          <select id="prod_${id}">${prodOpts}</select>
+        </td>
+        <td class="wRate"><input type="number" step="0.01" id="rate_${id}" value="0"></td>
+        <td class="wTenor">
           <div style="display:flex; gap:8px;">
-            <select id="vtype_${p.key}" style="flex:1;">
-              <option value="DAYS"${p.defaultVType==='DAYS'?' selected':''}>Gün</option>
-              <option value="MONTHS"${p.defaultVType==='MONTHS'?' selected':''}>Ay</option>
+            <select id="vtype_${id}" style="flex:1;">
+              <option value="DAYS" selected>Gün</option>
+              <option value="MONTHS">Ay</option>
             </select>
-            <input id="v_${p.key}" type="number" step="1" value="${p.defaultV}" style="flex:1;">
+            <input type="number" step="1" id="v_${id}" value="32" style="flex:1;">
           </div>
         </td>
-        <td>
-          <select id="method_${p.key}">
-            <option value="SIMPLE"${p.defaultMethod==='SIMPLE'?' selected':''}>Basit</option>
-            <option value="DAILY_COMPOUND"${p.defaultMethod==='DAILY_COMPOUND'?' selected':''}>Günlük</option>
+        <td class="wCalc">
+          <select id="method_${id}">
+            <option value="DAILY_COMPOUND" selected>Günlük (bileşik)</option>
+            <option value="SIMPLE">Basit</option>
           </select>
         </td>
-        <td id="p_${p.key}">-</td>
-        <td id="fv_${p.key}">-</td>
-        <td id="g_${p.key}">-</td>
-      `;
-      tbody.appendChild(tr);
+        <td class="wTax"><input type="number" step="0.01" id="tax_${id}" value="0"></td>
+        <td id="p_${id}">-</td>
+        <td id="fv_${id}">-</td>
+        <td id="net_${id}">-</td>
+        <td class="wBtn"><button class="miniBtn" onclick="removeRow('${id}')">Sil</button></td>
+      </tr>
+    `;
+  }
+
+  function addRow(preset={}){
+    const id = String(Math.random()).slice(2,8);
+    const body = document.getElementById('allocBody');
+    body.insertAdjacentHTML('beforeend', rowTemplate(id));
+
+    // apply preset
+    if(preset.amt != null) document.getElementById(`amt_${id}`).value = preset.amt;
+    if(preset.ccy) document.getElementById(`ccy_${id}`).value = preset.ccy;
+    if(preset.prod) document.getElementById(`prod_${id}`).value = preset.prod;
+    if(preset.rate != null) document.getElementById(`rate_${id}`).value = preset.rate;
+    if(preset.vtype) document.getElementById(`vtype_${id}`).value = preset.vtype;
+    if(preset.v != null) document.getElementById(`v_${id}`).value = preset.v;
+    if(preset.method) document.getElementById(`method_${id}`).value = preset.method;
+    if(preset.tax != null) document.getElementById(`tax_${id}`).value = preset.tax;
+
+    // smart defaults by product
+    applyDefaultsByProduct(id);
+    document.getElementById(`prod_${id}`).addEventListener('change', ()=>applyDefaultsByProduct(id));
+  }
+
+  function removeRow(id){
+    const tr = document.querySelector(`tr[data-id="${id}"]`);
+    if(tr) tr.remove();
+  }
+
+  function applyDefaultsByProduct(id){
+    const prod = document.getElementById(`prod_${id}`).value;
+
+    // If user hasn't filled rate/tax, set sensible defaults for roadshow (can be overwritten).
+    const rateEl = document.getElementById(`rate_${id}`);
+    const taxEl  = document.getElementById(`tax_${id}`);
+    const vEl    = document.getElementById(`v_${id}`);
+    const vTypeEl= document.getElementById(`vtype_${id}`);
+    const methodEl=document.getElementById(`method_${id}`);
+
+    const r = Number(rateEl.value)||0;
+    const t = Number(taxEl.value)||0;
+
+    if(prod==='TERM'){
+      if(r===0) rateEl.value = 35;
+      if(vTypeEl.value==='DAYS' && (Number(vEl.value)||0)===0) vEl.value = 32;
+      methodEl.value = 'DAILY_COMPOUND';
+      // stopaj default 0; you will enter manually per your rule
+      if(t===0) taxEl.value = 0;
+    } else if(prod==='FUND'){
+      if(r===0) rateEl.value = 42;
+      methodEl.value = 'DAILY_COMPOUND';
+      if(t===0) taxEl.value = 0;
+    } else if(prod==='SUKUK'){
+      if(r===0) rateEl.value = 6;
+      methodEl.value = 'SIMPLE';
+      if(vTypeEl.value==='MONTHS' && (Number(vEl.value)||0)===0) vEl.value = 12;
+      if(t===0) taxEl.value = 0;
+    } else if(prod==='DPM'){
+      if(r===0) rateEl.value = 18;
+      methodEl.value = 'DAILY_COMPOUND';
+      if(t===0) taxEl.value = 0;
     }
   }
 
@@ -478,94 +525,104 @@
     const totalCcy = document.getElementById('total_ccy').value;
     const reportCcy = document.getElementById('report_ccy').value;
 
-    // allocation percents
-    let pDemand = clamp(document.getElementById('p_demand').value);
-    let pTime   = clamp(document.getElementById('p_time').value);
-    let pFund   = clamp(document.getElementById('p_fund').value);
-    let pSukuk  = clamp(document.getElementById('p_sukuk').value);
-
-    const sumP = pDemand + pTime + pFund + pSukuk;
-    if(sumP <= 0){
-      warn.textContent = 'Alokasyon yüzdeleri boş. En az bir ürün için yüzde gir.';
+    if(totalAmount <= 0){
+      warn.textContent = 'Toplam varlık boş veya 0. Tutar gir.';
       return;
     }
 
-    // normalize to 100
-    const nDemand = pDemand/sumP;
-    const nTime   = pTime/sumP;
-    const nFund   = pFund/sumP;
-    const nSukuk  = pSukuk/sumP;
+    const rows = Array.from(document.querySelectorAll('#allocBody tr'));
+    if(rows.length === 0){
+      warn.textContent = 'En az 1 alokasyon satırı ekle.';
+      return;
+    }
 
-    const items = [
-      { key:'demand', name:'Mevduat (Vadesiz)', share:nDemand },
-      { key:'time',   name:'Vadeli Mevduat',    share:nTime   },
-      { key:'fund',   name:'Yatırım Fonu',      share:nFund   },
-      { key:'sukuk',  name:'Sukuk',             share:nSukuk  },
-    ];
+    // FX availability check
+    const rTest = fxRate('USD','TL');
+    if(rTest === null){
+      warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “USD/EUR Kurlarını Çek” kullan.';
+      return;
+    }
 
-    // Split principal amounts in TOTAL_CCY first
-    // Then, if product currency differs, convert using fx.
+    let usedTotalCcy = 0;
+
     let totalFV_report = 0;
-    let totalP_report = 0;
-    let totalGain_report = 0;
+    let totalP_report  = 0;
+    let totalNetGain_report = 0;
 
     const chartLabels = [];
     const chartValues = [];
 
-    for(const it of items){
-      const prodCcy = document.getElementById(`ccy_${it.key}`).value;
-      const rate = Number(document.getElementById(`rate_${it.key}`).value)||0;
-      const vType = document.getElementById(`vtype_${it.key}`).value;
-      const vVal  = Number(document.getElementById(`v_${it.key}`).value)||0;
-      const method = document.getElementById(`method_${it.key}`).value;
+    for(const tr of rows){
+      const id = tr.getAttribute('data-id');
 
-      const P_totalCcy = totalAmount * it.share;
+      const amtBase = clamp(document.getElementById(`amt_${id}`).value); // amount in total currency
+      const targetCcy = document.getElementById(`ccy_${id}`).value;
+      const prod = document.getElementById(`prod_${id}`).value;
+      const rate = Number(document.getElementById(`rate_${id}`).value)||0;
+      const vType= document.getElementById(`vtype_${id}`).value;
+      const vVal = Number(document.getElementById(`v_${id}`).value)||0;
+      const method = document.getElementById(`method_${id}`).value;
+      const taxPct = Number(document.getElementById(`tax_${id}`).value)||0;
 
-      // Convert principal from total currency to product currency (if needed)
-      const r1 = fxRate(totalCcy, prodCcy);
+      usedTotalCcy += amtBase;
+
+      // Convert base amount (total ccy) to target currency principal
+      const r1 = fxRate(totalCcy, targetCcy);
       if(r1 === null){
-        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “Kurları İnternetten Çek” kullan.';
+        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “USD/EUR Kurlarını Çek” kullan.';
         return;
       }
-      const P_prodCcy = P_totalCcy * r1;
+      const P_target = amtBase * r1;
 
       const days = daysFromInput(vType, vVal);
 
-      let FV_prodCcy = P_prodCcy;
-      if(it.key === 'demand'){
-        // vadesiz: rate 0 default; still allow rate if user enters
-        FV_prodCcy = (method==='DAILY_COMPOUND') ? fvDailyCompound(P_prodCcy, rate, days) : fvSimple(P_prodCcy, rate, days);
-      } else {
-        FV_prodCcy = (method==='DAILY_COMPOUND') ? fvDailyCompound(P_prodCcy, rate, days) : fvSimple(P_prodCcy, rate, days);
-      }
+      let FV_target = P_target;
+      if(method === 'DAILY_COMPOUND') FV_target = fvDailyCompound(P_target, rate, days);
+      else FV_target = fvSimple(P_target, rate, days);
 
-      const G_prodCcy = FV_prodCcy - P_prodCcy;
+      const grossGain_target = FV_target - P_target;
+
+      // Stopaj: tax on gain
+      const tax_target = grossGain_target * (taxPct/100);
+      const netGain_target = grossGain_target - tax_target;
+      const netFV_target = P_target + netGain_target;
 
       // Convert to report currency for totals & chart
-      const r2 = fxRate(prodCcy, reportCcy);
+      const r2 = fxRate(targetCcy, reportCcy);
       if(r2 === null){
-        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “Kurları İnternetten Çek” kullan.';
+        warn.textContent = 'Kur bilgisi eksik. USD/TRY ve EUR/TRY gir veya “USD/EUR Kurlarını Çek” kullan.';
         return;
       }
-      const P_rep = P_prodCcy * r2;
-      const FV_rep = FV_prodCcy * r2;
-      const G_rep = G_prodCcy * r2;
-
-      // render row
-      document.getElementById(`p_${it.key}`).textContent  = fmtMoney(P_prodCcy, prodCcy);
-      document.getElementById(`fv_${it.key}`).textContent = fmtMoney(FV_prodCcy, prodCcy);
-      document.getElementById(`g_${it.key}`).textContent  = fmtMoney(G_prodCcy, prodCcy);
+      const P_rep = P_target * r2;
+      const FV_rep = netFV_target * r2;
+      const netGain_rep = netGain_target * r2;
 
       totalP_report += P_rep;
       totalFV_report += FV_rep;
-      totalGain_report += G_rep;
+      totalNetGain_report += netGain_rep;
 
-      chartLabels.push(it.key==='demand'?'Vadesiz':it.key==='time'?'Vadeli':it.key==='fund'?'Fon':'Sukuk');
-      chartValues.push(G_rep);
+      // Render row outputs in target ccy
+      document.getElementById(`p_${id}`).textContent  = fmtMoney(P_target, targetCcy);
+      document.getElementById(`fv_${id}`).textContent = fmtMoney(netFV_target, targetCcy);
+      document.getElementById(`net_${id}`).textContent= fmtMoney(netGain_target, targetCcy);
+
+      // chart label
+      const prodLabel = (prod==='TERM'?'Vadeli':prod==='FUND'?'Fon':prod==='SUKUK'?'Sukuk':'DPM');
+      chartLabels.push(`${prodLabel}-${targetCcy}`);
+      chartValues.push(netGain_rep);
+    }
+
+    // Used/left check
+    document.getElementById('kpi_used').textContent = fmtMoney(usedTotalCcy, totalCcy);
+    const left = totalAmount - usedTotalCcy;
+    document.getElementById('kpi_left').textContent = fmtMoney(left, totalCcy);
+
+    if(usedTotalCcy > totalAmount + 1e-9){
+      warn.textContent = 'Alokasyon tutarları toplamı, toplam varlığı aşıyor. Satır tutarlarını düşür.';
     }
 
     document.getElementById('kpi_total').textContent = fmtMoney(totalFV_report, reportCcy);
-    document.getElementById('kpi_gain').textContent  = fmtMoney(totalGain_report, reportCcy);
+    document.getElementById('kpi_gain').textContent  = fmtMoney(totalNetGain_report, reportCcy);
     document.getElementById('pillInfo').textContent  = `Toplam: ${fmtMoney(totalAmount, totalCcy)} → Rapor: ${reportCcy}`;
 
     drawBarChart(document.getElementById('chart'), chartLabels, chartValues);
@@ -576,24 +633,41 @@
     document.getElementById('total_ccy').value = 'USD';
     document.getElementById('report_ccy').value = 'TL';
 
+    document.getElementById('xautry_g').value = '0';
     document.getElementById('usdtry').value = '0';
     document.getElementById('eurtry').value = '0';
 
-    document.getElementById('p_demand').value = '0';
-    document.getElementById('p_time').value = '35';
-    document.getElementById('p_fund').value = '35';
-    document.getElementById('p_sukuk').value = '30';
-
-    buildRows();
-    document.getElementById('warn').textContent = '';
     document.getElementById('rate_status').textContent = '';
+    document.getElementById('warn').textContent = '';
     document.getElementById('pillInfo').textContent = 'hazır';
+
+    document.getElementById('kpi_used').textContent = '-';
+    document.getElementById('kpi_left').textContent = '-';
     document.getElementById('kpi_total').textContent = '-';
     document.getElementById('kpi_gain').textContent = '-';
+
+    const body = document.getElementById('allocBody');
+    body.innerHTML = '';
+    // add a few blank rows
+    addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0 });
+    addRow({ amt:0, ccy:'TL', prod:'FUND', rate:42, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0 });
+
     const ctx = document.getElementById('chart').getContext('2d');
-    ctx.clearRect(0,0,1100,300);
+    ctx.clearRect(0,0,1200,300);
   }
 
+  function fillSample(){
+    // Example based on your message: total USD, distribute amounts to TL products
+    // 250k USD -> TL term, 100k USD -> TL sukuk, 200k USD -> TL sukuk, remaining -> e.g. USD DPM
+    const body = document.getElementById('allocBody');
+    body.innerHTML = '';
+    addRow({ amt:250000, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0 });
+    addRow({ amt:100000, ccy:'TL', prod:'SUKUK', rate:38, vtype:'MONTHS', v:12, method:'SIMPLE', tax:0 });
+    addRow({ amt:200000, ccy:'TL', prod:'SUKUK', rate:38, vtype:'MONTHS', v:12, method:'SIMPLE', tax:0 });
+    addRow({ amt:150000, ccy:'USD', prod:'DPM', rate:10, vtype:'DAYS', v:180, method:'DAILY_COMPOUND', tax:0 });
+  }
+
+  // ---------- Wire up ----------
   document.getElementById('btn_calc').addEventListener('click', calc);
   document.getElementById('btn_reset').addEventListener('click', resetAll);
   document.getElementById('btn_rates').addEventListener('click', fetchRates);
@@ -604,8 +678,11 @@
     else st.textContent = 'Manuel kur eksik: USD/TRY ve EUR/TRY gir.';
   });
 
+  document.getElementById('btn_add').addEventListener('click', ()=>addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, vtype:'DAYS', v:32, method:'DAILY_COMPOUND', tax:0 }));
+  document.getElementById('btn_sample').addEventListener('click', fillSample);
+
   // init
-  buildRows();
+  resetAll();
 </script>
 </body>
 </html>
