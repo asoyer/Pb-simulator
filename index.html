@@ -9,6 +9,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
+  <!-- Icons / PWA -->
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+
   <style>
     :root{
       --bg:#f6f7fb; --card:#ffffff; --ink:#0b1a2a; --muted:#5b6777;
@@ -125,13 +130,15 @@
 
     .watermark{
       position:fixed; right:10px; bottom:10px;
-      font-size:13px;
+      font-size:15px;
       color:rgba(11,26,42,.40);
       background:rgba(255,255,255,.75);
       border:1px solid rgba(230,233,242,.9);
-      padding:8px 12px;
+      padding:10px 14px;
       border-radius:999px;
       backdrop-filter: blur(6px);
+      font-weight:650;
+      letter-spacing:.2px;
     }
     .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
     .mutedLine{margin-top:6px; font-size:12px; color:var(--muted)}
@@ -176,12 +183,12 @@
     <div>
       <h1 id="t_title">PB Allocation Engine <span class="pill" id="t_roadshow">Roadshow</span></h1>
       <div class="sub" id="t_sub">
-        Spot + Forward (faiz farkı) ile vade sonu kurlar → Giriş para birimine dönüşte Net P/L.
+        Spot + Forward (getiri farkı) ile vade sonu kurlar → Giriş para birimine dönüşte Net P/L.
       </div>
     </div>
 
     <div class="headRight">
-      <div class="buildTag" id="buildTag">Build: V13</div>
+      <div class="buildTag" id="buildTag">Build: V14</div>
       <div class="langSel">
         <label id="t_langLabel">Dil</label>
         <select id="lang">
@@ -280,7 +287,7 @@
             <label id="t_endMode">Vade Sonu Kur Modu</label>
             <select id="end_mode">
               <option value="SPOT" selected id="opt_endSpot_tr">Spot = Vade Sonu</option>
-              <option value="FWD" id="opt_endFwd_tr">Forward (Faiz farkı)</option>
+              <option value="FWD" id="opt_endFwd_tr">Forward (getiri farkı)</option>
               <option value="MANUAL" id="opt_endManual_tr">Manuel</option>
             </select>
           </div>
@@ -307,15 +314,15 @@
 
         <div class="row3">
           <div>
-            <label id="t_rtl">TL faiz (yıllık %)</label>
+            <label id="t_rtl">TL getiri oranı (yıllık %)</label>
             <input id="rtl" type="number" step="0.01" value="45" />
           </div>
           <div>
-            <label id="t_rusd">USD faiz (yıllık %)</label>
+            <label id="t_rusd">USD getiri oranı (yıllık %)</label>
             <input id="rusd" type="number" step="0.01" value="5" />
           </div>
           <div>
-            <label id="t_reur">EUR faiz (yıllık %)</label>
+            <label id="t_reur">EUR getiri oranı (yıllık %)</label>
             <input id="reur" type="number" step="0.01" value="3" />
           </div>
         </div>
@@ -360,7 +367,7 @@
             <th class="wAmt" id="hdr_amt">Tutar (Giriş PB)</th>
             <th class="wProd" id="th_prod">Ürün</th>
             <th class="wCcy" id="th_target">Hedef PB</th>
-            <th class="wRate" id="th_rate">Yıllık %</th>
+            <th class="wRate" id="th_rate">Getiri oranı % (yıllık)</th>
             <th class="wCalc" id="th_calc">Hesap</th>
             <th class="wTax" id="th_tax">Stopaj</th>
             <th id="th_p">Anapara (Hedef PB)</th>
@@ -397,7 +404,7 @@
 
     <div style="margin-top:12px;">
       <canvas id="chart"></canvas>
-      <div class="small" id="t_chartNote">Grafik: Dağılım + Kâr/Zarar – Rapor PB</div>
+      <div class="small" id="t_chartNote">Grafik: Başlangıç dağılımı + Vade sonu toplam dağılımı – Rapor PB</div>
     </div>
 
     <div id="warn" class="inlineWarn"></div>
@@ -408,10 +415,8 @@
 <div class="watermark">Adem Soyer</div>
 
 <script>
-/* ========== V13: Stabil event wiring (no inline onclick) ========== */
 (() => {
-  const BUILD = "V13";
-
+  const BUILD = "V14";
   const $ = (id) => document.getElementById(id);
 
   // ---------- i18n ----------
@@ -419,7 +424,7 @@
     tr: {
       langLabel:"Dil",
       roadshow:"Roadshow",
-      sub:"Spot + Forward (faiz farkı) ile vade sonu kurlar → Giriş para birimine dönüşte Net P/L.",
+      sub:"Spot + Forward (getiri farkı) ile vade sonu kurlar → Giriş para birimine dönüşte Net P/L.",
       sec1:"1) Müşteri Varlığı",
       totalAsset:"Toplam Varlık",
       principalCcy:"Giriş Para Birimi (Principal)",
@@ -437,15 +442,15 @@
       sec3:"3) Vade Sonu Kurları (Oto)",
       endMode:"Vade Sonu Kur Modu",
       endSpot:"Spot = Vade Sonu",
-      endFwd:"Forward (Faiz farkı)",
+      endFwd:"Forward (getiri farkı)",
       endManual:"Manuel",
       goldExp:"Altın Beklenti (yıllık %)",
       goldEnd:"Altın (gram/TRY) – Vade Sonu",
       usdEnd:"USD/TRY – Vade Sonu",
       eurEnd:"EUR/TRY – Vade Sonu",
-      rtl:"TL faiz (yıllık %)",
-      rusd:"USD faiz (yıllık %)",
-      reur:"EUR faiz (yıllık %)",
+      rtl:"TL getiri oranı (yıllık %)",
+      rusd:"USD getiri oranı (yıllık %)",
+      reur:"EUR getiri oranı (yıllık %)",
       btnFillEnd:"Vade Sonu Kurları Doldur",
       btnCalc:"Hesapla",
       btnReset:"Sıfırla",
@@ -453,20 +458,20 @@
       headline:"Headline – Net P/L (Giriş Para Birimi)",
       btnAddRow:"+ Satır Ekle",
       s1:"Dengeli", s2:"Koruma", s3:"Büyüme (Riskli)", s4:"FX Hedge", s5:"DPM Ağırlıklı",
-      th_prod:"Ürün", th_target:"Hedef PB", th_rate:"Yıllık %", th_calc:"Hesap", th_tax:"Stopaj",
+      th_prod:"Ürün", th_target:"Hedef PB", th_rate:"Getiri oranı % (yıllık)", th_calc:"Hesap", th_tax:"Stopaj",
       th_p:"Anapara (Hedef PB)", th_fv:"Vade Sonu (Hedef PB)", th_net:"Net Kazanç (Hedef PB)",
       used:"Kullanılan Tutar (Giriş PB)",
       left:"Kalan Tutar (Giriş PB)",
       portTotal:"Portföy Toplamı (Rapor PB)",
       portGain:"Net Kazanç (Rapor PB)",
-      chartNote:"Grafik: Dağılım + Kâr/Zarar – Rapor PB",
+      chartNote:"Grafik: Başlangıç dağılımı + Vade sonu toplam dağılımı – Rapor PB",
       prod_term:"Vadeli Mevduat", prod_fund:"Yatırım Fonu", prod_sukuk:"Sukuk", prod_dpm:"DPM",
       calc_simple:"Basit (bankacılık)", calc_comp:"Günlük (bileşik) [opsiyon]",
       rollover:"Yenilemeli", delete:"Sil",
       endNoteSpot:"Spot = Vade Sonu: End kurlar spot ile aynı kabul edilir.",
       endNoteNeedSpot:"Not: Forward/Spot için önce USD/TRY ve EUR/TRY girilmeli ya da çekilmeli.",
       endNoteManual:"Manuel mod: vade sonu kurları sen girersin.",
-      endNoteFwd:"Forward modu: USD/TRY & EUR/TRY faiz farkı ile türetildi (proxy). Altın: beklenti % ile.",
+      endNoteFwd:"Forward modu: USD/TRY ve EUR/TRY getiri farkı ile türetildi (proxy). Altın: beklenti % ile.",
       warnTotal0:"Toplam varlık 0 olamaz.",
       warnNeedRow:"En az 1 satır ekle.",
       warnTenor0:"Global vade 0 olamaz.",
@@ -481,15 +486,15 @@
       rateStatusFail:"Kurlar çekilemedi. Manuel girip devam edebilirsin.",
       rateStatusManualOk:"Manuel kur kullanılıyor.",
       rateStatusManualBad:"Manuel kur eksik.",
-      riskLine:"Risk/Dağılım (ürün bazlı, başlangıç kurlarıyla):",
+      riskLine:"Dağılım (ürün bazlı, başlangıç kurlarıyla):",
       donutAllocTitle:"Dağılım (Başlangıç - Rapor PB)",
-      donutPLTitle:"Kâr/Zarar (Vade Sonu - Rapor PB)",
+      donutEndTitle:"Dağılım (Vade Sonu Toplam - Rapor PB)",
       donutMidTitle:"Toplam Net P/L (Rapor PB)"
     },
     en: {
       langLabel:"Language",
       roadshow:"Roadshow",
-      sub:"Spot + Forward (interest differential) end-rates → Net P/L back in the principal currency.",
+      sub:"Spot + Forward (return differential) end-rates → Net P/L back in the principal currency.",
       sec1:"1) Client Asset",
       totalAsset:"Total Asset",
       principalCcy:"Principal Currency",
@@ -507,15 +512,15 @@
       sec3:"3) End Rates (Auto)",
       endMode:"End Rate Mode",
       endSpot:"Spot = End",
-      endFwd:"Forward (IR diff)",
+      endFwd:"Forward (return diff)",
       endManual:"Manual",
       goldExp:"Gold Expectation (annual %)",
       goldEnd:"Gold (gram/TRY) – End",
       usdEnd:"USD/TRY – End",
       eurEnd:"EUR/TRY – End",
-      rtl:"TRY rate (annual %)",
-      rusd:"USD rate (annual %)",
-      reur:"EUR rate (annual %)",
+      rtl:"TRY return rate (annual %)",
+      rusd:"USD return rate (annual %)",
+      reur:"EUR return rate (annual %)",
       btnFillEnd:"Fill End Rates",
       btnCalc:"Calculate",
       btnReset:"Reset",
@@ -523,20 +528,20 @@
       headline:"Headline – Net P/L (Principal Currency)",
       btnAddRow:"+ Add Row",
       s1:"Balanced", s2:"Conservative", s3:"Growth (Risky)", s4:"FX Hedge", s5:"DPM Focus",
-      th_prod:"Product", th_target:"Target CCY", th_rate:"Annual %", th_calc:"Method", th_tax:"Withholding",
+      th_prod:"Product", th_target:"Target CCY", th_rate:"Return rate % (annual)", th_calc:"Method", th_tax:"Withholding",
       th_p:"Principal (Target)", th_fv:"End Value (Target)", th_net:"Net Gain (Target)",
       used:"Used (Principal)",
       left:"Remaining (Principal)",
       portTotal:"Portfolio Total (Report CCY)",
       portGain:"Net Gain (Report CCY)",
-      chartNote:"Chart: Allocation + P/L breakdown – Report CCY",
+      chartNote:"Chart: Start allocation + End total allocation – Report CCY",
       prod_term:"Time Deposit", prod_fund:"Investment Fund", prod_sukuk:"Sukuk", prod_dpm:"DPM",
       calc_simple:"Simple (bank-style)", calc_comp:"Daily comp (optional)",
       rollover:"Rollover", delete:"Delete",
       endNoteSpot:"Spot = End: end rates assumed equal to spot.",
       endNoteNeedSpot:"Note: For Spot/Forward, please enter or fetch USD/TRY and EUR/TRY first.",
       endNoteManual:"Manual mode: you enter the end rates.",
-      endNoteFwd:"Forward mode: USD/TRY & EUR/TRY derived from IR differential (proxy). Gold uses expectation %.",
+      endNoteFwd:"Forward mode: USD/TRY & EUR/TRY derived from return differential (proxy). Gold uses expectation %.",
       warnTotal0:"Total asset cannot be 0.",
       warnNeedRow:"Please add at least 1 row.",
       warnTenor0:"Global tenor cannot be 0.",
@@ -551,9 +556,9 @@
       rateStatusFail:"Could not fetch rates. You can proceed with manual input.",
       rateStatusManualOk:"Using manual rates.",
       rateStatusManualBad:"Manual rates missing.",
-      riskLine:"Risk/Allocation (by product, start rates):",
+      riskLine:"Allocation (by product, start rates):",
       donutAllocTitle:"Allocation (Start - Report CCY)",
-      donutPLTitle:"P/L Breakdown (End - Report CCY)",
+      donutEndTitle:"Allocation (End Total - Report CCY)",
       donutMidTitle:"Total Net P/L (Report CCY)"
     }
   };
@@ -610,7 +615,6 @@
     $("btn_calc").textContent = t("btnCalc");
     $("btn_reset").textContent = t("btnReset");
 
-    // allocation
     $("t_allocTitle").childNodes[0].nodeValue = t("allocTitle") + " ";
     $("t_headline").textContent = t("headline");
     $("btn_add").textContent = t("btnAddRow");
@@ -973,7 +977,8 @@
 
     ctx.restore();
   }
-  function drawDualDonutChart(canvas, allocSegments, plSegments, totalPLText){
+
+  function drawDualDonutChart(canvas, leftSeg, rightSeg, totalPLText){
     const ctx = setupHiDPI(canvas);
     const W = canvas.clientWidth || 1200;
     const H = 300;
@@ -985,8 +990,8 @@
 
     const rOuter = 86, rInner = 56;
 
-    donut(ctx, leftCX,  cy, rOuter, rInner, allocSegments, t("donutAllocTitle"));
-    donut(ctx, rightCX, cy, rOuter, rInner, plSegments,    t("donutPLTitle"));
+    donut(ctx, leftCX,  cy, rOuter, rInner, leftSeg,  t("donutAllocTitle"));
+    donut(ctx, rightCX, cy, rOuter, rInner, rightSeg, t("donutEndTitle"));
 
     ctx.save();
     ctx.fillStyle = "#5b6777";
@@ -1018,12 +1023,10 @@
       return `<option value="${v}">${label}</option>`;
     }).join("");
 
-    const html = `
+    return `
       <tr data-id="${id}">
         <td class="wAmt"><input type="number" step="0.01" id="amt_${id}" value="0"></td>
-        <td class="wProd">
-          <select id="prod_${id}">${prodOptions}</select>
-        </td>
+        <td class="wProd"><select id="prod_${id}">${prodOptions}</select></td>
         <td class="wCcy">
           <select id="ccy_${id}">
             <option value="TL">TL</option>
@@ -1062,7 +1065,6 @@
         </td>
       </tr>
     `;
-    return html;
   }
 
   function addRow(preset={}){
@@ -1146,11 +1148,9 @@
     let totalNetGain_report = 0;
     let totalEnd_principalCcy = 0;
 
-    const byProductReport = { TERM:0, FUND:0, SUKUK:0, DPM:0 };
-    let totalPrincipalReport = 0;
-
-    const rowLabels = [];
-    const rowPL_report = [];
+    const byProductStartReport = { TERM:0, FUND:0, SUKUK:0, DPM:0 };
+    const byProductEndReport   = { TERM:0, FUND:0, SUKUK:0, DPM:0 };
+    let totalPrincipalStartReport = 0;
 
     for(const tr of rows){
       const id = tr.dataset.id;
@@ -1174,13 +1174,14 @@
       if(r1 === null){ $("warn").textContent = t("warnMissingSpot"); return; }
       const P_target = amtBase * r1;
 
-      const rP_start = fxRate(targetCcy, reportCcy, "start");
-      if(rP_start === null){ $("warn").textContent = t("warnMissingSpotReport"); return; }
-      const P_report_start = P_target * rP_start;
+      // start distribution (report at start)
+      const rStartToReport = fxRate(targetCcy, reportCcy, "start");
+      if(rStartToReport === null){ $("warn").textContent = t("warnMissingSpotReport"); return; }
+      const P_report_start = P_target * rStartToReport;
+      totalPrincipalStartReport += P_report_start;
+      byProductStartReport[prod] = (byProductStartReport[prod]||0) + P_report_start;
 
-      totalPrincipalReport += P_report_start;
-      byProductReport[prod] = (byProductReport[prod]||0) + P_report_start;
-
+      // product evolution in target
       let FV_target_net, netGain_target;
 
       const rollOn = !!$("roll_"+id)?.checked;
@@ -1203,30 +1204,27 @@
         netGain_target = out.netGain;
       }
 
+      // back to principal at end
       const rBack_end = fxRate(targetCcy, principalCcy, "end");
       if(rBack_end === null){ $("warn").textContent = t("warnMissingEnd"); return; }
       const end_in_principal = FV_target_net * rBack_end;
       totalEnd_principalCcy += end_in_principal;
 
-      const rToReport_end = fxRate(targetCcy, reportCcy, "end");
-      if(rToReport_end === null){ $("warn").textContent = t("warnMissingEndReport"); return; }
-      const FV_report_end = FV_target_net * rToReport_end;
-      const netGain_report_end = netGain_target * rToReport_end;
+      // report at end
+      const rEndToReport = fxRate(targetCcy, reportCcy, "end");
+      if(rEndToReport === null){ $("warn").textContent = t("warnMissingEndReport"); return; }
+      const FV_report_end = FV_target_net * rEndToReport;
+      const netGain_report_end = netGain_target * rEndToReport;
 
       totalFV_report += FV_report_end;
       totalNetGain_report += netGain_report_end;
 
+      // end distribution includes principal + net gain (already inside FV)
+      byProductEndReport[prod] = (byProductEndReport[prod]||0) + FV_report_end;
+
       $("p_"+id).textContent  = fmtMoney(P_target, targetCcy);
       $("fv_"+id).textContent = fmtMoney(FV_target_net, targetCcy);
       $("net_"+id).textContent= fmtMoney(netGain_target, targetCcy);
-
-      const short =
-        (prod==="TERM") ? (t("prod_term")==="Time Deposit" ? "TD" : "Vadeli") :
-        (prod==="FUND") ? (t("prod_fund")==="Investment Fund" ? "Fund" : "Fon") :
-        (prod==="SUKUK") ? "Sukuk" : "DPM";
-
-      rowLabels.push(short + "-" + targetCcy);
-      rowPL_report.push(netGain_report_end);
     }
 
     $("kpi_used").textContent = fmtMoney(usedPrincipal, principalCcy);
@@ -1245,52 +1243,42 @@
     const detail = ($("lang").value==="en")
       ? (`Start: ${fmtMoney(principalAmt, principalCcy)} → End: ${fmtMoney(totalEnd_principalCcy, principalCcy)} (Tenor: ${days.toFixed(0)} days)`)
       : (`Başlangıç: ${fmtMoney(principalAmt, principalCcy)} → Vade Sonu: ${fmtMoney(totalEnd_principalCcy, principalCcy)} (Global vade: ${days.toFixed(0)} gün)`);
-
     $("headline_detail").textContent = detail;
+
     $("pillInfo").textContent = "Principal: " + principalCcy + " | Report: " + reportCcy;
 
-    // Risk badges
+    // badges (start)
     const nameMap = { TERM:t("prod_term"), FUND:t("prod_fund"), SUKUK:t("prod_sukuk"), DPM:t("prod_dpm") };
-    if(totalPrincipalReport > 0){
-      const items = Object.keys(byProductReport)
-        .map(k => ({k, v:byProductReport[k]}))
+    if(totalPrincipalStartReport > 0){
+      const items = Object.keys(byProductStartReport)
+        .map(k => ({k, v:byProductStartReport[k]}))
         .filter(x => x.v > 0)
         .sort((a,b)=>b.v-a.v)
-        .map(x => `<span class="pill">${nameMap[x.k]}: ${(x.v/totalPrincipalReport*100).toFixed(1)}%</span>`)
+        .map(x => `<span class="pill">${nameMap[x.k]}: ${(x.v/totalPrincipalStartReport*100).toFixed(1)}%</span>`)
         .join(" ");
       $("risk_badges").innerHTML = `<div class="mutedLine">${t("riskLine")}</div> ${items}`;
     } else {
       $("risk_badges").textContent = "";
     }
 
-    // Donuts
-    const allocSegments = Object.keys(byProductReport)
+    // Donuts: left = start distribution, right = end total distribution (includes return)
+    const leftSeg = Object.keys(byProductStartReport)
       .map((k, idx) => ({
         label: nameMap[k],
-        value: byProductReport[k] || 0,
+        value: byProductStartReport[k] || 0,
         color: ["rgba(18,58,99,.92)","rgba(200,163,58,.92)","rgba(18,58,99,.65)","rgba(200,163,58,.65)"][idx % 4]
       }))
       .filter(x => x.value > 0);
 
-    const plSegments = [];
-    for(let i=0;i<rowLabels.length;i++){
-      const v = Number(rowPL_report[i]) || 0;
-      if(v === 0) continue;
-      plSegments.push({
-        label: rowLabels[i],
-        value: Math.abs(v),
-        color: (v >= 0) ? null : "rgba(155,28,28,.78)"
-      });
-    }
-    const blues = ["rgba(18,58,99,.92)","rgba(18,58,99,.70)","rgba(18,58,99,.50)"];
-    let posIdx = 0;
-    plSegments.forEach(s=>{
-      if(s.color) return;
-      s.color = blues[posIdx % blues.length];
-      posIdx++;
-    });
+    const rightSeg = Object.keys(byProductEndReport)
+      .map((k, idx) => ({
+        label: nameMap[k],
+        value: byProductEndReport[k] || 0,
+        color: ["rgba(18,58,99,.92)","rgba(200,163,58,.92)","rgba(18,58,99,.65)","rgba(200,163,58,.65)"][idx % 4]
+      }))
+      .filter(x => x.value > 0);
 
-    drawDualDonutChart($("chart"), allocSegments, plSegments, fmtMoney(totalNetGain_report, reportCcy));
+    drawDualDonutChart($("chart"), leftSeg, rightSeg, fmtMoney(totalNetGain_report, reportCcy));
   }
 
   // ---------- scenarios ----------
@@ -1405,28 +1393,23 @@
     $("end_note").textContent = t("endNoteSpot");
     setAmtHeader();
 
-    // clear chart
     const c = $("chart");
     const ctx = setupHiDPI(c);
     ctx.clearRect(0,0,c.clientWidth||1200,300);
   }
 
-  // ---------- event delegation (table) ----------
+  // ---------- event delegation ----------
   $("allocBody").addEventListener("click", (e) => {
     const btn = e.target.closest("button");
     if(!btn) return;
-
     if(btn.dataset.action === "delete-row"){
-      const id = btn.dataset.id;
-      removeRow(id);
+      removeRow(btn.dataset.id);
     }
   });
 
   $("allocBody").addEventListener("change", (e) => {
     const el = e.target;
     if(!el || !el.id) return;
-
-    // prod change -> defaults + rollover ui
     if(el.id.startsWith("prod_")){
       const id = el.id.split("_")[1];
       applyDefaultsByProduct(id);
@@ -1468,7 +1451,6 @@
   $("reur").addEventListener("input", autoFillEndRates);
   $("gold_exp").addEventListener("input", autoFillEndRates);
 
-  // language persistence
   $("lang").addEventListener("change", () => {
     localStorage.setItem("pb_lang", $("lang").value);
     applyLang();
