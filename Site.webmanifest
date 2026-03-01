@@ -1,0 +1,16 @@
+{
+  "name": "KT PB Allocation Engine",
+  "short_name": "KT PB",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#123a63",
+  "theme_color": "#123a63",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
