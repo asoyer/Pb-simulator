@@ -1831,6 +1831,50 @@ resetAll();
   }
 })();
 </script>
+  <script>
+/* PDF yazan eski/ortadaki butonları gizle (FAB hariç) */
+(function(){
+  function hideMiddlePDF(){
+    // Bizim floating PDF butonu
+    var fab = document.getElementById('btn_pdf_fab');
+
+    // Tüm olası tıklanabilirler: button, a, input[type=button|submit]
+    var candidates = []
+      .concat(Array.from(document.querySelectorAll('button')))
+      .concat(Array.from(document.querySelectorAll('a')))
+      .concat(Array.from(document.querySelectorAll('input[type="button"], input[type="submit"]')));
+
+    candidates.forEach(function(el){
+      // Bizim FAB ise dokunma
+      if(fab && el === fab) return;
+
+      // İçerik "PDF" ise (TR/EN)
+      var txt = (el.innerText || el.value || el.textContent || '').trim().toUpperCase();
+      var isPdfText = (txt === 'PDF' || txt.includes('PDF'));
+
+      // Ayrıca id/class içinde pdf geçenler
+      var idc = ((el.id || '') + ' ' + (el.className || '')).toLowerCase();
+      var isPdfHint = idc.includes('pdf');
+
+      if(isPdfText || isPdfHint){
+        // FAB değilse gizle
+        el.style.display = 'none';
+      }
+    });
+  }
+
+  // İlk çalıştır
+  hideMiddlePDF();
+
+  // Sonradan DOM değişirse (bazı scriptler yeniden basıyor) tekrar gizle
+  var obs = new MutationObserver(function(){ hideMiddlePDF(); });
+  obs.observe(document.documentElement, { childList:true, subtree:true });
+
+  // Güvenlik: biraz gecikmeli bir daha
+  setTimeout(hideMiddlePDF, 300);
+  setTimeout(hideMiddlePDF, 1200);
+})();
+</script>
   
 </body>
 </html>
