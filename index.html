@@ -1686,5 +1686,141 @@ document.getElementById('gold_exp').addEventListener('input', autoFillEndRates);
 applyLang();
 resetAll();
 </script>
+  <!-- ===========================
+     PATCH: PDF + Hizalama + Yenileme Kısıtı
+     Yapıştırma yeri: </body> kapanmadan hemen önce
+=========================== -->
+
+<style>
+/* 1) PDF'yi alta sakla (sağ alt köşe) */
+.pdfFab{
+  position:fixed;
+  right:12px;
+  bottom:12px;
+  z-index:9999;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(230,233,242,.9);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* 2) Kutucuk hizalama: row3 içindeki label'lar aynı yükseklikte olsun */
+.row3{ align-items:end !important; }
+.row3 label{
+  min-height:34px;
+  display:flex;
+  align-items:flex-end;
+  line-height:1.15;
+}
+
+/* İstersen tablo içi input/select daha da sıkı dursun (çok minimal dokunuş) */
+/* .tableWrap input, .tableWrap select{ padding:8px 8px !important; } */
+</style>
+
+<button class="pdfFab" id="btn_pdf_fab">PDF</button>
+
+<script>
+/* 1) PDF butonu: en pratik iPad çözümü = print -> Share -> Save PDF */
+(function(){
+  try{
+    var b = document.getElementById('btn_pdf_fab');
+    if(b){
+      b.addEventListener('click', function(){ window.print(); });
+    }
+  }catch(e){}
+})();
+
+/* 3) Yenileme opsiyonu sadece: Ürün = TERM (Vadeli) ve PB = TL iken aktif
+   - Eğer sistemde RENEW/yenileme methodu varsa diğer kombinasyonlarda otomatik SIMPLE'a çeker
+   - Eğer method seçenekleri dinamik değilse bile en azından seçim yanlış kalamaz
+*/
+(function(){
+  // "yenileme" method value'ları farklı olabiliyor: RENEW / ROLLOVER / RENEWAL
+  var RENEW_KEYS = new Set(['RENEW','ROLLOVER','RENEWAL']);
+
+  function normalizeRenewValue(v){
+    if(!v) return v;
+    var up = String(v).toUpperCase();
+    return RENEW_KEYS.has(up) ? up : v;
+  }
+
+  function rowIds(){
+    return Array.from(document.querySelectorAll('#allocBody tr[data-id]'))
+      .map(function(tr){ return tr.getAttribute('data-id'); });
+  }
+
+  function enforceOneRow(id){
+    var prodEl = document.getElementById('prod_'+id);
+    var ccyEl  = document.getElementById('ccy_'+id);
+    var methEl = document.getElementById('method_'+id);
+    var renewWrap = document.getElementById('renewWrap_'+id); // varsa
+
+    if(!prodEl || !ccyEl || !methEl) return;
+
+    var prod = prodEl.value;
+    var ccy  = ccyEl.value;
+    var meth = normalizeRenewValue(methEl.value);
+
+    var allowRenew = (prod === 'TERM' && ccy === 'TL');
+
+    // Yenileme satırı UI'sı varsa gizle/göster
+    if(renewWrap){
+      renewWrap.hidden = !(allowRenew && normalizeRenewValue(methEl.value) === 'RENEW');
+    }
+
+    // Eğer allowRenew değilken renew seçilmişse, SIMPLE'a dön
+    if(!allowRenew && RENEW_KEYS.has(String(meth).toUpperCase())){
+      methEl.value = 'SIMPLE';
+    }
+
+    // Method dropdown içinde RENEW seçeneği varsa ve allowRenew değilse kaldır (yumuşak temizlik)
+    // (Bazı versiyonlarda seçenek yoksa sorun değil)
+    try{
+      var opts = Array.from(methEl.options || []);
+      opts.forEach(function(op){
+        var val = normalizeRenewValue(op.value);
+        if(RENEW_KEYS.has(String(val).toUpperCase())){
+          // allowRenew değilse opsiyonu disable et/gizle
+          op.disabled = !allowRenew;
+          op.hidden = !allowRenew;
+        }
+      });
+    }catch(e){}
+  }
+
+  function enforceAll(){
+    rowIds().forEach(enforceOneRow);
+  }
+
+  // Satır ekleme/senaryo tıklamaları sonrası da çalışsın
+  document.addEventListener('change', function(ev){
+    var t = ev.target;
+    if(!t || !t.id) return;
+
+    // prod_/ccy_/method_ değişince satır bazında uygula
+    if(t.id.startsWith('prod_') || t.id.startsWith('ccy_') || t.id.startsWith('method_')){
+      var id = t.id.split('_')[1];
+      if(id) enforceOneRow(id);
+    }
+  });
+
+  // Hesapla / Senaryo / Satır ekle gibi aksiyonlardan sonra da uygula (butonları aramadan “genel”)
+  document.addEventListener('click', function(){
+    // microtask gibi: DOM güncellensin, sonra uygula
+    setTimeout(enforceAll, 0);
+  });
+
+  // İlk yüklemede uygula
+  setTimeout(enforceAll, 0);
+})();
+</script>
+<!-- ===========================
+     /PATCH
+=========================== -->
 </body>
 </html>
