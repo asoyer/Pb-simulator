@@ -1822,5 +1822,15 @@ resetAll();
 <!-- ===========================
      /PATCH
 =========================== -->
+  <script>
+/* Ortadaki eski PDF butonunu gizle */
+(function(){
+  var oldPdf = document.getElementById('btn_pdf');
+  if(oldPdf){
+    oldPdf.style.display = 'none';
+  }
+})();
+</script>
+  
 </body>
 </html>
