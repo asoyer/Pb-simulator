@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="tr">
 <head>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PB Allocation Engine – Roadshow</title>
@@ -18,11 +19,15 @@
       --bg:#f6f7fb; --card:#ffffff; --ink:#0b1a2a; --muted:#5b6777;
       --line:#e6e9f2; --accent:#c8a33a; --accent2:#123a63;
       --danger:#9b1c1c;
+
+      /* alttaki sabit barın yüksekliği: içerik altta gizlenmesin */
+      --bottombar-h: 86px;
     }
     *{box-sizing:border-box}
     body{
       margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
       background:var(--bg); color:var(--ink);
+      padding-bottom: var(--bottombar-h);
     }
     header{
       padding:14px 14px 10px;
@@ -33,15 +38,6 @@
     .hdrTop{display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
     h1{margin:0; font-size:16px; letter-spacing:.2px}
     .sub{margin-top:6px; color:var(--muted); font-size:12.5px; line-height:1.35}
-    .disc{
-      margin-top:8px;
-      font-size:11.5px;
-      color:rgba(91,103,119,.92);
-      border:1px dashed rgba(230,233,242,.9);
-      background:rgba(255,255,255,.7);
-      padding:8px 10px;
-      border-radius:12px;
-    }
     .hdrRight{display:flex; gap:10px; align-items:center;}
     .miniSelect{
       display:flex; align-items:center; gap:8px;
@@ -51,6 +47,18 @@
     .miniSelect select{width:auto; padding:6px 10px; border-radius:10px; border:1px solid var(--line); font-size:12.5px;}
 
     .wrap{max-width:1240px; margin:0 auto; padding:12px 12px 26px}
+
+    /* disclaimer */
+    .disclaimer{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border:1px dashed rgba(18,58,99,.25);
+      background:rgba(18,58,99,.04);
+      border-radius:14px;
+      color:var(--muted);
+      font-size:12.2px;
+      line-height:1.35;
+    }
 
     .card{
       background:var(--card);
@@ -107,11 +115,13 @@
     table{
       width:100%;
       border-collapse:collapse;
-      min-width:1260px;
+      min-width:1180px;
       font-size:12.5px;
     }
     th, td{padding:9px 6px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
     th{font-size:12px; color:var(--muted); font-weight:600}
+
+    /* tablo içi daha dar */
     .tableWrap input, .tableWrap select{padding:9px 9px; border-radius:12px; font-size:12.5px;}
 
     .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
@@ -127,107 +137,102 @@
       border:1px solid rgba(230,233,242,.9);
       padding:9px 16px; border-radius:999px;
       backdrop-filter: blur(6px);
+      z-index:30;
     }
     .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
     .mutedLine{margin-top:6px; font-size:12px; color:var(--muted)}
+
     .miniBtn{padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:12px;}
 
+    /* Kolonlar (daraltıldı) */
     .wAmt{min-width:98px}
     .wProd{min-width:150px}
     .wCcy{min-width:78px}
-    .wRate{min-width:74px}
-    .wCalc{min-width:200px}
+    .wRate{min-width:72px}
+    .wCalc{min-width:150px}
     .wTax{min-width:96px}
     .wTaxAmt{min-width:140px}
-    .wEndGross{min-width:150px}
-    .wEndNet{min-width:150px}
     .wBtn{min-width:64px}
 
     .taxWrap{display:flex; gap:8px; align-items:center;}
     .taxWrap label{display:flex; gap:6px; align-items:center; margin:0; font-size:12px; color:var(--muted); white-space:nowrap;}
     .taxWrap input[type="checkbox"]{width:auto; padding:0; margin:0; transform: translateY(1px);}
 
-    .renewRow{
-      display:flex; align-items:center; gap:10px; margin-top:6px; flex-wrap:wrap;
-      color:var(--muted); font-size:12px;
-    }
-    .renewRow label{margin:0; display:flex; align-items:center; gap:6px; font-size:12px;}
-    .renewRow input[type="checkbox"]{width:auto; transform: translateY(1px);}
-    .renewRow input[type="number"]{
-      width:86px; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:#fff; font-size:12.5px;
-    }
-
+    /* alt alan: tek pie + sağda toplam değerler */
     .bottomGrid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px;}
     .chartCard{border:1px solid var(--line); border-radius:14px; background:#fff; padding:12px;}
     .chartTitle{font-size:12px;color:var(--muted);margin-bottom:8px}
-    .donutWrap{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+
+    .donutWrap{
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+      position:relative;
+    }
+
     canvas{width:280px; height:220px; border-radius:14px; background:#fff;}
+
+    /* Pie detay kartı (interactive) */
+    .pieDetail{
+      min-width:220px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(246,247,251,.55);
+    }
+    .pieDetail .h{font-size:12px;color:var(--muted)}
+    .pieDetail .v{margin-top:6px;font-size:15px;font-weight:800;color:var(--ink)}
+    .pieDetail .r{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.4}
+    .hintTap{margin-top:10px;font-size:12px;color:var(--muted)}
+
+    /* Alt sabit bar (dar, ortada) */
+    .bottomControls{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:14px;
+
+      width:420px;       /* burada daraltırsın */
+      max-width:86%;
+
+      display:flex;
+      gap:10px;
+      justify-content:center;
+
+      padding:12px;
+
+      background:rgba(255,255,255,.95);
+      border:1px solid var(--line);
+      border-radius:14px;
+
+      backdrop-filter:blur(6px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.12);
+
+      z-index:50;
+    }
+    .bottomControls button{
+      height:44px;
+      padding:0 18px;
+      border-radius:12px;
+      font-weight:700;
+    }
+
+    /* watermark banner kapatmasın (genişlik sorunu yerine garanti) */
+    @media (max-width: 520px){
+      .watermark{display:none;}
+    }
+
     @media (max-width: 980px){
       .bottomGrid{grid-template-columns: 1fr;}
-      table{min-width:1220px;}
+      table{min-width:1120px;}
     }
 
-    /* Net P/L bloğunu ayırdık */
-    .plBlock{
-      margin-top:12px;
-      border-top:1px solid var(--line);
-      padding-top:12px;
+    /* PRINT/PDF */
+    @media print{
+      header{position:static}
+      body{background:#fff; padding-bottom:0}
+      .bottomControls, .watermark{display:none !important;}
+      .card{box-shadow:none}
+      .tableWrap{overflow:visible}
     }
-    .plTitle{
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:8px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .plDot{
-      width:8px; height:8px; border-radius:999px;
-      background: rgba(18,58,99,.88);
-      display:inline-block;
-    }
-
-    /* Sticky alt kontrol */
-    .bottomControls{
-      position:sticky;
-      bottom:10px;
-      z-index:20;
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      padding:12px;
-      background:rgba(255,255,255,0.90);
-      backdrop-filter:blur(6px);
-      border:1px solid rgba(230,233,242,.9);
-      border-radius:14px;
-      margin-top:16px;
-    }
- .bottomControls{
-  position:fixed;
-
-  left:50%;
-  transform:translateX(-50%);
-
-  bottom:14px;
-
-  width:380px;
-  max-width:80%;
-
-  display:flex;
-  gap:12px;
-  justify-content:center;
-
-  padding:12px;
-
-  background:rgba(255,255,255,0.95);
-  border:1px solid #e6e9f2;
-  border-radius:14px;
-
-  backdrop-filter:blur(6px);
-  box-shadow:0 10px 30px rgba(0,0,0,0.12);
-
-  z-index:40;
-}
   </style>
 </head>
 
@@ -237,8 +242,8 @@
     <div>
       <h1 id="hdr_title">PB Allocation Engine <span class="pill" id="pill_build">Build: v100</span></h1>
       <div class="sub" id="hdr_sub">Spot + Forward yaklaşımı ile vade sonu kurlar → giriş PB’ye dönüşte Net P/L.</div>
-      <div class="disc" id="hdr_disc">
-        Bu çalışma bilgilendirme amaçlıdır; hesaplamalar yaklaşık olup piyasa koşulları, fiyatlama, vergi oranları ve ürün kuralları nedeniyle farklılık gösterebilir.
+      <div class="disclaimer" id="disclaimer">
+        Bu hesaplamalar bilgilendirme amaçlı yaklaşık değerlerdir. Nihai tutarlar; piyasa koşulları, fiyatlama, masraf/komisyon ve mevzuat kaynaklı değişiklikler gösterebilir.
       </div>
     </div>
     <div class="hdrRight">
@@ -420,9 +425,8 @@
             <th class="wCalc" id="hdr_calc">Hesap</th>
             <th class="wTax" id="hdr_tax">Stopaj</th>
             <th id="hdr_p">Anapara (Hedef PB)</th>
-            <th class="wEndGross" id="hdr_end_gross">Vade Sonu Brüt (Hedef PB)</th>
+            <th id="hdr_fv">Vade Sonu (Hedef PB)</th>
             <th class="wTaxAmt" id="hdr_taxamt">Stopaj Tutarı (Hedef PB)</th>
-            <th class="wEndNet" id="hdr_end_net">Vade Sonu Net (Hedef PB)</th>
             <th id="hdr_net">Net Kazanç (Hedef PB)</th>
             <th class="wBtn"></th>
           </tr>
@@ -464,13 +468,20 @@
       </div>
     </div>
 
+    <!-- ALT: solda pie (interactive), sağda değer setleri -->
     <div class="bottomGrid">
       <div class="chartCard">
         <div class="chartTitle" id="lbl_pie_title">Dağılım (Başlangıç – Rapor PB)</div>
         <div class="donutWrap">
           <canvas id="pieStart" width="420" height="320"></canvas>
-          <div style="min-width:220px">
-            <div id="pieLegend" class="small"></div>
+
+          <div class="pieDetail" id="pieDetail">
+            <div class="h" id="pd_title">Seçili Dilim</div>
+            <div class="v" id="pd_name">-</div>
+            <div class="r" id="pd_lines">
+              -
+            </div>
+            <div class="hintTap" id="pd_hint">İpucu: Grafiğe dokun → detay gör.</div>
           </div>
         </div>
       </div>
@@ -500,39 +511,31 @@
           </div>
         </div>
 
-        <div class="plBlock">
-          <div class="plTitle" id="lbl_pl_block"><span class="plDot"></span>Net P/L (4 Para Birimi)</div>
-          <div class="kpi" style="margin-top:0;">
-            <div class="box">
-              <div class="t" id="lbl_pl_tl">Net P/L (TL)</div>
-              <div class="v" id="pl_tl">-</div>
-            </div>
-            <div class="box">
-              <div class="t" id="lbl_pl_usd">Net P/L (USD)</div>
-              <div class="v" id="pl_usd">-</div>
-            </div>
+        <div class="kpi">
+          <div class="box">
+            <div class="t" id="lbl_pl_tl">Net P/L (TL)</div>
+            <div class="v" id="pl_tl">-</div>
           </div>
-          <div class="kpi">
-            <div class="box">
-              <div class="t" id="lbl_pl_eur">Net P/L (EUR)</div>
-              <div class="v" id="pl_eur">-</div>
-            </div>
-            <div class="box">
-              <div class="t" id="lbl_pl_xau">Net P/L (Altın g)</div>
-              <div class="v" id="pl_xau">-</div>
-            </div>
-          </div>
-
-          <div class="small" id="txt_pl_note">
-            Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).
+          <div class="box">
+            <div class="t" id="lbl_pl_usd">Net P/L (USD)</div>
+            <div class="v" id="pl_usd">-</div>
           </div>
         </div>
-      </div>
-    </div>
+        <div class="kpi">
+          <div class="box">
+            <div class="t" id="lbl_pl_eur">Net P/L (EUR)</div>
+            <div class="v" id="pl_eur">-</div>
+          </div>
+          <div class="box">
+            <div class="t" id="lbl_pl_xau">Net P/L (Altın g)</div>
+            <div class="v" id="pl_xau">-</div>
+          </div>
+        </div>
 
-    <div class="bottomControls">
-      <button class="primary" id="btn_calc_bottom" onclick="calc()">Hesapla</button>
-      <button class="ghost" id="btn_reset_bottom" onclick="resetAll()">Sıfırla</button>
+        <div class="small" id="txt_pl_note">
+          Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).
+        </div>
+      </div>
     </div>
 
     <div id="warn" class="inlineWarn"></div>
@@ -542,6 +545,13 @@
 
 <div class="watermark">Adem Soyer</div>
 
+<!-- Altta sabit kontrol barı -->
+<div class="bottomControls">
+  <button class="ghost" id="btn_pdf">PDF / Print</button>
+  <button class="primary" id="btn_calc2">Hesapla</button>
+  <button class="danger" id="btn_reset2">Sıfırla</button>
+</div>
+
 <script>
 /* =========================
    i18n
@@ -549,7 +559,7 @@
 const I18N = {
   tr: {
     hdr_sub: "Spot + Forward yaklaşımı ile vade sonu kurlar → giriş PB’ye dönüşte Net P/L.",
-    hdr_disc:"Bu çalışma bilgilendirme amaçlıdır; hesaplamalar yaklaşık olup piyasa koşulları, fiyatlama, vergi oranları ve ürün kuralları nedeniyle farklılık gösterebilir.",
+    disclaimer:"Bu hesaplamalar bilgilendirme amaçlı yaklaşık değerlerdir. Nihai tutarlar; piyasa koşulları, fiyatlama, masraf/komisyon ve mevzuat kaynaklı değişiklikler gösterebilir.",
     Dil:"Dil",
     sec1:"1) Müşteri Varlığı",
     sec2:"2) Başlangıç Kurları (Spot)",
@@ -574,6 +584,7 @@ const I18N = {
     Reset:"Sıfırla",
     Fetch:"Kurları Çek",
     Manual:"Manuel Kur Kullan",
+    PDF:"PDF / Print",
     AllocTitle:"Alokasyon (Tutar Bazlı)",
     Headline:"Headline – Net P/L (Giriş Para Birimi)",
     Add:"+ Satır Ekle",
@@ -589,9 +600,9 @@ const I18N = {
     SumStartRp:"Başlangıç (Rapor PB)",
     SumEndPr:"Vade Sonu Toplam (Giriş PB)",
     SumEndRp:"Vade Sonu Toplam (Rapor PB)",
-    PLBlock:"Net P/L (4 Para Birimi)",
-    PLTL:"Net P/L (TL)", PLUSD:"Net P/L (USD)", PLEUR:"Net P/L (EUR)", PLXAU:"Net P/L (Altın g)",
     PLNote:"Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).",
+    PieHint:"İpucu: Grafiğe dokun → detay gör.",
+    PieSel:"Seçili Dilim",
     hdr_amt:(ccy)=>`Tutar (Giriş PB – ${ccy})`,
     hdr_prod:"Ürün",
     hdr_ccy:"Hedef PB",
@@ -599,9 +610,8 @@ const I18N = {
     hdr_calc:"Hesap",
     hdr_tax:"Stopaj",
     hdr_p:"Anapara (Hedef PB)",
-    hdr_end_gross:"Vade Sonu Brüt (Hedef PB)",
+    hdr_fv:"Vade Sonu (Hedef PB)",
     hdr_taxamt:"Stopaj Tutarı (Hedef PB)",
-    hdr_end_net:"Vade Sonu Net (Hedef PB)",
     hdr_net:"Net Kazanç (Hedef PB)",
     warn_amt:"Toplam varlık 0 olamaz.",
     warn_row:"En az 1 satır ekle.",
@@ -620,15 +630,17 @@ const I18N = {
     manualBad:"Manuel kur eksik.",
     mixNote:"Dağılım (ürün bazlı, başlangıç kurlarıyla):",
     scenario:{ s1:"Dengeli", s2:"Koruma", s3:"Büyüme (Riskli)", s4:"FX Hedge", s5:"DPM Ağırlıklı" },
-    method:{ daily:"Günlük (bileşik)", simple:"Basit (bankacılık)" },
-    renew:{ on:"Yenilemeli", period:"Periyot", day:"gün" },
+    method:{ daily:"Günlük (bileşik)", simple:"Basit" },
     prod:{ TERM:"Vadeli Mevduat", FUND:"Yatırım Fonu", SUKUK:"Sukuk", DPM:"DPM" },
     del:"Sil",
-    auto:"Auto"
+    auto:"Auto",
+    pieLines:(pct, start, end, pl, tax)=>(
+      `Dağılım: %${pct}\nBaşlangıç: ${start}\nVade Sonu: ${end}\nNet P/L: ${pl}\nStopaj: ${tax}`
+    )
   },
   en: {
     hdr_sub: "Spot + Forward approach for end FX → Net P/L back in principal currency.",
-    hdr_disc:"For information purposes only; calculations are approximate and may differ due to market conditions, pricing, tax rates, and product rules.",
+    disclaimer:"These calculations are indicative approximations. Final amounts may change due to market conditions, pricing, fees/commissions and regulatory/tax factors.",
     Dil:"Language",
     sec1:"1) Client Assets",
     sec2:"2) Spot Rates (Start)",
@@ -653,6 +665,7 @@ const I18N = {
     Reset:"Reset",
     Fetch:"Fetch Rates",
     Manual:"Use Manual Rates",
+    PDF:"PDF / Print",
     AllocTitle:"Allocation (Amount Based)",
     Headline:"Headline – Net P/L (Principal)",
     Add:"+ Add Row",
@@ -668,9 +681,9 @@ const I18N = {
     SumStartRp:"Start (Report)",
     SumEndPr:"End Total (Principal)",
     SumEndRp:"End Total (Report)",
-    PLBlock:"Net P/L (4 Currencies)",
-    PLTL:"Net P/L (TRY)", PLUSD:"Net P/L (USD)", PLEUR:"Net P/L (EUR)", PLXAU:"Net P/L (Gold g)",
     PLNote:"Note: Report P/L = end total − start total (same base).",
+    PieHint:"Tip: Tap the chart → see details.",
+    PieSel:"Selected Slice",
     hdr_amt:(ccy)=>`Amount (Principal – ${ccy})`,
     hdr_prod:"Product",
     hdr_ccy:"Target CCY",
@@ -678,9 +691,8 @@ const I18N = {
     hdr_calc:"Method",
     hdr_tax:"Withholding",
     hdr_p:"Principal (Target)",
-    hdr_end_gross:"End Gross (Target)",
+    hdr_fv:"End Value (Target)",
     hdr_taxamt:"Withholding Amount (Target)",
-    hdr_end_net:"End Net (Target)",
     hdr_net:"Net Gain (Target)",
     warn_amt:"Total amount cannot be 0.",
     warn_row:"Add at least one row.",
@@ -699,11 +711,13 @@ const I18N = {
     manualBad:"Manual rates missing.",
     mixNote:"Mix (by product, start rates):",
     scenario:{ s1:"Balanced", s2:"Protection", s3:"Growth (Risk)", s4:"FX Hedge", s5:"DPM Focus" },
-    method:{ daily:"Daily (comp.)", simple:"Simple (banking)" },
-    renew:{ on:"Rollover", period:"Period", day:"days" },
+    method:{ daily:"Daily (comp.)", simple:"Simple" },
     prod:{ TERM:"Term Deposit", FUND:"Fund", SUKUK:"Sukuk", DPM:"DPM" },
     del:"Del",
-    auto:"Auto"
+    auto:"Auto",
+    pieLines:(pct, start, end, pl, tax)=>(
+      `Mix: ${pct}%\nStart: ${start}\nEnd: ${end}\nNet P/L: ${pl}\nWithholding: ${tax}`
+    )
   }
 };
 function L(){ return document.getElementById('lang').value || 'tr'; }
@@ -719,12 +733,15 @@ function T(key){
 function parseAmount(str){
   if(!str) return 0;
   let s = String(str).trim().replace(/\s/g,'');
-  if(s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
-  else if(s.includes(',')){
+  if(s.includes(',') && s.includes('.')){
+    s = s.replace(/\./g,'').replace(',', '.');
+  } else if(s.includes(',')){
     const parts = s.split(',');
     if(parts.length===2 && parts[1].length<=2) s = parts[0].replace(/\./g,'') + '.' + parts[1];
     else s = s.replace(/,/g,'');
-  } else s = s.replace(/\./g,'');
+  } else {
+    s = s.replace(/\./g,'');
+  }
   const n = Number(s);
   return isFinite(n) ? n : 0;
 }
@@ -737,6 +754,7 @@ function fmtPlain(n){
   return new Intl.NumberFormat('tr-TR', { maximumFractionDigits:2 }).format(n);
 }
 function clamp(x){ return Math.max(0, Number(x)||0); }
+
 function setAmtHeader(){
   const ccy = document.getElementById('total_ccy').value;
   document.getElementById('hdr_amt').textContent = I18N[L()].hdr_amt(ccy);
@@ -753,7 +771,7 @@ function globalDays(){
 }
 
 /* =========================
-   Rates + FX
+   Rates
 ========================= */
 function getStartRates(){
   return {
@@ -778,6 +796,8 @@ function getEndRatesResolved(){
     xautry_g: xautry_g_end>0 ? xautry_g_end : s.xautry_g
   };
 }
+
+// FX conversion uses TRY as bridge; supports TL, USD, EUR, XAUg
 function fxRate(from, to, when){
   if(from === to) return 1;
   const r = (when === 'end') ? getEndRatesResolved() : getStartRates();
@@ -804,6 +824,7 @@ function fxRate(from, to, when){
   return a*b;
 }
 
+// Fetch spot rates (Trunçgil + fallback)
 async function fetchRatesAll(){
   const status = document.getElementById('rate_status');
   status.textContent = (L()==='en') ? 'Fetching rates…' : 'Kurlar çekiliyor…';
@@ -845,6 +866,7 @@ async function fetchRatesAll(){
   }
 }
 
+// Forward logic for END rates
 function autoFillEndRates(){
   const mode = document.getElementById('end_mode').value;
   const note = document.getElementById('end_note');
@@ -907,9 +929,10 @@ function suggestTaxPct(prod, targetCcy, days){
 }
 
 /* =========================
-   Donut chart
+   Donut chart (hi-res + interactive)
 ========================= */
-function drawDonut(canvas, labels, values){
+let PIE_HIT = []; // [{label, startA, endA, value, meta:{...}}]
+function drawDonut(canvas, slices){
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const cssW = 280, cssH = 220;
@@ -923,7 +946,8 @@ function drawDonut(canvas, labels, values){
   const cx = cssW/2, cy = cssH/2;
   const R = Math.min(cssW, cssH) * 0.42;
   const r = R * 0.62;
-  const total = values.reduce((a,b)=>a+b,0) || 1;
+
+  const total = slices.reduce((a,b)=>a+(b.value||0),0) || 1;
   let ang = -Math.PI/2;
 
   const palette = [
@@ -934,8 +958,9 @@ function drawDonut(canvas, labels, values){
     'rgba(200,163,58,.55)'
   ];
 
-  for(let i=0;i<labels.length;i++){
-    const v = Math.max(0, values[i]);
+  PIE_HIT = [];
+  for(let i=0;i<slices.length;i++){
+    const v = Math.max(0, slices[i].value||0);
     const a = (v/total) * Math.PI*2;
 
     ctx.beginPath();
@@ -951,6 +976,14 @@ function drawDonut(canvas, labels, values){
     ctx.lineWidth = 2;
     ctx.stroke();
 
+    PIE_HIT.push({
+      label: slices[i].label,
+      startA: ang,
+      endA: ang+a,
+      value: v,
+      meta: slices[i].meta || {}
+    });
+
     ang += a;
   }
 
@@ -960,11 +993,80 @@ function drawDonut(canvas, labels, values){
   ctx.fill();
 }
 
+function pickSliceFromEvent(canvas, evt){
+  const rect = canvas.getBoundingClientRect();
+  const x = (evt.clientX - rect.left);
+  const y = (evt.clientY - rect.top);
+
+  const cx = rect.width/2, cy = rect.height/2;
+  const dx = x - cx, dy = y - cy;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  // donut radius thresholds
+  const R = Math.min(rect.width, rect.height) * 0.42;
+  const r = R * 0.62;
+
+  if(dist < r || dist > R) return null;
+
+  let ang = Math.atan2(dy, dx); // -PI..PI
+  // convert to 0..2PI with reference -PI/2
+  if(ang < -Math.PI/2) ang += Math.PI*2;
+
+  // Our chart starts at -PI/2. Convert:
+  // actualAngle = ang; but relative to -PI/2, we used angStart=-PI/2.
+  // So we need the raw angle in chart space:
+  // We'll transform the point angle to chart-space:
+  // pointAngle = atan2(dy,dx), and chart uses [-PI/2..] increasing.
+  // We'll normalize to [-PI/2, 3PI/2)
+  let pointA = Math.atan2(dy, dx);
+  if(pointA < -Math.PI/2) pointA += Math.PI*2;
+
+  for(const s of PIE_HIT){
+    if(pointA >= s.startA && pointA < s.endA) return s;
+  }
+  return null;
+}
+
+function setPieDetail(slice){
+  const pdTitle = document.getElementById('pd_title');
+  const pdName = document.getElementById('pd_name');
+  const pdLines = document.getElementById('pd_lines');
+  const pdHint = document.getElementById('pd_hint');
+
+  pdTitle.textContent = T('PieSel');
+  pdHint.textContent = T('PieHint');
+
+  if(!slice){
+    pdName.textContent = '-';
+    pdLines.textContent = '-';
+    return;
+  }
+
+  const m = slice.meta || {};
+  pdName.textContent = slice.label;
+
+  // lines:
+  const pct = (m.pct != null) ? m.pct.toFixed(1) : 0;
+  const text = I18N[L()].pieLines(
+    pct,
+    m.start || '-',
+    m.end || '-',
+    m.pl || '-',
+    m.tax || '-'
+  );
+
+  // show multi-line
+  pdLines.innerHTML = text.split('\n').map(line=>'<div>'+line+'</div>').join('');
+}
+
 /* =========================
    Rows
 ========================= */
 const PRODUCT_OPTIONS = [
-  { val:'TERM' }, { val:'FUND' }, { val:'SUKUK'}, { val:'DPM' }
+  { val:'TERM' },
+  { val:'FUND' },
+  { val:'SUKUK'},
+  { val:'DPM'  }
 ];
 
 function rowTemplate(id){
@@ -977,10 +1079,6 @@ function rowTemplate(id){
   const mSimple = I18N[L()].method.simple;
   const delTxt = I18N[L()].del;
   const autoTxt = I18N[L()].auto;
-
-  const renewOn = I18N[L()].renew.on;
-  const renewPeriod = I18N[L()].renew.period;
-  const renewDay = I18N[L()].renew.day;
 
   return ''+
     '<tr data-id="'+id+'">'+
@@ -1000,12 +1098,6 @@ function rowTemplate(id){
           '<option value="DAILY_COMPOUND">'+mDaily+'</option>'+
           '<option value="SIMPLE" selected>'+mSimple+'</option>'+
         '</select>'+
-        '<div class="renewRow">'+
-          '<label><input type="checkbox" id="renew_'+id+'"> '+renewOn+'</label>'+
-          '<span>'+renewPeriod+':</span>'+
-          '<input type="number" min="1" step="1" id="renew_days_'+id+'" value="2">'+
-          '<span>'+renewDay+'</span>'+
-        '</div>'+
       '</td>'+
       '<td class="wTax">'+
         '<div class="taxWrap">'+
@@ -1014,9 +1106,8 @@ function rowTemplate(id){
         '</div>'+
       '</td>'+
       '<td id="p_'+id+'">-</td>'+
-      '<td id="endgross_'+id+'">-</td>'+
+      '<td id="fv_'+id+'">-</td>'+
       '<td id="taxamt_'+id+'">-</td>'+
-      '<td id="endnet_'+id+'">-</td>'+
       '<td id="net_'+id+'">-</td>'+
       '<td class="wBtn"><button class="miniBtn" onclick="removeRow(\''+id+'\')">'+delTxt+'</button></td>'+
     '</tr>';
@@ -1035,13 +1126,9 @@ function addRow(preset){
   if(preset.tax != null) document.getElementById('tax_'+id).value = preset.tax;
   if(preset.taxAuto != null) document.getElementById('taxAuto_'+id).checked = preset.taxAuto;
 
-  if(preset.renew != null) document.getElementById('renew_'+id).checked = preset.renew;
-  if(preset.renewDays != null) document.getElementById('renew_days_'+id).value = preset.renewDays;
-
   applyDefaultsByProduct(id);
 
   document.getElementById('prod_'+id).addEventListener('change', function(){ applyDefaultsByProduct(id); });
-
   document.getElementById('amt_'+id).addEventListener('blur', function(){
     const n = parseAmount(this.value);
     this.value = fmtPlain(n);
@@ -1075,54 +1162,9 @@ function applyDefaultsByProduct(id){
 }
 
 /* =========================
-   Rollover math (stopaj each close)
+   Calc (with pie slice meta)
 ========================= */
-function computeWithRenewal(P_target, rate, method, daysTotal, taxPct, renewOn, renewDays){
-  const growthFn = (p, d) => (method==='DAILY_COMPOUND') ? fvDailyCompound(p, rate, d) : fvSimple(p, rate, d);
-
-  let P = P_target;
-  let totalTax = 0;
-  let lastGrossEnd = 0;
-
-  if(!renewOn || !renewDays || renewDays <= 0 || renewDays >= daysTotal){
-    const FV_gross = growthFn(P, daysTotal);
-    const grossGain = FV_gross - P;
-    const tax = grossGain * (taxPct/100);
-    const FV_net = FV_gross - tax;
-    totalTax += tax;
-    lastGrossEnd = FV_gross;
-    return { endGross: lastGrossEnd, taxTotal: totalTax, endNet: FV_net };
-  }
-
-  const fullCycles = Math.floor(daysTotal / renewDays);
-  const rem = daysTotal % renewDays;
-
-  for(let i=0;i<fullCycles;i++){
-    const FV_gross = growthFn(P, renewDays);
-    const grossGain = FV_gross - P;
-    const tax = grossGain * (taxPct/100);
-    const FV_net = FV_gross - tax;
-    totalTax += tax;
-    P = FV_net;
-    lastGrossEnd = FV_gross;
-  }
-
-  if(rem > 0){
-    const FV_gross = growthFn(P, rem);
-    const grossGain = FV_gross - P;
-    const tax = grossGain * (taxPct/100);
-    const FV_net = FV_gross - tax;
-    totalTax += tax;
-    lastGrossEnd = FV_gross;
-    return { endGross: lastGrossEnd, taxTotal: totalTax, endNet: FV_net };
-  }
-
-  return { endGross: lastGrossEnd, taxTotal: totalTax, endNet: P };
-}
-
-/* =========================
-   Calc
-========================= */
+let LAST_PIE_SLICES = []; // store for click details
 function calc(){
   const warn = document.getElementById('warn');
   warn.textContent = '';
@@ -1143,12 +1185,19 @@ function calc(){
 
   let usedPrincipal = 0;
 
-  let startTotalReport = 0;
-  let endTotalReport = 0;
-  let endTotalPrincipal = 0;
-  let totalTaxReport = 0;
+  // Totals
+  let startTotalReport = 0;   // allocation-based start in report (consistent base)
+  let endTotalReport = 0;     // end total in report (end FX)
+  let endTotalPrincipal = 0;  // end total in principal (end FX)
+  let totalTaxReport = 0;     // taxes in report currency (end FX)
 
-  const byProductStartReport = { TERM:0, FUND:0, SUKUK:0, DPM:0 };
+  // byProduct (for pie) start & end in report + tax in report
+  const byProd = {
+    TERM:{ start:0, end:0, tax:0 },
+    FUND:{ start:0, end:0, tax:0 },
+    SUKUK:{ start:0, end:0, tax:0 },
+    DPM:{  start:0, end:0, tax:0 }
+  };
 
   for(const tr of rows){
     const id = tr.getAttribute('data-id');
@@ -1159,9 +1208,6 @@ function calc(){
     const rate = Number(document.getElementById('rate_'+id).value)||0;
     const method = document.getElementById('method_'+id).value;
 
-    const renewOn = document.getElementById('renew_'+id)?.checked ? true : false;
-    const renewDays = Number(document.getElementById('renew_days_'+id).value)||0;
-
     const taxAuto = (document.getElementById('taxAuto_'+id)?.checked) ? true : false;
     let taxPct = Number(document.getElementById('tax_'+id).value)||0;
     if(taxAuto){
@@ -1171,40 +1217,54 @@ function calc(){
 
     usedPrincipal += amtBase;
 
+    // principal -> target at START
     const r1 = fxRate(principalCcy, targetCcy, 'start');
     if(r1 === null){ warn.textContent = T('warn_start'); return; }
     const P_target = amtBase * r1;
 
+    // start in report (start FX)
     const rStartToReport = fxRate(targetCcy, reportCcy, 'start');
     if(rStartToReport === null){ warn.textContent = T('warn_start'); return; }
     const P_report_start = P_target * rStartToReport;
     startTotalReport += P_report_start;
-    byProductStartReport[prod] = (byProductStartReport[prod]||0) + P_report_start;
+    byProd[prod].start += P_report_start;
 
-    const out = computeWithRenewal(P_target, rate, method, days, taxPct, renewOn, renewDays);
-    const endGross_target = out.endGross;
-    const tax_target_total = out.taxTotal;
-    const endNet_target = out.endNet;
+    // growth in target
+    const FV_target_gross = (method === 'DAILY_COMPOUND')
+      ? fvDailyCompound(P_target, rate, days)
+      : fvSimple(P_target, rate, days);
 
-    const netGain_target = endNet_target - P_target;
+    const grossGain_target = FV_target_gross - P_target;
+    const tax_target = grossGain_target * (taxPct/100);
+    const netGain_target = grossGain_target - tax_target;
+    const FV_target_net = P_target + netGain_target;
 
+    // end in principal (end FX)
     const rBack_end = fxRate(targetCcy, principalCcy, 'end');
     if(rBack_end === null){ warn.textContent = T('warn_end'); return; }
-    endTotalPrincipal += endNet_target * rBack_end;
+    const end_in_principal = FV_target_net * rBack_end;
+    endTotalPrincipal += end_in_principal;
 
+    // end in report (end FX)
     const rEndToReport = fxRate(targetCcy, reportCcy, 'end');
     if(rEndToReport === null){ warn.textContent = T('warn_end'); return; }
-    endTotalReport += endNet_target * rEndToReport;
+    const FV_report_end = FV_target_net * rEndToReport;
+    endTotalReport += FV_report_end;
+    byProd[prod].end += FV_report_end;
 
-    totalTaxReport += tax_target_total * rEndToReport;
+    // tax in report (end FX)
+    const tax_report = tax_target * rEndToReport;
+    totalTaxReport += tax_report;
+    byProd[prod].tax += tax_report;
 
+    // write row outputs
     document.getElementById('p_'+id).textContent = fmtMoney(P_target, targetCcy);
-    document.getElementById('endgross_'+id).textContent = fmtMoney(endGross_target, targetCcy);
-    document.getElementById('taxamt_'+id).textContent = fmtMoney(tax_target_total, targetCcy);
-    document.getElementById('endnet_'+id).textContent = fmtMoney(endNet_target, targetCcy);
+    document.getElementById('fv_'+id).textContent = fmtMoney(FV_target_net, targetCcy);
+    document.getElementById('taxamt_'+id).textContent = fmtMoney(tax_target, targetCcy);
     document.getElementById('net_'+id).textContent = fmtMoney(netGain_target, targetCcy);
   }
 
+  // KPIs
   document.getElementById('kpi_used').textContent = fmtMoney(usedPrincipal, principalCcy);
   document.getElementById('kpi_left').textContent = fmtMoney(principalAmt - usedPrincipal, principalCcy);
 
@@ -1219,6 +1279,7 @@ function calc(){
   document.getElementById('kpi_pl_report').textContent = fmtMoney(plReport, reportCcy);
   document.getElementById('kpi_tax_report').textContent = fmtMoney(totalTaxReport, reportCcy);
 
+  // Headline in principal
   const plPrincipal = endTotalPrincipal - principalAmt;
   document.getElementById('headline_pl').textContent = fmtMoney(plPrincipal, principalCcy);
   document.getElementById('headline_detail').textContent =
@@ -1228,11 +1289,13 @@ function calc(){
 
   document.getElementById('pillInfo').textContent = `Principal: ${principalCcy} | Rapor: ${reportCcy}`;
 
+  // Summary boxes (right card)
   document.getElementById('sum_start_pr').textContent = fmtMoney(principalAmt, principalCcy);
   document.getElementById('sum_start_rp').textContent = fmtMoney(startTotalReport, reportCcy);
   document.getElementById('sum_end_pr').textContent = fmtMoney(endTotalPrincipal, principalCcy);
   document.getElementById('sum_end_rp').textContent = fmtMoney(endTotalReport, reportCcy);
 
+  // 3rd set: P/L in TL/USD/EUR/XAUg (principal-based)
   function plIn(ccy){
     const rStart = fxRate(principalCcy, ccy, 'start');
     const rEnd = fxRate(principalCcy, ccy, 'end');
@@ -1247,11 +1310,12 @@ function calc(){
   document.getElementById('pl_eur').textContent = pEUR ? fmtMoney(pEUR.pl,'EUR') : '-';
   document.getElementById('pl_xau').textContent = pXAU ? (fmtPlain(pXAU.pl)+' XAUg') : '-';
 
+  // Mix badges
   const nameMap = I18N[L()].prod;
   const badgeEl = document.getElementById('risk_badges');
   if(startTotalReport > 0){
-    const items = Object.keys(byProductStartReport)
-      .map(k=>({k, v:byProductStartReport[k]}))
+    const items = Object.keys(byProd)
+      .map(k=>({k, v:byProd[k].start}))
       .filter(x=>x.v>0)
       .sort((a,b)=>b.v-a.v)
       .map(x=>'<span class="pill">'+nameMap[x.k]+': '+(x.v/startTotalReport*100).toFixed(1)+'%</span>')
@@ -1259,20 +1323,41 @@ function calc(){
     badgeEl.innerHTML = '<div class="mutedLine">'+T('mixNote')+'</div> '+items;
   } else badgeEl.textContent='';
 
-  const labels=[], vals=[];
-  Object.keys(byProductStartReport).forEach(k=>{
-    if(byProductStartReport[k] > 0){
-      labels.push(nameMap[k]);
-      vals.push(byProductStartReport[k]);
+  // Build slices for donut with meta (start/end/pl/tax)
+  const slices = [];
+  Object.keys(byProd).forEach(k=>{
+    if(byProd[k].start > 0){
+      const start = byProd[k].start;
+      const end = byProd[k].end;
+      const pl = end - start;
+      const tax = byProd[k].tax;
+      slices.push({
+        key:k,
+        label:nameMap[k],
+        value:start,
+        meta:{
+          pct: (start/startTotalReport*100),
+          start: fmtMoney(start, reportCcy),
+          end: fmtMoney(end, reportCcy),
+          pl: fmtMoney(pl, reportCcy),
+          tax: fmtMoney(tax, reportCcy)
+        }
+      });
     }
   });
-  drawDonut(document.getElementById('pieStart'), labels, vals);
 
-  const legend = labels.map((l,i)=>{
-    const pct = (vals[i]/(startTotalReport||1))*100;
-    return '<div style="margin:6px 0;"><b>'+l+'</b>: '+pct.toFixed(1)+'%</div>';
-  }).join('');
-  document.getElementById('pieLegend').innerHTML = legend;
+  LAST_PIE_SLICES = slices;
+
+  drawDonut(document.getElementById('pieStart'), slices);
+
+  // default select biggest slice
+  if(slices.length){
+    const biggest = slices.reduce((a,b)=> (b.value>a.value?b:a), slices[0]);
+    const hit = PIE_HIT.find(x=>x.label===biggest.label);
+    setPieDetail(hit || null);
+  } else {
+    setPieDetail(null);
+  }
 }
 
 /* =========================
@@ -1299,16 +1384,14 @@ function applyScenario(weights){
       rate: it.rate,
       method: it.method,
       taxAuto: (it.taxAuto!=null) ? it.taxAuto : true,
-      tax: (it.tax!=null) ? it.tax : 0,
-      renew: (it.renew!=null) ? it.renew : false,
-      renewDays: (it.renewDays!=null) ? it.renewDays : 2
+      tax: (it.tax!=null) ? it.tax : 0
     });
   }
 }
 
 function scenario1(){
   applyScenario([
-    { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 },
+    { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
     { w:0.35, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
     { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
     { w:0.15, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
@@ -1316,7 +1399,7 @@ function scenario1(){
 }
 function scenario2(){
   applyScenario([
-    { w:0.45, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 },
+    { w:0.45, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
     { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
     { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
     { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
@@ -1324,7 +1407,7 @@ function scenario2(){
 }
 function scenario3(){
   applyScenario([
-    { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 },
+    { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
     { w:0.55, ccy:'TL',  prod:'FUND',  rate:48, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
     { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
     { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
@@ -1343,41 +1426,19 @@ function scenario5(){
     { w:0.55, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
     { w:0.20, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
     { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 }
+    { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true }
   ]);
 }
 
 /* =========================
-   Language apply (+ redraw rows)
+   Reset + Apply language
 ========================= */
-function getRowsState(){
-  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
-  return rows.map(tr=>{
-    const id = tr.getAttribute('data-id');
-    return {
-      amt: parseAmount(document.getElementById('amt_'+id).value),
-      prod: document.getElementById('prod_'+id).value,
-      ccy: document.getElementById('ccy_'+id).value,
-      rate: Number(document.getElementById('rate_'+id).value)||0,
-      method: document.getElementById('method_'+id).value,
-      tax: Number(document.getElementById('tax_'+id).value)||0,
-      taxAuto: document.getElementById('taxAuto_'+id).checked,
-      renew: document.getElementById('renew_'+id).checked,
-      renewDays: Number(document.getElementById('renew_days_'+id).value)||2
-    };
-  });
-}
-function rebuildRowsPreserve(state){
-  document.getElementById('allocBody').innerHTML='';
-  state.forEach(r=> addRow(r));
-}
-
 function applyLang(){
   const lang = L();
   const o = I18N[lang];
 
   document.getElementById('hdr_sub').textContent = o.hdr_sub;
-  document.getElementById('hdr_disc').textContent = o.hdr_disc;
+  document.getElementById('disclaimer').textContent = o.disclaimer;
   document.getElementById('lbl_lang').textContent = o.Dil;
 
   document.getElementById('sec1').textContent = o.sec1;
@@ -1410,8 +1471,9 @@ function applyLang(){
   document.getElementById('btn_rates').textContent = o.Fetch;
   document.getElementById('btn_use_manual').textContent = o.Manual;
 
-  document.getElementById('btn_calc_bottom').textContent = o.Calc;
-  document.getElementById('btn_reset_bottom').textContent = o.Reset;
+  document.getElementById('btn_pdf').textContent = o.PDF;
+  document.getElementById('btn_calc2').textContent = o.Calc;
+  document.getElementById('btn_reset2').textContent = o.Reset;
 
   document.getElementById('sec_alloc').innerHTML = o.AllocTitle + ' <span class="pill" id="pillInfo">hazır</span>';
   document.getElementById('lbl_headline').textContent = o.Headline;
@@ -1432,18 +1494,10 @@ function applyLang(){
 
   document.getElementById('lbl_pie_title').textContent = o.PieTitle;
   document.getElementById('lbl_summary_title').textContent = o.Summary;
-
   document.getElementById('lbl_sum_start_pr').textContent = o.SumStartPr;
   document.getElementById('lbl_sum_start_rp').textContent = o.SumStartRp;
   document.getElementById('lbl_sum_end_pr').textContent = o.SumEndPr;
   document.getElementById('lbl_sum_end_rp').textContent = o.SumEndRp;
-
-  document.getElementById('lbl_pl_block').innerHTML = '<span class="plDot"></span>'+o.PLBlock;
-  document.getElementById('lbl_pl_tl').textContent = o.PLTL;
-  document.getElementById('lbl_pl_usd').textContent = o.PLUSD;
-  document.getElementById('lbl_pl_eur').textContent = o.PLEUR;
-  document.getElementById('lbl_pl_xau').textContent = o.PLXAU;
-
   document.getElementById('txt_pl_note').textContent = o.PLNote;
 
   document.getElementById('hdr_prod').textContent = o.hdr_prod;
@@ -1452,22 +1506,25 @@ function applyLang(){
   document.getElementById('hdr_calc').textContent = o.hdr_calc;
   document.getElementById('hdr_tax').textContent = o.hdr_tax;
   document.getElementById('hdr_p').textContent = o.hdr_p;
-  document.getElementById('hdr_end_gross').textContent = o.hdr_end_gross;
+  document.getElementById('hdr_fv').textContent = o.hdr_fv;
   document.getElementById('hdr_taxamt').textContent = o.hdr_taxamt;
-  document.getElementById('hdr_end_net').textContent = o.hdr_end_net;
   document.getElementById('hdr_net').textContent = o.hdr_net;
 
+  document.getElementById('pd_title').textContent = o.PieSel;
+  document.getElementById('pd_hint').textContent = o.PieHint;
+
+  document.getElementById('lbl_pl_tl').textContent = (lang==='en') ? 'Net P/L (TRY)' : 'Net P/L (TL)';
+  document.getElementById('lbl_pl_usd').textContent = (lang==='en') ? 'Net P/L (USD)' : 'Net P/L (USD)';
+  document.getElementById('lbl_pl_eur').textContent = (lang==='en') ? 'Net P/L (EUR)' : 'Net P/L (EUR)';
+  document.getElementById('lbl_pl_xau').textContent = (lang==='en') ? 'Net P/L (Gold g)' : 'Net P/L (Altın g)';
+
   setAmtHeader();
-
-  const state = getRowsState();
-  rebuildRowsPreserve(state);
-
   autoFillEndRates();
+
+  // Pie detail re-render (if any)
+  setPieDetail(null);
 }
 
-/* =========================
-   Reset
-========================= */
 function resetAll(){
   document.getElementById('total_amount').value='1.000.000';
   document.getElementById('total_ccy').value='USD';
@@ -1497,22 +1554,31 @@ function resetAll(){
   document.getElementById('headline_pl').textContent='-';
   document.getElementById('headline_detail').textContent='';
 
-  [
-    'kpi_used','kpi_left','kpi_start_report','kpi_end_report','kpi_pl_report','kpi_tax_report',
-    'sum_start_pr','sum_start_rp','sum_end_pr','sum_end_rp',
-    'pl_tl','pl_usd','pl_eur','pl_xau'
+  ['kpi_used','kpi_left','kpi_start_report','kpi_end_report','kpi_pl_report','kpi_tax_report',
+   'sum_start_pr','sum_start_rp','sum_end_pr','sum_end_rp',
+   'pl_tl','pl_usd','pl_eur','pl_xau'
   ].forEach(id=>document.getElementById(id).textContent='-');
 
   document.getElementById('allocBody').innerHTML='';
-  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 });
-  addRow({ amt:0, ccy:'TL', prod:'FUND', rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0, renew:false, renewDays:2 });
+  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true });
+  addRow({ amt:0, ccy:'TL', prod:'FUND', rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 });
 
-  document.getElementById('pieLegend').innerHTML='';
-  const ctx = document.getElementById('pieStart').getContext('2d');
-  ctx.clearRect(0,0,document.getElementById('pieStart').width,document.getElementById('pieStart').height);
+  // clear pie
+  const canvas = document.getElementById('pieStart');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  setPieDetail(null);
 
   setAmtHeader();
   autoFillEndRates();
+}
+
+/* =========================
+   PDF / Print
+========================= */
+function exportPDF(){
+  // iPad: Share -> Print -> Save as PDF
+  window.print();
 }
 
 /* =========================
@@ -1520,6 +1586,11 @@ function resetAll(){
 ========================= */
 document.getElementById('btn_calc').addEventListener('click', calc);
 document.getElementById('btn_reset').addEventListener('click', resetAll);
+document.getElementById('btn_calc2').addEventListener('click', calc);
+document.getElementById('btn_reset2').addEventListener('click', resetAll);
+
+document.getElementById('btn_pdf').addEventListener('click', exportPDF);
+
 document.getElementById('btn_rates').addEventListener('click', fetchRatesAll);
 document.getElementById('btn_fill_end').addEventListener('click', autoFillEndRates);
 
@@ -1531,7 +1602,7 @@ document.getElementById('btn_use_manual').addEventListener('click', function(){
 });
 
 document.getElementById('btn_add').addEventListener('click', function(){
-  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 });
+  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true });
 });
 
 document.getElementById('btn_s1').addEventListener('click', scenario1);
@@ -1550,6 +1621,12 @@ document.getElementById('rtl').addEventListener('input', autoFillEndRates);
 document.getElementById('rusd').addEventListener('input', autoFillEndRates);
 document.getElementById('reur').addEventListener('input', autoFillEndRates);
 document.getElementById('gold_exp').addEventListener('input', autoFillEndRates);
+
+// Pie interactive
+document.getElementById('pieStart').addEventListener('click', function(e){
+  const s = pickSliceFromEvent(this, e);
+  setPieDetail(s);
+});
 
 // init
 applyLang();
