@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="tr">
 <head>
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PB Allocation Engine – Roadshow</title>
@@ -10,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <!-- İKONLAR -->
+  <!-- ICONS -->
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260302b">
   <link rel="icon" href="apple-touch-icon.png?v=20260302b">
 
@@ -18,16 +17,13 @@
     :root{
       --bg:#f6f7fb; --card:#ffffff; --ink:#0b1a2a; --muted:#5b6777;
       --line:#e6e9f2; --accent:#c8a33a; --accent2:#123a63;
-      --danger:#9b1c1c;
-
-      /* alttaki sabit barın yüksekliği: içerik altta gizlenmesin */
-      --bottombar-h: 86px;
+      --danger:#9b1c1c; --ok:#0b6b2f;
     }
     *{box-sizing:border-box}
     body{
       margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
       background:var(--bg); color:var(--ink);
-      padding-bottom: var(--bottombar-h);
+      padding-bottom:84px;
     }
     header{
       padding:14px 14px 10px;
@@ -45,20 +41,7 @@
       font-size:12.5px; color:var(--ink); white-space:nowrap;
     }
     .miniSelect select{width:auto; padding:6px 10px; border-radius:10px; border:1px solid var(--line); font-size:12.5px;}
-
-    .wrap{max-width:1240px; margin:0 auto; padding:12px 12px 26px}
-
-    /* disclaimer */
-    .disclaimer{
-      margin:10px 0 0;
-      padding:10px 12px;
-      border:1px dashed rgba(18,58,99,.25);
-      background:rgba(18,58,99,.04);
-      border-radius:14px;
-      color:var(--muted);
-      font-size:12.2px;
-      line-height:1.35;
-    }
+    .wrap{max-width:1280px; margin:0 auto; padding:12px 12px 26px}
 
     .card{
       background:var(--card);
@@ -68,6 +51,17 @@
       box-shadow:0 6px 18px rgba(12,26,43,.06);
     }
     .card h2{margin:0 0 10px; font-size:13px; color:var(--accent2); letter-spacing:.2px}
+
+    .disclaimer{
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px dashed rgba(18,58,99,.25);
+      background:rgba(18,58,99,.04);
+      border-radius:12px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
 
     label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
     input, select{
@@ -115,124 +109,101 @@
     table{
       width:100%;
       border-collapse:collapse;
-      min-width:1180px;
+      min-width:1280px;
       font-size:12.5px;
     }
     th, td{padding:9px 6px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
     th{font-size:12px; color:var(--muted); font-weight:600}
-
-    /* tablo içi daha dar */
-    .tableWrap input, .tableWrap select{padding:9px 9px; border-radius:12px; font-size:12.5px;}
+    .tableWrap input, .tableWrap select{padding:8px 8px; border-radius:12px; font-size:12.5px;}
 
     .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
     .kpi .box{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff}
     .kpi .t{color:var(--muted); font-size:12px}
     .kpi .v{margin-top:6px; font-size:18px; font-weight:780; letter-spacing:.2px}
 
+    .pl4{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .pl4 .box{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff}
+    .pl4 .t{color:var(--muted); font-size:12px}
+    .pl4 .v{margin-top:6px; font-size:16px; font-weight:780}
+    @media (max-width: 980px){
+      .pl4{grid-template-columns:1fr 1fr;}
+    }
+
     .watermark{
-      position:fixed; right:10px; bottom:10px;
+      position:fixed;
+      right:10px;
+      bottom:92px;
       font-size:14px; font-weight:850;
       color:rgba(11,26,42,.45);
       background:rgba(255,255,255,.78);
       border:1px solid rgba(230,233,242,.9);
       padding:9px 16px; border-radius:999px;
       backdrop-filter: blur(6px);
-      z-index:30;
+      z-index:9;
+      pointer-events:none;
     }
     .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
     .mutedLine{margin-top:6px; font-size:12px; color:var(--muted)}
-
     .miniBtn{padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:12px;}
 
-    /* Kolonlar (daraltıldı) */
-    .wAmt{min-width:98px}
-    .wProd{min-width:150px}
-    .wCcy{min-width:78px}
-    .wRate{min-width:72px}
-    .wCalc{min-width:150px}
-    .wTax{min-width:96px}
-    .wTaxAmt{min-width:140px}
-    .wBtn{min-width:64px}
+    .wAmt{min-width:96px}
+    .wProd{min-width:140px}
+    .wCcy{min-width:84px}
+    .wRate{min-width:70px}
+    .wCalc{min-width:170px}
+    .wTax{min-width:92px}
+    .wTaxAmt{min-width:130px}
+    .wBtn{min-width:62px}
 
     .taxWrap{display:flex; gap:8px; align-items:center;}
     .taxWrap label{display:flex; gap:6px; align-items:center; margin:0; font-size:12px; color:var(--muted); white-space:nowrap;}
     .taxWrap input[type="checkbox"]{width:auto; padding:0; margin:0; transform: translateY(1px);}
 
-    /* alt alan: tek pie + sağda toplam değerler */
     .bottomGrid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px;}
     .chartCard{border:1px solid var(--line); border-radius:14px; background:#fff; padding:12px;}
     .chartTitle{font-size:12px;color:var(--muted);margin-bottom:8px}
-
-    .donutWrap{
-      display:flex; gap:12px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
-      position:relative;
+    .donutWrap{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    canvas{width:300px; height:240px; border-radius:14px; background:#fff;}
+    @media (max-width: 980px){
+      .bottomGrid{grid-template-columns: 1fr;}
+      table{min-width:1220px;}
+      canvas{width:280px; height:220px;}
     }
 
-    canvas{width:280px; height:220px; border-radius:14px; background:#fff;}
-
-    /* Pie detay kartı (interactive) */
-    .pieDetail{
-      min-width:220px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px 12px;
-      background:rgba(246,247,251,.55);
-    }
-    .pieDetail .h{font-size:12px;color:var(--muted)}
-    .pieDetail .v{margin-top:6px;font-size:15px;font-weight:800;color:var(--ink)}
-    .pieDetail .r{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.4}
-    .hintTap{margin-top:10px;font-size:12px;color:var(--muted)}
-
-    /* Alt sabit bar (dar, ortada) */
-    .bottomControls{
+    .actionBar{
       position:fixed;
       left:50%;
       transform:translateX(-50%);
-      bottom:14px;
+      bottom:10px;
+      width:520px;
+      max-width:92%;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(230,233,242,.9);
+      border-radius:16px;
+      box-shadow:0 14px 30px rgba(12,26,43,.14);
+      backdrop-filter: blur(10px);
+      z-index:20;
+      padding:10px;
+    }
+    .actionBar .rowA{display:flex; gap:10px; align-items:center; justify-content:space-between;}
+    .actionBar button{flex:1}
 
-      width:420px;       /* burada daraltırsın */
-      max-width:86%;
-
-      display:flex;
-      gap:10px;
-      justify-content:center;
-
-      padding:12px;
-
-      background:rgba(255,255,255,.95);
+    .tapInfo{
+      margin-top:8px;
       border:1px solid var(--line);
-      border-radius:14px;
-
-      backdrop-filter:blur(6px);
-      box-shadow:0 10px 30px rgba(0,0,0,0.12);
-
-      z-index:50;
-    }
-    .bottomControls button{
-      height:44px;
-      padding:0 18px;
+      background:rgba(18,58,99,.03);
       border-radius:12px;
-      font-weight:700;
+      padding:10px 12px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
     }
-
-    /* watermark banner kapatmasın (genişlik sorunu yerine garanti) */
-    @media (max-width: 520px){
-      .watermark{display:none;}
-    }
-
-    @media (max-width: 980px){
-      .bottomGrid{grid-template-columns: 1fr;}
-      table{min-width:1120px;}
-    }
-
-    /* PRINT/PDF */
-    @media print{
-      header{position:static}
-      body{background:#fff; padding-bottom:0}
-      .bottomControls, .watermark{display:none !important;}
-      .card{box-shadow:none}
-      .tableWrap{overflow:visible}
-    }
+    .tapInfo b{color:var(--ink)}
   </style>
 </head>
 
@@ -240,10 +211,10 @@
 <header>
   <div class="hdrTop">
     <div>
-      <h1 id="hdr_title">PB Allocation Engine <span class="pill" id="pill_build">Build: v100</span></h1>
+      <h1 id="hdr_title">PB Allocation Engine <span class="pill" id="pill_build">Build: v110</span></h1>
       <div class="sub" id="hdr_sub">Spot + Forward yaklaşımı ile vade sonu kurlar → giriş PB’ye dönüşte Net P/L.</div>
-      <div class="disclaimer" id="disclaimer">
-        Bu hesaplamalar bilgilendirme amaçlı yaklaşık değerlerdir. Nihai tutarlar; piyasa koşulları, fiyatlama, masraf/komisyon ve mevzuat kaynaklı değişiklikler gösterebilir.
+      <div class="disclaimer" id="hdr_disc">
+        Bu hesaplamalar yaklaşık değerlerdir. Kullanılan kurlar, stopaj oranları ve ürün getirileri varsayımsaldır; nihai sonuçlar bankanın resmi fiyatlaması/işlem anındaki koşullara göre değişebilir.
       </div>
     </div>
     <div class="hdrRight">
@@ -299,7 +270,7 @@
           </div>
           <div>
             <label id="lbl_tval">Global Vade</label>
-            <input id="tenor_val" type="number" step="1" value="183" />
+            <input id="tenor_val" type="number" step="1" value="32" />
           </div>
         </div>
 
@@ -383,8 +354,8 @@
 
         <div class="btns">
           <button class="ghost" id="btn_fill_end" style="flex:1;">Vade Sonu Kurları Doldur</button>
-          <button class="primary" id="btn_calc" style="flex:1;">Hesapla</button>
-          <button class="danger" id="btn_reset" style="flex:1;">Sıfırla</button>
+          <button class="primary" id="btn_calc_top" style="flex:1;">Hesapla</button>
+          <button class="danger" id="btn_reset_top" style="flex:1;">Sıfırla</button>
         </div>
 
         <div class="small" id="end_note"></div>
@@ -425,9 +396,10 @@
             <th class="wCalc" id="hdr_calc">Hesap</th>
             <th class="wTax" id="hdr_tax">Stopaj</th>
             <th id="hdr_p">Anapara (Hedef PB)</th>
-            <th id="hdr_fv">Vade Sonu (Hedef PB)</th>
-            <th class="wTaxAmt" id="hdr_taxamt">Stopaj Tutarı (Hedef PB)</th>
-            <th id="hdr_net">Net Kazanç (Hedef PB)</th>
+            <th id="hdr_fv_gross">Vade Sonu (Brüt)</th>
+            <th class="wTaxAmt" id="hdr_taxamt">Stopaj Tutarı</th>
+            <th id="hdr_fv_net">Vade Sonu (Net)</th>
+            <th id="hdr_net">Net Kazanç</th>
             <th class="wBtn"></th>
           </tr>
         </thead>
@@ -468,20 +440,35 @@
       </div>
     </div>
 
-    <!-- ALT: solda pie (interactive), sağda değer setleri -->
+    <div class="pl4">
+      <div class="box">
+        <div class="t">Net P/L (TL)</div>
+        <div class="v" id="pl_tl">-</div>
+      </div>
+      <div class="box">
+        <div class="t">Net P/L (USD)</div>
+        <div class="v" id="pl_usd">-</div>
+      </div>
+      <div class="box">
+        <div class="t">Net P/L (EUR)</div>
+        <div class="v" id="pl_eur">-</div>
+      </div>
+      <div class="box">
+        <div class="t">Net P/L (Altın g)</div>
+        <div class="v" id="pl_xau">-</div>
+      </div>
+    </div>
+
     <div class="bottomGrid">
       <div class="chartCard">
         <div class="chartTitle" id="lbl_pie_title">Dağılım (Başlangıç – Rapor PB)</div>
         <div class="donutWrap">
-          <canvas id="pieStart" width="420" height="320"></canvas>
-
-          <div class="pieDetail" id="pieDetail">
-            <div class="h" id="pd_title">Seçili Dilim</div>
-            <div class="v" id="pd_name">-</div>
-            <div class="r" id="pd_lines">
-              -
+          <canvas id="pieStart" width="520" height="420"></canvas>
+          <div style="min-width:240px; flex:1;">
+            <div id="pieLegend" class="small"></div>
+            <div class="tapInfo" id="pieTapInfo">
+              <b>İpucu:</b> Dilime dokun → dilim bilgisi. Ortaya dokun → ürün bazlı özet.
             </div>
-            <div class="hintTap" id="pd_hint">İpucu: Grafiğe dokun → detay gör.</div>
           </div>
         </div>
       </div>
@@ -511,29 +498,8 @@
           </div>
         </div>
 
-        <div class="kpi">
-          <div class="box">
-            <div class="t" id="lbl_pl_tl">Net P/L (TL)</div>
-            <div class="v" id="pl_tl">-</div>
-          </div>
-          <div class="box">
-            <div class="t" id="lbl_pl_usd">Net P/L (USD)</div>
-            <div class="v" id="pl_usd">-</div>
-          </div>
-        </div>
-        <div class="kpi">
-          <div class="box">
-            <div class="t" id="lbl_pl_eur">Net P/L (EUR)</div>
-            <div class="v" id="pl_eur">-</div>
-          </div>
-          <div class="box">
-            <div class="t" id="lbl_pl_xau">Net P/L (Altın g)</div>
-            <div class="v" id="pl_xau">-</div>
-          </div>
-        </div>
-
         <div class="small" id="txt_pl_note">
-          Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).
+          Not: Rapor PB Net P/L = vade sonu toplam − başlangıç toplam (aynı baz).
         </div>
       </div>
     </div>
@@ -545,21 +511,19 @@
 
 <div class="watermark">Adem Soyer</div>
 
-<!-- Altta sabit kontrol barı -->
-<div class="bottomControls">
-  <button class="ghost" id="btn_pdf">PDF / Print</button>
-  <button class="primary" id="btn_calc2">Hesapla</button>
-  <button class="danger" id="btn_reset2">Sıfırla</button>
+<div class="actionBar" id="actionBar">
+  <div class="rowA">
+    <button class="primary" id="btn_calc">Hesapla</button>
+    <button class="ghost" id="btn_pdf">PDF</button>
+    <button class="danger" id="btn_reset">Sıfırla</button>
+  </div>
 </div>
 
 <script>
-/* =========================
-   i18n
-========================= */
 const I18N = {
   tr: {
     hdr_sub: "Spot + Forward yaklaşımı ile vade sonu kurlar → giriş PB’ye dönüşte Net P/L.",
-    disclaimer:"Bu hesaplamalar bilgilendirme amaçlı yaklaşık değerlerdir. Nihai tutarlar; piyasa koşulları, fiyatlama, masraf/komisyon ve mevzuat kaynaklı değişiklikler gösterebilir.",
+    disc: "Bu hesaplamalar yaklaşık değerlerdir. Kullanılan kurlar, stopaj oranları ve ürün getirileri varsayımsaldır; nihai sonuçlar bankanın resmi fiyatlaması/işlem anındaki koşullara göre değişebilir.",
     Dil:"Dil",
     sec1:"1) Müşteri Varlığı",
     sec2:"2) Başlangıç Kurları (Spot)",
@@ -582,9 +546,9 @@ const I18N = {
     FillEnd:"Vade Sonu Kurları Doldur",
     Calc:"Hesapla",
     Reset:"Sıfırla",
+    PDF:"PDF",
     Fetch:"Kurları Çek",
     Manual:"Manuel Kur Kullan",
-    PDF:"PDF / Print",
     AllocTitle:"Alokasyon (Tutar Bazlı)",
     Headline:"Headline – Net P/L (Giriş Para Birimi)",
     Add:"+ Satır Ekle",
@@ -600,9 +564,8 @@ const I18N = {
     SumStartRp:"Başlangıç (Rapor PB)",
     SumEndPr:"Vade Sonu Toplam (Giriş PB)",
     SumEndRp:"Vade Sonu Toplam (Rapor PB)",
-    PLNote:"Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).",
-    PieHint:"İpucu: Grafiğe dokun → detay gör.",
-    PieSel:"Seçili Dilim",
+    PLNote:"Not: Rapor PB Net P/L = vade sonu toplam − başlangıç toplam (aynı baz).",
+    pieHint:"İpucu: Dilime dokun → dilim bilgisi. Ortaya dokun → ürün bazlı özet.",
     hdr_amt:(ccy)=>`Tutar (Giriş PB – ${ccy})`,
     hdr_prod:"Ürün",
     hdr_ccy:"Hedef PB",
@@ -610,9 +573,10 @@ const I18N = {
     hdr_calc:"Hesap",
     hdr_tax:"Stopaj",
     hdr_p:"Anapara (Hedef PB)",
-    hdr_fv:"Vade Sonu (Hedef PB)",
-    hdr_taxamt:"Stopaj Tutarı (Hedef PB)",
-    hdr_net:"Net Kazanç (Hedef PB)",
+    hdr_fv_g:"Vade Sonu (Brüt)",
+    hdr_taxamt:"Stopaj Tutarı",
+    hdr_fv_n:"Vade Sonu (Net)",
+    hdr_net:"Net Kazanç",
     warn_amt:"Toplam varlık 0 olamaz.",
     warn_row:"En az 1 satır ekle.",
     warn_tenor:"Global vade 0 olamaz.",
@@ -628,19 +592,17 @@ const I18N = {
     ratesFail:"Kurlar çekilemedi. Manuel girip devam edebilirsin.",
     manualOk:"Manuel kur kullanılıyor.",
     manualBad:"Manuel kur eksik.",
-    mixNote:"Dağılım (ürün bazlı, başlangıç kurlarıyla):",
+    mixNote:"Dağılım (ürün+PB bazlı, başlangıç kurlarıyla):",
     scenario:{ s1:"Dengeli", s2:"Koruma", s3:"Büyüme (Riskli)", s4:"FX Hedge", s5:"DPM Ağırlıklı" },
-    method:{ daily:"Günlük (bileşik)", simple:"Basit" },
+    method:{ simple:"Basit", daily:"Günlük (bileşik)", renew:"Yenilemeli (TL vadeli)" },
     prod:{ TERM:"Vadeli Mevduat", FUND:"Yatırım Fonu", SUKUK:"Sukuk", DPM:"DPM" },
     del:"Sil",
     auto:"Auto",
-    pieLines:(pct, start, end, pl, tax)=>(
-      `Dağılım: %${pct}\nBaşlangıç: ${start}\nVade Sonu: ${end}\nNet P/L: ${pl}\nStopaj: ${tax}`
-    )
+    renewEvery:"Yenileme (gün)"
   },
   en: {
     hdr_sub: "Spot + Forward approach for end FX → Net P/L back in principal currency.",
-    disclaimer:"These calculations are indicative approximations. Final amounts may change due to market conditions, pricing, fees/commissions and regulatory/tax factors.",
+    disc: "These figures are indicative only. FX rates, withholding assumptions and product returns are illustrative; final results may differ based on official pricing and execution-time conditions.",
     Dil:"Language",
     sec1:"1) Client Assets",
     sec2:"2) Spot Rates (Start)",
@@ -663,9 +625,9 @@ const I18N = {
     FillEnd:"Fill End Rates",
     Calc:"Calculate",
     Reset:"Reset",
+    PDF:"PDF",
     Fetch:"Fetch Rates",
     Manual:"Use Manual Rates",
-    PDF:"PDF / Print",
     AllocTitle:"Allocation (Amount Based)",
     Headline:"Headline – Net P/L (Principal)",
     Add:"+ Add Row",
@@ -682,8 +644,7 @@ const I18N = {
     SumEndPr:"End Total (Principal)",
     SumEndRp:"End Total (Report)",
     PLNote:"Note: Report P/L = end total − start total (same base).",
-    PieHint:"Tip: Tap the chart → see details.",
-    PieSel:"Selected Slice",
+    pieHint:"Tip: Tap a slice for details. Tap the center for product-only summary.",
     hdr_amt:(ccy)=>`Amount (Principal – ${ccy})`,
     hdr_prod:"Product",
     hdr_ccy:"Target CCY",
@@ -691,9 +652,10 @@ const I18N = {
     hdr_calc:"Method",
     hdr_tax:"Withholding",
     hdr_p:"Principal (Target)",
-    hdr_fv:"End Value (Target)",
-    hdr_taxamt:"Withholding Amount (Target)",
-    hdr_net:"Net Gain (Target)",
+    hdr_fv_g:"End (Gross)",
+    hdr_taxamt:"Withholding Amt",
+    hdr_fv_n:"End (Net)",
+    hdr_net:"Net Gain",
     warn_amt:"Total amount cannot be 0.",
     warn_row:"Add at least one row.",
     warn_tenor:"Tenor cannot be 0.",
@@ -709,17 +671,16 @@ const I18N = {
     ratesFail:"Could not fetch rates. Enter manually.",
     manualOk:"Using manual rates.",
     manualBad:"Manual rates missing.",
-    mixNote:"Mix (by product, start rates):",
+    mixNote:"Mix (by product+ccy, start rates):",
     scenario:{ s1:"Balanced", s2:"Protection", s3:"Growth (Risk)", s4:"FX Hedge", s5:"DPM Focus" },
-    method:{ daily:"Daily (comp.)", simple:"Simple" },
+    method:{ simple:"Simple", daily:"Daily (comp.)", renew:"Rollover (TRY term)" },
     prod:{ TERM:"Term Deposit", FUND:"Fund", SUKUK:"Sukuk", DPM:"DPM" },
     del:"Del",
     auto:"Auto",
-    pieLines:(pct, start, end, pl, tax)=>(
-      `Mix: ${pct}%\nStart: ${start}\nEnd: ${end}\nNet P/L: ${pl}\nWithholding: ${tax}`
-    )
+    renewEvery:"Rollover (days)"
   }
 };
+
 function L(){ return document.getElementById('lang').value || 'tr'; }
 function T(key){
   const lang = L();
@@ -727,9 +688,6 @@ function T(key){
   return obj[key] ?? I18N.tr[key] ?? key;
 }
 
-/* =========================
-   Helpers
-========================= */
 function parseAmount(str){
   if(!str) return 0;
   let s = String(str).trim().replace(/\s/g,'');
@@ -760,9 +718,6 @@ function setAmtHeader(){
   document.getElementById('hdr_amt').textContent = I18N[L()].hdr_amt(ccy);
 }
 
-/* =========================
-   Tenor
-========================= */
 function globalDays(){
   const ttype = document.getElementById('tenor_type').value;
   const v = Number(document.getElementById('tenor_val').value)||0;
@@ -770,9 +725,6 @@ function globalDays(){
   return (ttype==='DAYS') ? n : (n*30.4375);
 }
 
-/* =========================
-   Rates
-========================= */
 function getStartRates(){
   return {
     usdtry: Number(document.getElementById('usdtry').value)||0,
@@ -797,7 +749,6 @@ function getEndRatesResolved(){
   };
 }
 
-// FX conversion uses TRY as bridge; supports TL, USD, EUR, XAUg
 function fxRate(from, to, when){
   if(from === to) return 1;
   const r = (when === 'end') ? getEndRatesResolved() : getStartRates();
@@ -824,7 +775,6 @@ function fxRate(from, to, when){
   return a*b;
 }
 
-// Fetch spot rates (Trunçgil + fallback)
 async function fetchRatesAll(){
   const status = document.getElementById('rate_status');
   status.textContent = (L()==='en') ? 'Fetching rates…' : 'Kurlar çekiliyor…';
@@ -866,7 +816,6 @@ async function fetchRatesAll(){
   }
 }
 
-// Forward logic for END rates
 function autoFillEndRates(){
   const mode = document.getElementById('end_mode').value;
   const note = document.getElementById('end_note');
@@ -903,9 +852,6 @@ function autoFillEndRates(){
   note.textContent = T('endFwd');
 }
 
-/* =========================
-   Product math
-========================= */
 function fvSimple(P, annualPct, days){
   const r = (Number(annualPct)||0)/100;
   return P * (1 + r * (days/365));
@@ -914,10 +860,25 @@ function fvDailyCompound(P, annualPct, days){
   const r = (Number(annualPct)||0)/100;
   return P * Math.pow(1 + r/365, days);
 }
+function fvRenewWithTax(P, annualPct, totalDays, renewEveryDays, taxPct){
+  const r = (Number(annualPct)||0)/100;
+  const t = (Number(taxPct)||0)/100;
+  const step = Math.max(1, Math.floor(Number(renewEveryDays)||1));
+  let remaining = Math.max(0, Math.floor(totalDays));
+  let principal = P;
 
-/* =========================
-   Stopaj suggestion
-========================= */
+  while(remaining > 0){
+    const d = Math.min(step, remaining);
+    const grossEnd = principal * (1 + r * (d/365));
+    const grossGain = grossEnd - principal;
+    const tax = grossGain * t;
+    const netEnd = grossEnd - tax;
+    principal = netEnd;
+    remaining -= d;
+  }
+  return principal;
+}
+
 function suggestTaxPct(prod, targetCcy, days){
   if(prod === 'TERM'){
     if(targetCcy !== 'TL') return 25;
@@ -928,14 +889,25 @@ function suggestTaxPct(prod, targetCcy, days){
   return 0;
 }
 
-/* =========================
-   Donut chart (hi-res + interactive)
-========================= */
-let PIE_HIT = []; // [{label, startA, endA, value, meta:{...}}]
-function drawDonut(canvas, slices){
+const PIE_STATE = { labels:[], vals:[], arcs:[] };
+function colorForIndex(i){
+  const palette = [
+    'rgba(18,58,99,.88)',
+    'rgba(200,163,58,.92)',
+    'rgba(91,103,119,.75)',
+    'rgba(18,58,99,.55)',
+    'rgba(200,163,58,.55)',
+    'rgba(11,107,47,.55)',
+    'rgba(155,28,28,.55)'
+  ];
+  return palette[i % palette.length];
+}
+function drawDonutInteractive(canvas, labels, values){
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const cssW = 280, cssH = 220;
+  const cssW = window.matchMedia('(max-width: 980px)').matches ? 280 : 300;
+  const cssH = window.matchMedia('(max-width: 980px)').matches ? 220 : 240;
+
   canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
   canvas.width = Math.floor(cssW * dpr);
@@ -944,195 +916,231 @@ function drawDonut(canvas, slices){
   ctx.clearRect(0,0,cssW,cssH);
 
   const cx = cssW/2, cy = cssH/2;
-  const R = Math.min(cssW, cssH) * 0.42;
+  const R = Math.min(cssW, cssH) * 0.43;
   const r = R * 0.62;
+  const total = values.reduce((a,b)=>a+b,0) || 1;
 
-  const total = slices.reduce((a,b)=>a+(b.value||0),0) || 1;
   let ang = -Math.PI/2;
-
-  const palette = [
-    'rgba(18,58,99,.88)',
-    'rgba(200,163,58,.92)',
-    'rgba(91,103,119,.75)',
-    'rgba(18,58,99,.55)',
-    'rgba(200,163,58,.55)'
-  ];
-
-  PIE_HIT = [];
-  for(let i=0;i<slices.length;i++){
-    const v = Math.max(0, slices[i].value||0);
+  const arcs = [];
+  for(let i=0;i<labels.length;i++){
+    const v = Math.max(0, values[i]);
     const a = (v/total) * Math.PI*2;
+    const start = ang;
+    const end = ang + a;
 
     ctx.beginPath();
     ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,R,ang,ang+a);
+    ctx.arc(cx,cy,R,start,end);
     ctx.closePath();
-    ctx.fillStyle = palette[i % palette.length];
+    ctx.fillStyle = colorForIndex(i);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(cx,cy,R,ang,ang+a);
+    ctx.arc(cx,cy,R,start,end);
     ctx.strokeStyle = 'rgba(255,255,255,.55)';
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    PIE_HIT.push({
-      label: slices[i].label,
-      startA: ang,
-      endA: ang+a,
-      value: v,
-      meta: slices[i].meta || {}
-    });
-
-    ang += a;
+    arcs.push({i, start, end, R, r, cx, cy});
+    ang = end;
   }
 
   ctx.beginPath();
   ctx.arc(cx,cy,r,0,Math.PI*2);
   ctx.fillStyle = '#fff';
   ctx.fill();
+
+  ctx.fillStyle = 'rgba(11,26,42,.75)';
+  ctx.font = '12px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial';
+  const txt = (L()==='en') ? 'Tap' : 'Dokun';
+  const w = ctx.measureText(txt).width;
+  ctx.fillText(txt, cx - w/2, cy + 4);
+
+  PIE_STATE.labels = labels.slice();
+  PIE_STATE.vals = values.slice();
+  PIE_STATE.arcs = arcs;
 }
-
-function pickSliceFromEvent(canvas, evt){
+function donutHitTest(canvas, x, y){
   const rect = canvas.getBoundingClientRect();
-  const x = (evt.clientX - rect.left);
-  const y = (evt.clientY - rect.top);
-
   const cx = rect.width/2, cy = rect.height/2;
   const dx = x - cx, dy = y - cy;
   const dist = Math.sqrt(dx*dx + dy*dy);
+  const arcs = PIE_STATE.arcs || [];
+  const any = arcs[0];
+  if(!any) return { type:'none' };
+  const R = any.R, r = any.r;
+  if(dist <= r) return { type:'center' };
+  if(dist > R) return { type:'none' };
 
-  // donut radius thresholds
-  const R = Math.min(rect.width, rect.height) * 0.42;
-  const r = R * 0.62;
+  let ang = Math.atan2(dy, dx);
+  ang = ang - (-Math.PI/2);
+  while(ang < 0) ang += Math.PI*2;
+  while(ang >= Math.PI*2) ang -= Math.PI*2;
+  const absAng = -Math.PI/2 + ang;
 
-  if(dist < r || dist > R) return null;
-
-  let ang = Math.atan2(dy, dx); // -PI..PI
-  // convert to 0..2PI with reference -PI/2
-  if(ang < -Math.PI/2) ang += Math.PI*2;
-
-  // Our chart starts at -PI/2. Convert:
-  // actualAngle = ang; but relative to -PI/2, we used angStart=-PI/2.
-  // So we need the raw angle in chart space:
-  // We'll transform the point angle to chart-space:
-  // pointAngle = atan2(dy,dx), and chart uses [-PI/2..] increasing.
-  // We'll normalize to [-PI/2, 3PI/2)
-  let pointA = Math.atan2(dy, dx);
-  if(pointA < -Math.PI/2) pointA += Math.PI*2;
-
-  for(const s of PIE_HIT){
-    if(pointA >= s.startA && pointA < s.endA) return s;
+  for(const a of arcs){
+    if(absAng >= a.start && absAng <= a.end){
+      return { type:'slice', index:a.i };
+    }
   }
-  return null;
+  return { type:'none' };
 }
 
-function setPieDetail(slice){
-  const pdTitle = document.getElementById('pd_title');
-  const pdName = document.getElementById('pd_name');
-  const pdLines = document.getElementById('pd_lines');
-  const pdHint = document.getElementById('pd_hint');
-
-  pdTitle.textContent = T('PieSel');
-  pdHint.textContent = T('PieHint');
-
-  if(!slice){
-    pdName.textContent = '-';
-    pdLines.textContent = '-';
-    return;
+function buildProductOptionsHTML(){
+  const p = I18N[L()].prod;
+  return [
+    `<option value="TERM">${p.TERM}</option>`,
+    `<option value="FUND">${p.FUND}</option>`,
+    `<option value="SUKUK">${p.SUKUK}</option>`,
+    `<option value="DPM">${p.DPM}</option>`
+  ].join('');
+}
+function buildCurrencyOptionsHTML(){
+  const gold = (L()==='en') ? 'Gold' : 'Altın';
+  return [
+    `<option value="TL">TL</option>`,
+    `<option value="USD">USD</option>`,
+    `<option value="EUR">EUR</option>`,
+    `<option value="XAUg">${gold}</option>`
+  ].join('');
+}
+function buildMethodOptionsHTML(prod, targetCcy){
+  const m = I18N[L()].method;
+  let opts = `<option value="SIMPLE">${m.simple}</option>`;
+  if(prod === 'TERM'){
+    opts += `<option value="DAILY_COMPOUND">${m.daily}</option>`;
+    if(targetCcy === 'TL'){
+      opts += `<option value="RENEW">${m.renew}</option>`;
+    }
   }
-
-  const m = slice.meta || {};
-  pdName.textContent = slice.label;
-
-  // lines:
-  const pct = (m.pct != null) ? m.pct.toFixed(1) : 0;
-  const text = I18N[L()].pieLines(
-    pct,
-    m.start || '-',
-    m.end || '-',
-    m.pl || '-',
-    m.tax || '-'
-  );
-
-  // show multi-line
-  pdLines.innerHTML = text.split('\n').map(line=>'<div>'+line+'</div>').join('');
+  return opts;
 }
 
-/* =========================
-   Rows
-========================= */
-const PRODUCT_OPTIONS = [
-  { val:'TERM' },
-  { val:'FUND' },
-  { val:'SUKUK'},
-  { val:'DPM'  }
-];
+function rowTemplate(id, preset){
+  const prod = preset?.prod || 'TERM';
+  const ccy = preset?.ccy || 'TL';
+  const prodOpts = buildProductOptionsHTML();
+  const ccyOpts = buildCurrencyOptionsHTML();
+  const methodOpts = buildMethodOptionsHTML(prod, ccy);
 
-function rowTemplate(id){
-  const prodOpts = PRODUCT_OPTIONS.map(o=>{
-    const lab = I18N[L()].prod[o.val];
-    return '<option value="'+o.val+'">'+lab+'</option>';
-  }).join('');
-
-  const mDaily = I18N[L()].method.daily;
-  const mSimple = I18N[L()].method.simple;
   const delTxt = I18N[L()].del;
   const autoTxt = I18N[L()].auto;
+  const renewLbl = I18N[L()].renewEvery;
 
   return ''+
-    '<tr data-id="'+id+'">'+
-      '<td class="wAmt"><input type="text" inputmode="decimal" id="amt_'+id+'" value="0"></td>'+
-      '<td class="wProd"><select id="prod_'+id+'">'+prodOpts+'</select></td>'+
-      '<td class="wCcy">'+
-        '<select id="ccy_'+id+'">'+
-          '<option value="TL">TL</option>'+
-          '<option value="USD">USD</option>'+
-          '<option value="EUR">EUR</option>'+
-          '<option value="XAUg">'+(L()==='en'?'Gold':'Altın')+'</option>'+
-        '</select>'+
-      '</td>'+
-      '<td class="wRate"><input type="number" step="0.01" id="rate_'+id+'" value="0"></td>'+
-      '<td class="wCalc">'+
-        '<select id="method_'+id+'">'+
-          '<option value="DAILY_COMPOUND">'+mDaily+'</option>'+
-          '<option value="SIMPLE" selected>'+mSimple+'</option>'+
-        '</select>'+
-      '</td>'+
-      '<td class="wTax">'+
-        '<div class="taxWrap">'+
-          '<input type="number" step="0.01" id="tax_'+id+'" value="0" style="flex:1;">'+
-          '<label><input type="checkbox" id="taxAuto_'+id+'" checked>'+autoTxt+'</label>'+
-        '</div>'+
-      '</td>'+
-      '<td id="p_'+id+'">-</td>'+
-      '<td id="fv_'+id+'">-</td>'+
-      '<td id="taxamt_'+id+'">-</td>'+
-      '<td id="net_'+id+'">-</td>'+
-      '<td class="wBtn"><button class="miniBtn" onclick="removeRow(\''+id+'\')">'+delTxt+'</button></td>'+
-    '</tr>';
+    `<tr data-id="${id}">`+
+      `<td class="wAmt"><input type="text" inputmode="decimal" id="amt_${id}" value="0"></td>`+
+      `<td class="wProd"><select id="prod_${id}">${prodOpts}</select></td>`+
+      `<td class="wCcy"><select id="ccy_${id}">${ccyOpts}</select></td>`+
+      `<td class="wRate"><input type="number" step="0.01" id="rate_${id}" value="0"></td>`+
+      `<td class="wCalc">`+
+        `<select id="method_${id}">${methodOpts}</select>`+
+        `<div style="display:flex; gap:6px; margin-top:6px; align-items:center;" id="renewWrap_${id}" hidden>`+
+          `<span style="font-size:12px;color:var(--muted);white-space:nowrap;">${renewLbl}</span>`+
+          `<input type="number" id="renewEvery_${id}" min="1" step="1" value="2" style="width:88px; padding:7px 8px; border-radius:10px; font-size:12.5px;">`+
+        `</div>`+
+      `</td>`+
+      `<td class="wTax">`+
+        `<div class="taxWrap">`+
+          `<input type="number" step="0.01" id="tax_${id}" value="0" style="flex:1;">`+
+          `<label><input type="checkbox" id="taxAuto_${id}" checked>${autoTxt}</label>`+
+        `</div>`+
+      `</td>`+
+      `<td id="p_${id}">-</td>`+
+      `<td id="fv_g_${id}">-</td>`+
+      `<td id="taxamt_${id}">-</td>`+
+      `<td id="fv_n_${id}">-</td>`+
+      `<td id="net_${id}">-</td>`+
+      `<td class="wBtn"><button class="miniBtn" onclick="removeRow('${id}')">${delTxt}</button></td>`+
+    `</tr>`;
+}
+
+function refreshMethodOptionsForRow(id, {keepValue}){
+  const prod = document.getElementById('prod_'+id).value;
+  const ccy  = document.getElementById('ccy_'+id).value;
+  const mEl  = document.getElementById('method_'+id);
+  const prev = keepValue || mEl.value;
+
+  mEl.innerHTML = buildMethodOptionsHTML(prod, ccy);
+
+  if(prod !== 'TERM'){
+    mEl.value = 'SIMPLE';
+  }else{
+    if([...mEl.options].some(o=>o.value===prev)) mEl.value = prev;
+    else mEl.value = 'SIMPLE';
+  }
+  syncRenewVisibility(id);
+}
+function syncRenewVisibility(id){
+  const prod = document.getElementById('prod_'+id).value;
+  const ccy  = document.getElementById('ccy_'+id).value;
+  const method = document.getElementById('method_'+id).value;
+  const wrap = document.getElementById('renewWrap_'+id);
+  if(!wrap) return;
+  wrap.hidden = !(prod==='TERM' && ccy==='TL' && method==='RENEW');
+}
+
+function applyDefaultsByProduct(id){
+  const prod = document.getElementById('prod_'+id).value;
+  const ccy  = document.getElementById('ccy_'+id).value;
+  const rateEl = document.getElementById('rate_'+id);
+  const methodEl = document.getElementById('method_'+id);
+  const r = Number(rateEl.value)||0;
+
+  if(prod==='TERM'){
+    if(r===0) rateEl.value = (ccy==='TL') ? 35 : 5;
+  } else if(prod==='FUND'){
+    if(r===0) rateEl.value = 45;
+    methodEl.value = 'SIMPLE';
+  } else if(prod==='SUKUK'){
+    if(r===0) rateEl.value = (ccy==='TL') ? 38 : 7;
+    methodEl.value = 'SIMPLE';
+  } else if(prod==='DPM'){
+    if(r===0) rateEl.value = 12;
+    methodEl.value = 'SIMPLE';
+  }
+  syncRenewVisibility(id);
 }
 
 function addRow(preset){
   preset = preset || {};
   const id = String(Math.random()).slice(2,8);
-  document.getElementById('allocBody').insertAdjacentHTML('beforeend', rowTemplate(id));
+  document.getElementById('allocBody').insertAdjacentHTML('beforeend', rowTemplate(id, preset));
 
-  document.getElementById('amt_'+id).value = preset.amt != null ? fmtPlain(preset.amt) : '0';
-  if(preset.ccy) document.getElementById('ccy_'+id).value = preset.ccy;
-  if(preset.prod) document.getElementById('prod_'+id).value = preset.prod;
-  if(preset.rate != null) document.getElementById('rate_'+id).value = preset.rate;
-  if(preset.method) document.getElementById('method_'+id).value = preset.method;
-  if(preset.tax != null) document.getElementById('tax_'+id).value = preset.tax;
-  if(preset.taxAuto != null) document.getElementById('taxAuto_'+id).checked = preset.taxAuto;
+  const amtEl = document.getElementById('amt_'+id);
+  const prodEl = document.getElementById('prod_'+id);
+  const ccyEl  = document.getElementById('ccy_'+id);
+  const rateEl = document.getElementById('rate_'+id);
+  const methodEl = document.getElementById('method_'+id);
+  const taxEl  = document.getElementById('tax_'+id);
+  const taxAutoEl = document.getElementById('taxAuto_'+id);
 
+  amtEl.value = preset.amt != null ? fmtPlain(preset.amt) : '0';
+  prodEl.value = preset.prod || 'TERM';
+  ccyEl.value  = preset.ccy  || 'TL';
+  rateEl.value = (preset.rate != null) ? preset.rate : 0;
+  taxEl.value  = (preset.tax != null) ? preset.tax : 0;
+  taxAutoEl.checked = (preset.taxAuto != null) ? !!preset.taxAuto : true;
+
+  refreshMethodOptionsForRow(id, {keepValue: preset.method});
   applyDefaultsByProduct(id);
 
-  document.getElementById('prod_'+id).addEventListener('change', function(){ applyDefaultsByProduct(id); });
-  document.getElementById('amt_'+id).addEventListener('blur', function(){
+  prodEl.addEventListener('change', function(){
+    refreshMethodOptionsForRow(id, {keepValue:null});
+    applyDefaultsByProduct(id);
+  });
+  ccyEl.addEventListener('change', function(){
+    refreshMethodOptionsForRow(id, {keepValue:null});
+    applyDefaultsByProduct(id);
+  });
+  methodEl.addEventListener('change', function(){ syncRenewVisibility(id); });
+
+  amtEl.addEventListener('blur', function(){
     const n = parseAmount(this.value);
     this.value = fmtPlain(n);
   });
+
+  syncRenewVisibility(id);
 }
 
 function removeRow(id){
@@ -1140,229 +1148,6 @@ function removeRow(id){
   if(tr) tr.remove();
 }
 
-function applyDefaultsByProduct(id){
-  const prod = document.getElementById('prod_'+id).value;
-  const rateEl = document.getElementById('rate_'+id);
-  const methodEl = document.getElementById('method_'+id);
-  const r = Number(rateEl.value)||0;
-
-  if(prod==='TERM'){
-    if(r===0) rateEl.value = 35;
-    methodEl.value = 'DAILY_COMPOUND';
-  } else if(prod==='FUND'){
-    if(r===0) rateEl.value = 45;
-    methodEl.value = 'DAILY_COMPOUND';
-  } else if(prod==='SUKUK'){
-    if(r===0) rateEl.value = 38;
-    methodEl.value = 'SIMPLE';
-  } else if(prod==='DPM'){
-    if(r===0) rateEl.value = 12;
-    methodEl.value = 'DAILY_COMPOUND';
-  }
-}
-
-/* =========================
-   Calc (with pie slice meta)
-========================= */
-let LAST_PIE_SLICES = []; // store for click details
-function calc(){
-  const warn = document.getElementById('warn');
-  warn.textContent = '';
-
-  autoFillEndRates();
-
-  const principalAmt = parseAmount(document.getElementById('total_amount').value);
-  const principalCcy = document.getElementById('total_ccy').value;
-  const reportCcy = document.getElementById('report_ccy').value;
-
-  if(principalAmt <= 0){ warn.textContent = T('warn_amt'); return; }
-
-  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
-  if(rows.length === 0){ warn.textContent = T('warn_row'); return; }
-
-  const days = globalDays();
-  if(days <= 0){ warn.textContent = T('warn_tenor'); return; }
-
-  let usedPrincipal = 0;
-
-  // Totals
-  let startTotalReport = 0;   // allocation-based start in report (consistent base)
-  let endTotalReport = 0;     // end total in report (end FX)
-  let endTotalPrincipal = 0;  // end total in principal (end FX)
-  let totalTaxReport = 0;     // taxes in report currency (end FX)
-
-  // byProduct (for pie) start & end in report + tax in report
-  const byProd = {
-    TERM:{ start:0, end:0, tax:0 },
-    FUND:{ start:0, end:0, tax:0 },
-    SUKUK:{ start:0, end:0, tax:0 },
-    DPM:{  start:0, end:0, tax:0 }
-  };
-
-  for(const tr of rows){
-    const id = tr.getAttribute('data-id');
-
-    const amtBase = clamp(parseAmount(document.getElementById('amt_'+id).value));
-    const prod = document.getElementById('prod_'+id).value;
-    const targetCcy = document.getElementById('ccy_'+id).value;
-    const rate = Number(document.getElementById('rate_'+id).value)||0;
-    const method = document.getElementById('method_'+id).value;
-
-    const taxAuto = (document.getElementById('taxAuto_'+id)?.checked) ? true : false;
-    let taxPct = Number(document.getElementById('tax_'+id).value)||0;
-    if(taxAuto){
-      taxPct = suggestTaxPct(prod, targetCcy, days);
-      document.getElementById('tax_'+id).value = taxPct;
-    }
-
-    usedPrincipal += amtBase;
-
-    // principal -> target at START
-    const r1 = fxRate(principalCcy, targetCcy, 'start');
-    if(r1 === null){ warn.textContent = T('warn_start'); return; }
-    const P_target = amtBase * r1;
-
-    // start in report (start FX)
-    const rStartToReport = fxRate(targetCcy, reportCcy, 'start');
-    if(rStartToReport === null){ warn.textContent = T('warn_start'); return; }
-    const P_report_start = P_target * rStartToReport;
-    startTotalReport += P_report_start;
-    byProd[prod].start += P_report_start;
-
-    // growth in target
-    const FV_target_gross = (method === 'DAILY_COMPOUND')
-      ? fvDailyCompound(P_target, rate, days)
-      : fvSimple(P_target, rate, days);
-
-    const grossGain_target = FV_target_gross - P_target;
-    const tax_target = grossGain_target * (taxPct/100);
-    const netGain_target = grossGain_target - tax_target;
-    const FV_target_net = P_target + netGain_target;
-
-    // end in principal (end FX)
-    const rBack_end = fxRate(targetCcy, principalCcy, 'end');
-    if(rBack_end === null){ warn.textContent = T('warn_end'); return; }
-    const end_in_principal = FV_target_net * rBack_end;
-    endTotalPrincipal += end_in_principal;
-
-    // end in report (end FX)
-    const rEndToReport = fxRate(targetCcy, reportCcy, 'end');
-    if(rEndToReport === null){ warn.textContent = T('warn_end'); return; }
-    const FV_report_end = FV_target_net * rEndToReport;
-    endTotalReport += FV_report_end;
-    byProd[prod].end += FV_report_end;
-
-    // tax in report (end FX)
-    const tax_report = tax_target * rEndToReport;
-    totalTaxReport += tax_report;
-    byProd[prod].tax += tax_report;
-
-    // write row outputs
-    document.getElementById('p_'+id).textContent = fmtMoney(P_target, targetCcy);
-    document.getElementById('fv_'+id).textContent = fmtMoney(FV_target_net, targetCcy);
-    document.getElementById('taxamt_'+id).textContent = fmtMoney(tax_target, targetCcy);
-    document.getElementById('net_'+id).textContent = fmtMoney(netGain_target, targetCcy);
-  }
-
-  // KPIs
-  document.getElementById('kpi_used').textContent = fmtMoney(usedPrincipal, principalCcy);
-  document.getElementById('kpi_left').textContent = fmtMoney(principalAmt - usedPrincipal, principalCcy);
-
-  if(usedPrincipal > principalAmt + 1e-9){
-    warn.textContent = T('warn_alloc');
-  }
-
-  document.getElementById('kpi_start_report').textContent = fmtMoney(startTotalReport, reportCcy);
-  document.getElementById('kpi_end_report').textContent = fmtMoney(endTotalReport, reportCcy);
-
-  const plReport = endTotalReport - startTotalReport;
-  document.getElementById('kpi_pl_report').textContent = fmtMoney(plReport, reportCcy);
-  document.getElementById('kpi_tax_report').textContent = fmtMoney(totalTaxReport, reportCcy);
-
-  // Headline in principal
-  const plPrincipal = endTotalPrincipal - principalAmt;
-  document.getElementById('headline_pl').textContent = fmtMoney(plPrincipal, principalCcy);
-  document.getElementById('headline_detail').textContent =
-    (L()==='en'
-      ? `Start: ${fmtMoney(principalAmt, principalCcy)} → End: ${fmtMoney(endTotalPrincipal, principalCcy)} (Tenor: ${days.toFixed(0)} days)`
-      : `Başlangıç: ${fmtMoney(principalAmt, principalCcy)} → Vade Sonu: ${fmtMoney(endTotalPrincipal, principalCcy)} (Global vade: ${days.toFixed(0)} gün)`);
-
-  document.getElementById('pillInfo').textContent = `Principal: ${principalCcy} | Rapor: ${reportCcy}`;
-
-  // Summary boxes (right card)
-  document.getElementById('sum_start_pr').textContent = fmtMoney(principalAmt, principalCcy);
-  document.getElementById('sum_start_rp').textContent = fmtMoney(startTotalReport, reportCcy);
-  document.getElementById('sum_end_pr').textContent = fmtMoney(endTotalPrincipal, principalCcy);
-  document.getElementById('sum_end_rp').textContent = fmtMoney(endTotalReport, reportCcy);
-
-  // 3rd set: P/L in TL/USD/EUR/XAUg (principal-based)
-  function plIn(ccy){
-    const rStart = fxRate(principalCcy, ccy, 'start');
-    const rEnd = fxRate(principalCcy, ccy, 'end');
-    if(rStart==null || rEnd==null) return null;
-    const startC = principalAmt * rStart;
-    const endC = endTotalPrincipal * rEnd;
-    return { pl: endC - startC };
-  }
-  const pTL = plIn('TL'), pUSD = plIn('USD'), pEUR = plIn('EUR'), pXAU = plIn('XAUg');
-  document.getElementById('pl_tl').textContent = pTL ? fmtMoney(pTL.pl,'TL') : '-';
-  document.getElementById('pl_usd').textContent = pUSD ? fmtMoney(pUSD.pl,'USD') : '-';
-  document.getElementById('pl_eur').textContent = pEUR ? fmtMoney(pEUR.pl,'EUR') : '-';
-  document.getElementById('pl_xau').textContent = pXAU ? (fmtPlain(pXAU.pl)+' XAUg') : '-';
-
-  // Mix badges
-  const nameMap = I18N[L()].prod;
-  const badgeEl = document.getElementById('risk_badges');
-  if(startTotalReport > 0){
-    const items = Object.keys(byProd)
-      .map(k=>({k, v:byProd[k].start}))
-      .filter(x=>x.v>0)
-      .sort((a,b)=>b.v-a.v)
-      .map(x=>'<span class="pill">'+nameMap[x.k]+': '+(x.v/startTotalReport*100).toFixed(1)+'%</span>')
-      .join(' ');
-    badgeEl.innerHTML = '<div class="mutedLine">'+T('mixNote')+'</div> '+items;
-  } else badgeEl.textContent='';
-
-  // Build slices for donut with meta (start/end/pl/tax)
-  const slices = [];
-  Object.keys(byProd).forEach(k=>{
-    if(byProd[k].start > 0){
-      const start = byProd[k].start;
-      const end = byProd[k].end;
-      const pl = end - start;
-      const tax = byProd[k].tax;
-      slices.push({
-        key:k,
-        label:nameMap[k],
-        value:start,
-        meta:{
-          pct: (start/startTotalReport*100),
-          start: fmtMoney(start, reportCcy),
-          end: fmtMoney(end, reportCcy),
-          pl: fmtMoney(pl, reportCcy),
-          tax: fmtMoney(tax, reportCcy)
-        }
-      });
-    }
-  });
-
-  LAST_PIE_SLICES = slices;
-
-  drawDonut(document.getElementById('pieStart'), slices);
-
-  // default select biggest slice
-  if(slices.length){
-    const biggest = slices.reduce((a,b)=> (b.value>a.value?b:a), slices[0]);
-    const hit = PIE_HIT.find(x=>x.label===biggest.label);
-    setPieDetail(hit || null);
-  } else {
-    setPieDetail(null);
-  }
-}
-
-/* =========================
-   Scenarios
-========================= */
 function applyScenario(weights){
   const totalAmount = parseAmount(document.getElementById('total_amount').value);
   document.getElementById('allocBody').innerHTML='';
@@ -1388,57 +1173,111 @@ function applyScenario(weights){
     });
   }
 }
+function scenario1(){ applyScenario([
+  { w:0.30, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true },
+  { w:0.30, ccy:'TL',  prod:'FUND',  rate:45, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.15, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 }
+]);}
+function scenario2(){ applyScenario([
+  { w:0.45, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true },
+  { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 }
+]);}
+function scenario3(){ applyScenario([
+  { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true },
+  { w:0.55, ccy:'TL',  prod:'FUND',  rate:48, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 }
+]);}
+function scenario4(){ applyScenario([
+  { w:0.35, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.35, ccy:'EUR', prod:'SUKUK', rate:6,  method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.15, ccy:'TL',  prod:'FUND',  rate:45, method:'SIMPLE', taxAuto:false, tax:0 }
+]);}
+function scenario5(){ applyScenario([
+  { w:0.55, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.20, ccy:'TL',  prod:'FUND',  rate:45, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
+  { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true }
+]);}
 
-function scenario1(){
-  applyScenario([
-    { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
-    { w:0.35, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.15, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
-  ]);
-}
-function scenario2(){
-  applyScenario([
-    { w:0.45, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
-    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
-  ]);
-}
-function scenario3(){
-  applyScenario([
-    { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true },
-    { w:0.55, ccy:'TL',  prod:'FUND',  rate:48, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
-  ]);
-}
-function scenario4(){
-  applyScenario([
-    { w:0.35, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.35, ccy:'EUR', prod:'SUKUK', rate:6,  method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.15, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
-  ]);
-}
-function scenario5(){
-  applyScenario([
-    { w:0.55, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    { w:0.20, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
-    { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
-    { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true }
-  ]);
+function ensureDefaultAllocationIfEmpty(){
+  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
+  if(rows.length === 0){
+    addRow({ amt: parseAmount(document.getElementById('total_amount').value), prod:'TERM', ccy:'TL', rate:35, method:'SIMPLE', taxAuto:true });
+    return;
+  }
+  const principalAmt = parseAmount(document.getElementById('total_amount').value);
+  let used = 0;
+  for(const tr of rows){
+    const id = tr.getAttribute('data-id');
+    used += clamp(parseAmount(document.getElementById('amt_'+id).value));
+  }
+  if(used <= 0 && principalAmt > 0){
+    document.getElementById('allocBody').innerHTML='';
+    addRow({ amt: principalAmt, prod:'TERM', ccy:'TL', rate:35, method:'SIMPLE', taxAuto:true });
+  }
 }
 
-/* =========================
-   Reset + Apply language
-========================= */
+function exportPDF(){ window.print(); }
+
+function productOnlySummaryHTML(){
+  const labels = PIE_STATE.labels || [];
+  const vals = PIE_STATE.vals || [];
+  const total = vals.reduce((a,b)=>a+b,0) || 1;
+
+  const agg = {};
+  labels.forEach((lab,i)=>{
+    const prod = lab.split('/')[0].trim();
+    agg[prod] = (agg[prod]||0) + vals[i];
+  });
+  const items = Object.keys(agg)
+    .map(k=>({k,v:agg[k]}))
+    .sort((a,b)=>b.v-a.v)
+    .map(x=>`<div style="margin:6px 0;"><b>${x.k}</b>: ${(x.v/total*100).toFixed(1)}%</div>`)
+    .join('');
+  return items || '-';
+}
+
+function snapshotRows(){
+  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
+  return rows.map(tr=>{
+    const id = tr.getAttribute('data-id');
+    return {
+      amt: parseAmount(document.getElementById('amt_'+id).value),
+      prod: document.getElementById('prod_'+id).value,
+      ccy: document.getElementById('ccy_'+id).value,
+      rate: Number(document.getElementById('rate_'+id).value)||0,
+      method: document.getElementById('method_'+id).value,
+      tax: Number(document.getElementById('tax_'+id).value)||0,
+      taxAuto: !!document.getElementById('taxAuto_'+id).checked,
+      renewEvery: Number(document.getElementById('renewEvery_'+id)?.value)||2
+    };
+  });
+}
+function restoreRows(snaps){
+  document.getElementById('allocBody').innerHTML='';
+  snaps.forEach(s=>{
+    addRow({
+      amt: s.amt, prod: s.prod, ccy: s.ccy, rate: s.rate,
+      method: s.method, tax: s.tax, taxAuto: s.taxAuto
+    });
+    const lastTr = document.querySelector('#allocBody tr:last-child');
+    const id = lastTr?.getAttribute('data-id');
+    if(id && document.getElementById('renewEvery_'+id)){
+      document.getElementById('renewEvery_'+id).value = s.renewEvery || 2;
+      syncRenewVisibility(id);
+    }
+  });
+}
+
 function applyLang(){
-  const lang = L();
-  const o = I18N[lang];
-
+  const o = I18N[L()];
   document.getElementById('hdr_sub').textContent = o.hdr_sub;
-  document.getElementById('disclaimer').textContent = o.disclaimer;
+  document.getElementById('hdr_disc').textContent = o.disc;
   document.getElementById('lbl_lang').textContent = o.Dil;
 
   document.getElementById('sec1').textContent = o.sec1;
@@ -1466,16 +1305,13 @@ function applyLang(){
   document.getElementById('lbl_reur').textContent = o.EURget;
 
   document.getElementById('btn_fill_end').textContent = o.FillEnd;
-  document.getElementById('btn_calc').textContent = o.Calc;
-  document.getElementById('btn_reset').textContent = o.Reset;
+  document.getElementById('btn_calc_top').textContent = o.Calc;
+  document.getElementById('btn_reset_top').textContent = o.Reset;
+
   document.getElementById('btn_rates').textContent = o.Fetch;
   document.getElementById('btn_use_manual').textContent = o.Manual;
 
-  document.getElementById('btn_pdf').textContent = o.PDF;
-  document.getElementById('btn_calc2').textContent = o.Calc;
-  document.getElementById('btn_reset2').textContent = o.Reset;
-
-  document.getElementById('sec_alloc').innerHTML = o.AllocTitle + ' <span class="pill" id="pillInfo">hazır</span>';
+  document.getElementById('sec_alloc').innerHTML = `${o.AllocTitle} <span class="pill" id="pillInfo">hazır</span>`;
   document.getElementById('lbl_headline').textContent = o.Headline;
 
   document.getElementById('btn_add').textContent = o.Add;
@@ -1506,23 +1342,20 @@ function applyLang(){
   document.getElementById('hdr_calc').textContent = o.hdr_calc;
   document.getElementById('hdr_tax').textContent = o.hdr_tax;
   document.getElementById('hdr_p').textContent = o.hdr_p;
-  document.getElementById('hdr_fv').textContent = o.hdr_fv;
+  document.getElementById('hdr_fv_gross').textContent = o.hdr_fv_g;
   document.getElementById('hdr_taxamt').textContent = o.hdr_taxamt;
+  document.getElementById('hdr_fv_net').textContent = o.hdr_fv_n;
   document.getElementById('hdr_net').textContent = o.hdr_net;
 
-  document.getElementById('pd_title').textContent = o.PieSel;
-  document.getElementById('pd_hint').textContent = o.PieHint;
+  document.getElementById('btn_calc').textContent = o.Calc;
+  document.getElementById('btn_reset').textContent = o.Reset;
+  document.getElementById('btn_pdf').textContent = o.PDF;
 
-  document.getElementById('lbl_pl_tl').textContent = (lang==='en') ? 'Net P/L (TRY)' : 'Net P/L (TL)';
-  document.getElementById('lbl_pl_usd').textContent = (lang==='en') ? 'Net P/L (USD)' : 'Net P/L (USD)';
-  document.getElementById('lbl_pl_eur').textContent = (lang==='en') ? 'Net P/L (EUR)' : 'Net P/L (EUR)';
-  document.getElementById('lbl_pl_xau').textContent = (lang==='en') ? 'Net P/L (Gold g)' : 'Net P/L (Altın g)';
+  document.getElementById('pieTapInfo').innerHTML =
+    `<b>${L()==='en'?'Tip':'İpucu'}:</b> ${T('pieHint')}`;
 
   setAmtHeader();
   autoFillEndRates();
-
-  // Pie detail re-render (if any)
-  setPieDetail(null);
 }
 
 function resetAll(){
@@ -1530,7 +1363,7 @@ function resetAll(){
   document.getElementById('total_ccy').value='USD';
   document.getElementById('report_ccy').value='TL';
   document.getElementById('tenor_type').value='DAYS';
-  document.getElementById('tenor_val').value='183';
+  document.getElementById('tenor_val').value='32';
 
   document.getElementById('xautry_g').value='0';
   document.getElementById('usdtry').value='0';
@@ -1550,45 +1383,268 @@ function resetAll(){
   document.getElementById('rate_status').textContent='';
   document.getElementById('warn').textContent='';
   document.getElementById('risk_badges').textContent='';
-
   document.getElementById('headline_pl').textContent='-';
   document.getElementById('headline_detail').textContent='';
 
-  ['kpi_used','kpi_left','kpi_start_report','kpi_end_report','kpi_pl_report','kpi_tax_report',
-   'sum_start_pr','sum_start_rp','sum_end_pr','sum_end_rp',
-   'pl_tl','pl_usd','pl_eur','pl_xau'
+  [
+    'kpi_used','kpi_left','kpi_start_report','kpi_end_report','kpi_pl_report','kpi_tax_report',
+    'sum_start_pr','sum_start_rp','sum_end_pr','sum_end_rp',
+    'pl_tl','pl_usd','pl_eur','pl_xau'
   ].forEach(id=>document.getElementById(id).textContent='-');
 
   document.getElementById('allocBody').innerHTML='';
-  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true });
-  addRow({ amt:0, ccy:'TL', prod:'FUND', rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 });
+  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'SIMPLE', taxAuto:true });
+  addRow({ amt:0, ccy:'TL', prod:'FUND', rate:45, method:'SIMPLE', taxAuto:false, tax:0 });
 
-  // clear pie
+  document.getElementById('pieLegend').innerHTML='';
   const canvas = document.getElementById('pieStart');
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  setPieDetail(null);
 
   setAmtHeader();
   autoFillEndRates();
 }
 
-/* =========================
-   PDF / Print
-========================= */
-function exportPDF(){
-  // iPad: Share -> Print -> Save as PDF
-  window.print();
+function calc(){
+  const warn = document.getElementById('warn');
+  warn.textContent = '';
+  autoFillEndRates();
+  ensureDefaultAllocationIfEmpty();
+
+  const principalAmt = parseAmount(document.getElementById('total_amount').value);
+  const principalCcy = document.getElementById('total_ccy').value;
+  const reportCcy = document.getElementById('report_ccy').value;
+
+  if(principalAmt <= 0){ warn.textContent = T('warn_amt'); return; }
+
+  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
+  if(rows.length === 0){ warn.textContent = T('warn_row'); return; }
+
+  const days = globalDays();
+  if(days <= 0){ warn.textContent = T('warn_tenor'); return; }
+
+  let usedPrincipal = 0;
+  let startTotalReport = 0;
+  let endTotalReport = 0;
+  let endTotalPrincipal = 0;
+  let totalTaxReport = 0;
+
+  const byKeyStartReport = {};
+
+  for(const tr of rows){
+    const id = tr.getAttribute('data-id');
+
+    const amtBase = clamp(parseAmount(document.getElementById('amt_'+id).value));
+    const prod = document.getElementById('prod_'+id).value;
+    const targetCcy = document.getElementById('ccy_'+id).value;
+    const rate = Number(document.getElementById('rate_'+id).value)||0;
+    const method = document.getElementById('method_'+id).value;
+
+    const taxAuto = !!document.getElementById('taxAuto_'+id)?.checked;
+    let taxPct = Number(document.getElementById('tax_'+id).value)||0;
+    if(taxAuto){
+      taxPct = suggestTaxPct(prod, targetCcy, days);
+      document.getElementById('tax_'+id).value = taxPct;
+    }
+
+    usedPrincipal += amtBase;
+
+    const r1 = fxRate(principalCcy, targetCcy, 'start');
+    if(r1 === null){ warn.textContent = T('warn_start'); return; }
+    const P_target = amtBase * r1;
+
+    const rStartToReport = fxRate(targetCcy, reportCcy, 'start');
+    if(rStartToReport === null){ warn.textContent = T('warn_start'); return; }
+    const P_report_start = P_target * rStartToReport;
+    startTotalReport += P_report_start;
+
+    const key = `${prod}_${targetCcy}`;
+    byKeyStartReport[key] = (byKeyStartReport[key]||0) + P_report_start;
+
+    let FV_target_gross = 0;
+
+    if(method === 'DAILY_COMPOUND'){
+      FV_target_gross = fvDailyCompound(P_target, rate, days);
+    } else if(method === 'RENEW'){
+      const renewEvery = Number(document.getElementById('renewEvery_'+id)?.value)||2;
+
+      const r = (rate/100);
+      let remaining = Math.max(0, Math.floor(days));
+      let principalSeg = P_target;
+      while(remaining > 0){
+        const d = Math.min(Math.max(1, Math.floor(renewEvery)), remaining);
+        principalSeg = principalSeg * (1 + r*(d/365));
+        remaining -= d;
+      }
+      FV_target_gross = principalSeg;
+
+      const FV_net = fvRenewWithTax(P_target, rate, days, renewEvery, taxPct);
+      const tax_total = FV_target_gross - FV_net;
+      const netGain = FV_net - P_target;
+
+      const rBack_end = fxRate(targetCcy, principalCcy, 'end');
+      if(rBack_end === null){ warn.textContent = T('warn_end'); return; }
+      endTotalPrincipal += FV_net * rBack_end;
+
+      const rEndToReport = fxRate(targetCcy, reportCcy, 'end');
+      if(rEndToReport === null){ warn.textContent = T('warn_end'); return; }
+      endTotalReport += FV_net * rEndToReport;
+      totalTaxReport += tax_total * rEndToReport;
+
+      document.getElementById('p_'+id).textContent = fmtMoney(P_target, targetCcy);
+      document.getElementById('fv_g_'+id).textContent = fmtMoney(FV_target_gross, targetCcy);
+      document.getElementById('taxamt_'+id).textContent = fmtMoney(tax_total, targetCcy);
+      document.getElementById('fv_n_'+id).textContent = fmtMoney(FV_net, targetCcy);
+      document.getElementById('net_'+id).textContent = fmtMoney(netGain, targetCcy);
+      continue;
+    } else {
+      FV_target_gross = fvSimple(P_target, rate, days);
+    }
+
+    const grossGain_target = FV_target_gross - P_target;
+    const tax_target = grossGain_target * (taxPct/100);
+    const netGain_target = grossGain_target - tax_target;
+    const FV_target_net = P_target + netGain_target;
+
+    const rBack_end = fxRate(targetCcy, principalCcy, 'end');
+    if(rBack_end === null){ warn.textContent = T('warn_end'); return; }
+    endTotalPrincipal += FV_target_net * rBack_end;
+
+    const rEndToReport = fxRate(targetCcy, reportCcy, 'end');
+    if(rEndToReport === null){ warn.textContent = T('warn_end'); return; }
+    endTotalReport += FV_target_net * rEndToReport;
+
+    totalTaxReport += tax_target * rEndToReport;
+
+    document.getElementById('p_'+id).textContent = fmtMoney(P_target, targetCcy);
+    document.getElementById('fv_g_'+id).textContent = fmtMoney(FV_target_gross, targetCcy);
+    document.getElementById('taxamt_'+id).textContent = fmtMoney(tax_target, targetCcy);
+    document.getElementById('fv_n_'+id).textContent = fmtMoney(FV_target_net, targetCcy);
+    document.getElementById('net_'+id).textContent = fmtMoney(netGain_target, targetCcy);
+  }
+
+  document.getElementById('kpi_used').textContent = fmtMoney(usedPrincipal, principalCcy);
+  document.getElementById('kpi_left').textContent = fmtMoney(principalAmt - usedPrincipal, principalCcy);
+  if(usedPrincipal > principalAmt + 1e-9) warn.textContent = T('warn_alloc');
+
+  document.getElementById('kpi_start_report').textContent = fmtMoney(startTotalReport, reportCcy);
+  document.getElementById('kpi_end_report').textContent = fmtMoney(endTotalReport, reportCcy);
+
+  const plReport = endTotalReport - startTotalReport;
+  document.getElementById('kpi_pl_report').textContent = fmtMoney(plReport, reportCcy);
+  document.getElementById('kpi_tax_report').textContent = fmtMoney(totalTaxReport, reportCcy);
+
+  const plPrincipal = endTotalPrincipal - principalAmt;
+  document.getElementById('headline_pl').textContent = fmtMoney(plPrincipal, principalCcy);
+  const d = globalDays();
+  document.getElementById('headline_detail').textContent =
+    (L()==='en'
+      ? `Start: ${fmtMoney(principalAmt, principalCcy)} → End: ${fmtMoney(endTotalPrincipal, principalCcy)} (Tenor: ${d.toFixed(0)} days)`
+      : `Başlangıç: ${fmtMoney(principalAmt, principalCcy)} → Vade Sonu: ${fmtMoney(endTotalPrincipal, principalCcy)} (Global vade: ${d.toFixed(0)} gün)`);
+
+  document.getElementById('pillInfo').textContent = `Principal: ${principalCcy} | Rapor: ${reportCcy}`;
+
+  document.getElementById('sum_start_pr').textContent = fmtMoney(principalAmt, principalCcy);
+  document.getElementById('sum_start_rp').textContent = fmtMoney(startTotalReport, reportCcy);
+  document.getElementById('sum_end_pr').textContent = fmtMoney(endTotalPrincipal, principalCcy);
+  document.getElementById('sum_end_rp').textContent = fmtMoney(endTotalReport, reportCcy);
+
+  function plIn(ccy){
+    const rStart = fxRate(principalCcy, ccy, 'start');
+    const rEnd = fxRate(principalCcy, ccy, 'end');
+    if(rStart==null || rEnd==null) return null;
+    const startC = principalAmt * rStart;
+    const endC = endTotalPrincipal * rEnd;
+    return endC - startC;
+  }
+  const pTL = plIn('TL'), pUSD = plIn('USD'), pEUR = plIn('EUR'), pXAU = plIn('XAUg');
+  document.getElementById('pl_tl').textContent = (pTL!=null) ? fmtMoney(pTL,'TL') : '-';
+  document.getElementById('pl_usd').textContent = (pUSD!=null) ? fmtMoney(pUSD,'USD') : '-';
+  document.getElementById('pl_eur').textContent = (pEUR!=null) ? fmtMoney(pEUR,'EUR') : '-';
+  document.getElementById('pl_xau').textContent = (pXAU!=null) ? (fmtPlain(pXAU)+' XAUg') : '-';
+
+  const prodName = I18N[L()].prod;
+  const badgeEl = document.getElementById('risk_badges');
+
+  const entries = Object.keys(byKeyStartReport)
+    .map(k => ({k, v: byKeyStartReport[k]}))
+    .filter(x => x.v > 0)
+    .sort((a,b)=>b.v-a.v);
+
+  if(startTotalReport > 0 && entries.length){
+    const items = entries.map(x=>{
+      const pct = (x.v/startTotalReport*100).toFixed(1);
+      const parts = x.k.split('_');
+      const p = prodName[parts[0]] || parts[0];
+      const c = parts[1] || '';
+      return `<span class="pill">${p} / ${c}: ${pct}%</span>`;
+    }).join(' ');
+    badgeEl.innerHTML = `<div class="mutedLine">${T('mixNote')}</div> ${items}`;
+  } else {
+    badgeEl.textContent = '';
+  }
+
+  const labels = entries.map(x=>{
+    const parts = x.k.split('_');
+    const p = prodName[parts[0]] || parts[0];
+    const c = parts[1] || '';
+    return `${p} / ${c}`;
+  });
+  const vals = entries.map(x=>x.v);
+
+  drawDonutInteractive(document.getElementById('pieStart'), labels, vals);
+
+  const legend = labels.map((l,i)=>{
+    const pct = (vals[i]/(startTotalReport||1))*100;
+    return `<div style="margin:6px 0;"><b>${l}</b>: ${pct.toFixed(1)}%</div>`;
+  }).join('');
+  document.getElementById('pieLegend').innerHTML = legend;
+
+  document.getElementById('pieTapInfo').innerHTML =
+    `<b>${L()==='en'?'Tip':'İpucu'}:</b> ${T('pieHint')}`;
 }
 
-/* =========================
-   Wire
-========================= */
+(function bindDonutTap(){
+  const canvas = document.getElementById('pieStart');
+  const infoEl = document.getElementById('pieTapInfo');
+  if(!canvas) return;
+
+  function handleTap(clientX, clientY){
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const hit = donutHitTest(canvas, x, y);
+
+    const total = (PIE_STATE.vals||[]).reduce((a,b)=>a+b,0) || 1;
+
+    if(hit.type === 'center'){
+      const html = productOnlySummaryHTML();
+      infoEl.innerHTML = `<b>${L()==='en'?'Product summary':'Ürün özeti'}:</b>${html ? '<div style="margin-top:6px;">'+html+'</div>' : ''}`;
+      return;
+    }
+    if(hit.type === 'slice'){
+      const i = hit.index;
+      const lab = PIE_STATE.labels[i];
+      const val = PIE_STATE.vals[i];
+      const pct = (val/total*100).toFixed(1);
+      infoEl.innerHTML = `<b>${lab}</b><div style="margin-top:6px;">${pct}%</div>`;
+      return;
+    }
+    infoEl.innerHTML = `<b>${L()==='en'?'Tip':'İpucu'}:</b> ${T('pieHint')}`;
+  }
+
+  canvas.addEventListener('click', (e)=>handleTap(e.clientX, e.clientY));
+  canvas.addEventListener('touchstart', (e)=>{
+    const t = e.touches && e.touches[0];
+    if(t) handleTap(t.clientX, t.clientY);
+  }, {passive:true});
+})();
+
+/* WIRE */
+document.getElementById('btn_calc_top').addEventListener('click', calc);
+document.getElementById('btn_reset_top').addEventListener('click', resetAll);
 document.getElementById('btn_calc').addEventListener('click', calc);
 document.getElementById('btn_reset').addEventListener('click', resetAll);
-document.getElementById('btn_calc2').addEventListener('click', calc);
-document.getElementById('btn_reset2').addEventListener('click', resetAll);
-
 document.getElementById('btn_pdf').addEventListener('click', exportPDF);
 
 document.getElementById('btn_rates').addEventListener('click', fetchRatesAll);
@@ -1602,9 +1658,8 @@ document.getElementById('btn_use_manual').addEventListener('click', function(){
 });
 
 document.getElementById('btn_add').addEventListener('click', function(){
-  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true });
+  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'SIMPLE', taxAuto:true });
 });
-
 document.getElementById('btn_s1').addEventListener('click', scenario1);
 document.getElementById('btn_s2').addEventListener('click', scenario2);
 document.getElementById('btn_s3').addEventListener('click', scenario3);
@@ -1612,7 +1667,12 @@ document.getElementById('btn_s4').addEventListener('click', scenario4);
 document.getElementById('btn_s5').addEventListener('click', scenario5);
 
 document.getElementById('total_ccy').addEventListener('change', setAmtHeader);
-document.getElementById('lang').addEventListener('change', applyLang);
+
+document.getElementById('lang').addEventListener('change', function(){
+  const snaps = snapshotRows();
+  applyLang();
+  restoreRows(snaps);
+});
 
 document.getElementById('end_mode').addEventListener('change', autoFillEndRates);
 document.getElementById('tenor_type').addEventListener('change', autoFillEndRates);
@@ -1622,13 +1682,7 @@ document.getElementById('rusd').addEventListener('input', autoFillEndRates);
 document.getElementById('reur').addEventListener('input', autoFillEndRates);
 document.getElementById('gold_exp').addEventListener('input', autoFillEndRates);
 
-// Pie interactive
-document.getElementById('pieStart').addEventListener('click', function(e){
-  const s = pickSliceFromEvent(this, e);
-  setPieDetail(s);
-});
-
-// init
+/* INIT */
 applyLang();
 resetAll();
 </script>
