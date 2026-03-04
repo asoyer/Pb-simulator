@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="tr">
 <head>
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PB Allocation Engine – Roadshow</title>
@@ -34,6 +33,15 @@
     .hdrTop{display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
     h1{margin:0; font-size:16px; letter-spacing:.2px}
     .sub{margin-top:6px; color:var(--muted); font-size:12.5px; line-height:1.35}
+    .disc{
+      margin-top:8px;
+      font-size:11.5px;
+      color:rgba(91,103,119,.92);
+      border:1px dashed rgba(230,233,242,.9);
+      background:rgba(255,255,255,.7);
+      padding:8px 10px;
+      border-radius:12px;
+    }
     .hdrRight{display:flex; gap:10px; align-items:center;}
     .miniSelect{
       display:flex; align-items:center; gap:8px;
@@ -99,13 +107,11 @@
     table{
       width:100%;
       border-collapse:collapse;
-      min-width:1180px;
+      min-width:1260px;
       font-size:12.5px;
     }
     th, td{padding:9px 6px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
     th{font-size:12px; color:var(--muted); font-weight:600}
-
-    /* tablo içi daha dar */
     .tableWrap input, .tableWrap select{padding:9px 9px; border-radius:12px; font-size:12.5px;}
 
     .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
@@ -124,39 +130,33 @@
     }
     .inlineWarn{margin-top:10px; font-size:12px; color:var(--danger)}
     .mutedLine{margin-top:6px; font-size:12px; color:var(--muted)}
-
     .miniBtn{padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:12px;}
 
-    /* Kolonlar (daraltıldı) */
     .wAmt{min-width:98px}
     .wProd{min-width:150px}
     .wCcy{min-width:78px}
-    .wRate{min-width:72px}
-    .wCalc{min-width:170px}  /* yenileme satırı için biraz nefes */
+    .wRate{min-width:74px}
+    .wCalc{min-width:200px}
     .wTax{min-width:96px}
     .wTaxAmt{min-width:140px}
+    .wEndGross{min-width:150px}
+    .wEndNet{min-width:150px}
     .wBtn{min-width:64px}
 
     .taxWrap{display:flex; gap:8px; align-items:center;}
     .taxWrap label{display:flex; gap:6px; align-items:center; margin:0; font-size:12px; color:var(--muted); white-space:nowrap;}
     .taxWrap input[type="checkbox"]{width:auto; padding:0; margin:0; transform: translateY(1px);}
 
-    /* yenilemeli mini kontrol */
-    .renewWrap{
-      display:flex; gap:8px; align-items:center;
-      margin-top:6px;
+    .renewRow{
+      display:flex; align-items:center; gap:10px; margin-top:6px; flex-wrap:wrap;
+      color:var(--muted); font-size:12px;
     }
-    .renewWrap label{
-      display:flex; gap:6px; align-items:center;
-      margin:0; font-size:12px; color:var(--muted); white-space:nowrap;
-    }
-    .renewWrap input[type="checkbox"]{width:auto; padding:0; margin:0; transform: translateY(1px);}
-    .renewWrap input[type="number"]{
-      width:76px; padding:7px 8px; border-radius:10px; border:1px solid var(--line);
-      font-size:12.5px;
+    .renewRow label{margin:0; display:flex; align-items:center; gap:6px; font-size:12px;}
+    .renewRow input[type="checkbox"]{width:auto; transform: translateY(1px);}
+    .renewRow input[type="number"]{
+      width:86px; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:#fff; font-size:12.5px;
     }
 
-    /* alt alan: tek pie + sağda toplam değerler */
     .bottomGrid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px;}
     .chartCard{border:1px solid var(--line); border-radius:14px; background:#fff; padding:12px;}
     .chartTitle{font-size:12px;color:var(--muted);margin-bottom:8px}
@@ -164,7 +164,48 @@
     canvas{width:280px; height:220px; border-radius:14px; background:#fff;}
     @media (max-width: 980px){
       .bottomGrid{grid-template-columns: 1fr;}
-      table{min-width:1120px;}
+      table{min-width:1220px;}
+    }
+
+    /* Net P/L bloğunu ayırdık */
+    .plBlock{
+      margin-top:12px;
+      border-top:1px solid var(--line);
+      padding-top:12px;
+    }
+    .plTitle{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .plDot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(18,58,99,.88);
+      display:inline-block;
+    }
+
+    /* Sticky alt kontrol */
+    .bottomControls{
+      position:sticky;
+      bottom:10px;
+      z-index:20;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      padding:12px;
+      background:rgba(255,255,255,0.90);
+      backdrop-filter:blur(6px);
+      border:1px solid rgba(230,233,242,.9);
+      border-radius:14px;
+      margin-top:16px;
+    }
+    .bottomControls button{
+      padding:14px 26px;
+      font-size:16px;
+      border-radius:12px;
     }
   </style>
 </head>
@@ -173,8 +214,11 @@
 <header>
   <div class="hdrTop">
     <div>
-      <h1 id="hdr_title">PB Allocation Engine <span class="pill" id="pill_build">Build: v99</span></h1>
+      <h1 id="hdr_title">PB Allocation Engine <span class="pill" id="pill_build">Build: v100</span></h1>
       <div class="sub" id="hdr_sub">Spot + Forward yaklaşımı ile vade sonu kurlar → giriş PB’ye dönüşte Net P/L.</div>
+      <div class="disc" id="hdr_disc">
+        Bu çalışma bilgilendirme amaçlıdır; hesaplamalar yaklaşık olup piyasa koşulları, fiyatlama, vergi oranları ve ürün kuralları nedeniyle farklılık gösterebilir.
+      </div>
     </div>
     <div class="hdrRight">
       <div class="miniSelect">
@@ -355,8 +399,9 @@
             <th class="wCalc" id="hdr_calc">Hesap</th>
             <th class="wTax" id="hdr_tax">Stopaj</th>
             <th id="hdr_p">Anapara (Hedef PB)</th>
-            <th id="hdr_fv">Vade Sonu (Hedef PB)</th>
+            <th class="wEndGross" id="hdr_end_gross">Vade Sonu Brüt (Hedef PB)</th>
             <th class="wTaxAmt" id="hdr_taxamt">Stopaj Tutarı (Hedef PB)</th>
+            <th class="wEndNet" id="hdr_end_net">Vade Sonu Net (Hedef PB)</th>
             <th id="hdr_net">Net Kazanç (Hedef PB)</th>
             <th class="wBtn"></th>
           </tr>
@@ -398,7 +443,6 @@
       </div>
     </div>
 
-    <!-- ALT: solda pie, sağda değer setleri -->
     <div class="bottomGrid">
       <div class="chartCard">
         <div class="chartTitle" id="lbl_pie_title">Dağılım (Başlangıç – Rapor PB)</div>
@@ -435,31 +479,39 @@
           </div>
         </div>
 
-        <div class="kpi">
-          <div class="box">
-            <div class="t">Net P/L (TL)</div>
-            <div class="v" id="pl_tl">-</div>
+        <div class="plBlock">
+          <div class="plTitle" id="lbl_pl_block"><span class="plDot"></span>Net P/L (4 Para Birimi)</div>
+          <div class="kpi" style="margin-top:0;">
+            <div class="box">
+              <div class="t" id="lbl_pl_tl">Net P/L (TL)</div>
+              <div class="v" id="pl_tl">-</div>
+            </div>
+            <div class="box">
+              <div class="t" id="lbl_pl_usd">Net P/L (USD)</div>
+              <div class="v" id="pl_usd">-</div>
+            </div>
           </div>
-          <div class="box">
-            <div class="t">Net P/L (USD)</div>
-            <div class="v" id="pl_usd">-</div>
+          <div class="kpi">
+            <div class="box">
+              <div class="t" id="lbl_pl_eur">Net P/L (EUR)</div>
+              <div class="v" id="pl_eur">-</div>
+            </div>
+            <div class="box">
+              <div class="t" id="lbl_pl_xau">Net P/L (Altın g)</div>
+              <div class="v" id="pl_xau">-</div>
+            </div>
           </div>
-        </div>
-        <div class="kpi">
-          <div class="box">
-            <div class="t">Net P/L (EUR)</div>
-            <div class="v" id="pl_eur">-</div>
-          </div>
-          <div class="box">
-            <div class="t">Net P/L (Altın g)</div>
-            <div class="v" id="pl_xau">-</div>
-          </div>
-        </div>
 
-        <div class="small" id="txt_pl_note">
-          Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).
+          <div class="small" id="txt_pl_note">
+            Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).
+          </div>
         </div>
       </div>
+    </div>
+
+    <div class="bottomControls">
+      <button class="primary" id="btn_calc_bottom" onclick="calc()">Hesapla</button>
+      <button class="ghost" id="btn_reset_bottom" onclick="resetAll()">Sıfırla</button>
     </div>
 
     <div id="warn" class="inlineWarn"></div>
@@ -476,6 +528,7 @@
 const I18N = {
   tr: {
     hdr_sub: "Spot + Forward yaklaşımı ile vade sonu kurlar → giriş PB’ye dönüşte Net P/L.",
+    hdr_disc:"Bu çalışma bilgilendirme amaçlıdır; hesaplamalar yaklaşık olup piyasa koşulları, fiyatlama, vergi oranları ve ürün kuralları nedeniyle farklılık gösterebilir.",
     Dil:"Dil",
     sec1:"1) Müşteri Varlığı",
     sec2:"2) Başlangıç Kurları (Spot)",
@@ -515,6 +568,8 @@ const I18N = {
     SumStartRp:"Başlangıç (Rapor PB)",
     SumEndPr:"Vade Sonu Toplam (Giriş PB)",
     SumEndRp:"Vade Sonu Toplam (Rapor PB)",
+    PLBlock:"Net P/L (4 Para Birimi)",
+    PLTL:"Net P/L (TL)", PLUSD:"Net P/L (USD)", PLEUR:"Net P/L (EUR)", PLXAU:"Net P/L (Altın g)",
     PLNote:"Not: Rapor PB Net P/L = Vade sonu toplam − başlangıç toplam (aynı baz).",
     hdr_amt:(ccy)=>`Tutar (Giriş PB – ${ccy})`,
     hdr_prod:"Ürün",
@@ -523,8 +578,9 @@ const I18N = {
     hdr_calc:"Hesap",
     hdr_tax:"Stopaj",
     hdr_p:"Anapara (Hedef PB)",
-    hdr_fv:"Vade Sonu (Hedef PB)",
+    hdr_end_gross:"Vade Sonu Brüt (Hedef PB)",
     hdr_taxamt:"Stopaj Tutarı (Hedef PB)",
+    hdr_end_net:"Vade Sonu Net (Hedef PB)",
     hdr_net:"Net Kazanç (Hedef PB)",
     warn_amt:"Toplam varlık 0 olamaz.",
     warn_row:"En az 1 satır ekle.",
@@ -544,15 +600,14 @@ const I18N = {
     mixNote:"Dağılım (ürün bazlı, başlangıç kurlarıyla):",
     scenario:{ s1:"Dengeli", s2:"Koruma", s3:"Büyüme (Riskli)", s4:"FX Hedge", s5:"DPM Ağırlıklı" },
     method:{ daily:"Günlük (bileşik)", simple:"Basit (bankacılık)" },
+    renew:{ on:"Yenilemeli", period:"Periyot", day:"gün" },
     prod:{ TERM:"Vadeli Mevduat", FUND:"Yatırım Fonu", SUKUK:"Sukuk", DPM:"DPM" },
     del:"Sil",
-    auto:"Auto",
-    renew:"Yenilemeli",
-    period:"Periyot",
-    day:"gün"
+    auto:"Auto"
   },
   en: {
     hdr_sub: "Spot + Forward approach for end FX → Net P/L back in principal currency.",
+    hdr_disc:"For information purposes only; calculations are approximate and may differ due to market conditions, pricing, tax rates, and product rules.",
     Dil:"Language",
     sec1:"1) Client Assets",
     sec2:"2) Spot Rates (Start)",
@@ -592,6 +647,8 @@ const I18N = {
     SumStartRp:"Start (Report)",
     SumEndPr:"End Total (Principal)",
     SumEndRp:"End Total (Report)",
+    PLBlock:"Net P/L (4 Currencies)",
+    PLTL:"Net P/L (TRY)", PLUSD:"Net P/L (USD)", PLEUR:"Net P/L (EUR)", PLXAU:"Net P/L (Gold g)",
     PLNote:"Note: Report P/L = end total − start total (same base).",
     hdr_amt:(ccy)=>`Amount (Principal – ${ccy})`,
     hdr_prod:"Product",
@@ -600,8 +657,9 @@ const I18N = {
     hdr_calc:"Method",
     hdr_tax:"Withholding",
     hdr_p:"Principal (Target)",
-    hdr_fv:"End Value (Target)",
+    hdr_end_gross:"End Gross (Target)",
     hdr_taxamt:"Withholding Amount (Target)",
+    hdr_end_net:"End Net (Target)",
     hdr_net:"Net Gain (Target)",
     warn_amt:"Total amount cannot be 0.",
     warn_row:"Add at least one row.",
@@ -620,13 +678,11 @@ const I18N = {
     manualBad:"Manual rates missing.",
     mixNote:"Mix (by product, start rates):",
     scenario:{ s1:"Balanced", s2:"Protection", s3:"Growth (Risk)", s4:"FX Hedge", s5:"DPM Focus" },
-    method:{ daily:"Daily (comp.)", simple:"Simple (bank)" },
+    method:{ daily:"Daily (comp.)", simple:"Simple (banking)" },
+    renew:{ on:"Rollover", period:"Period", day:"days" },
     prod:{ TERM:"Term Deposit", FUND:"Fund", SUKUK:"Sukuk", DPM:"DPM" },
     del:"Del",
-    auto:"Auto",
-    renew:"Rollover",
-    period:"Period",
-    day:"day"
+    auto:"Auto"
   }
 };
 function L(){ return document.getElementById('lang').value || 'tr'; }
@@ -642,19 +698,12 @@ function T(key){
 function parseAmount(str){
   if(!str) return 0;
   let s = String(str).trim().replace(/\s/g,'');
-  // TR style: 1.000.000,50
-  if(s.includes(',') && s.includes('.')){
-    // assume dots thousands, comma decimals
-    s = s.replace(/\./g,'').replace(',', '.');
-  } else if(s.includes(',')){
-    // if comma decimals
+  if(s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if(s.includes(',')){
     const parts = s.split(',');
     if(parts.length===2 && parts[1].length<=2) s = parts[0].replace(/\./g,'') + '.' + parts[1];
     else s = s.replace(/,/g,'');
-  } else {
-    // dots as thousands
-    s = s.replace(/\./g,'');
-  }
+  } else s = s.replace(/\./g,'');
   const n = Number(s);
   return isFinite(n) ? n : 0;
 }
@@ -667,7 +716,6 @@ function fmtPlain(n){
   return new Intl.NumberFormat('tr-TR', { maximumFractionDigits:2 }).format(n);
 }
 function clamp(x){ return Math.max(0, Number(x)||0); }
-
 function setAmtHeader(){
   const ccy = document.getElementById('total_ccy').value;
   document.getElementById('hdr_amt').textContent = I18N[L()].hdr_amt(ccy);
@@ -684,7 +732,7 @@ function globalDays(){
 }
 
 /* =========================
-   Rates
+   Rates + FX
 ========================= */
 function getStartRates(){
   return {
@@ -709,8 +757,6 @@ function getEndRatesResolved(){
     xautry_g: xautry_g_end>0 ? xautry_g_end : s.xautry_g
   };
 }
-
-// FX conversion uses TRY as bridge; supports TL, USD, EUR, XAUg
 function fxRate(from, to, when){
   if(from === to) return 1;
   const r = (when === 'end') ? getEndRatesResolved() : getStartRates();
@@ -737,7 +783,6 @@ function fxRate(from, to, when){
   return a*b;
 }
 
-// Fetch spot rates (Trunçgil + fallback)
 async function fetchRatesAll(){
   const status = document.getElementById('rate_status');
   status.textContent = (L()==='en') ? 'Fetching rates…' : 'Kurlar çekiliyor…';
@@ -779,7 +824,6 @@ async function fetchRatesAll(){
   }
 }
 
-// Forward logic for END rates
 function autoFillEndRates(){
   const mode = document.getElementById('end_mode').value;
   const note = document.getElementById('end_note');
@@ -828,39 +872,6 @@ function fvDailyCompound(P, annualPct, days){
   return P * Math.pow(1 + r/365, days);
 }
 
-/**
- * Rollover engine:
- * - Uses "simple bank" accrual per period
- * - Withholding is applied at each rollover (period end), since instrument is assumed to mature.
- * - Any remaining tail days are treated as a final rollover (also taxed).
- */
-function fvRolloverWithTax(P0, annualPct, totalDays, rollDays, taxPct){
-  const r = (Number(annualPct)||0)/100;
-  const t = (Number(taxPct)||0)/100;
-  let P = Number(P0)||0;
-  let taxTotal = 0;
-  let dLeft = Math.max(0, Number(totalDays)||0);
-  const step = Math.max(1, Math.floor(Number(rollDays)||0)); // at least 1 day
-
-  if(P<=0 || dLeft<=0) return { fv:P, tax:0 };
-
-  while(dLeft > 0){
-    const d = Math.min(step, dLeft);
-    const gross = P * r * (d/365);
-    const tax = gross * t;
-    const net = gross - tax;
-
-    taxTotal += tax;
-    P = P + net;
-
-    dLeft -= d;
-    // safety guard
-    if(taxTotal > 1e18) break;
-  }
-
-  return { fv:P, tax:taxTotal };
-}
-
 /* =========================
    Stopaj suggestion
 ========================= */
@@ -875,7 +886,7 @@ function suggestTaxPct(prod, targetCcy, days){
 }
 
 /* =========================
-   Donut chart (hi-res)
+   Donut chart
 ========================= */
 function drawDonut(canvas, labels, values){
   const ctx = canvas.getContext('2d');
@@ -932,10 +943,7 @@ function drawDonut(canvas, labels, values){
    Rows
 ========================= */
 const PRODUCT_OPTIONS = [
-  { val:'TERM' },
-  { val:'FUND' },
-  { val:'SUKUK'},
-  { val:'DPM'  }
+  { val:'TERM' }, { val:'FUND' }, { val:'SUKUK'}, { val:'DPM' }
 ];
 
 function rowTemplate(id){
@@ -948,9 +956,10 @@ function rowTemplate(id){
   const mSimple = I18N[L()].method.simple;
   const delTxt = I18N[L()].del;
   const autoTxt = I18N[L()].auto;
-  const renewTxt = I18N[L()].renew;
-  const periodTxt = I18N[L()].period;
-  const dayTxt = I18N[L()].day;
+
+  const renewOn = I18N[L()].renew.on;
+  const renewPeriod = I18N[L()].renew.period;
+  const renewDay = I18N[L()].renew.day;
 
   return ''+
     '<tr data-id="'+id+'">'+
@@ -967,14 +976,14 @@ function rowTemplate(id){
       '<td class="wRate"><input type="number" step="0.01" id="rate_'+id+'" value="0"></td>'+
       '<td class="wCalc">'+
         '<select id="method_'+id+'">'+
-          '<option value="SIMPLE" selected>'+mSimple+'</option>'+
           '<option value="DAILY_COMPOUND">'+mDaily+'</option>'+
+          '<option value="SIMPLE" selected>'+mSimple+'</option>'+
         '</select>'+
-        '<div class="renewWrap">'+
-          '<label><input type="checkbox" id="renew_'+id+'"> '+renewTxt+'</label>'+
-          '<span style="font-size:12px;color:var(--muted)">'+periodTxt+':</span>'+
-          '<input type="number" min="1" step="1" id="renewDays_'+id+'" value="2">'+
-          '<span style="font-size:12px;color:var(--muted)">'+dayTxt+'</span>'+
+        '<div class="renewRow">'+
+          '<label><input type="checkbox" id="renew_'+id+'"> '+renewOn+'</label>'+
+          '<span>'+renewPeriod+':</span>'+
+          '<input type="number" min="1" step="1" id="renew_days_'+id+'" value="2">'+
+          '<span>'+renewDay+'</span>'+
         '</div>'+
       '</td>'+
       '<td class="wTax">'+
@@ -984,8 +993,9 @@ function rowTemplate(id){
         '</div>'+
       '</td>'+
       '<td id="p_'+id+'">-</td>'+
-      '<td id="fv_'+id+'">-</td>'+
+      '<td id="endgross_'+id+'">-</td>'+
       '<td id="taxamt_'+id+'">-</td>'+
+      '<td id="endnet_'+id+'">-</td>'+
       '<td id="net_'+id+'">-</td>'+
       '<td class="wBtn"><button class="miniBtn" onclick="removeRow(\''+id+'\')">'+delTxt+'</button></td>'+
     '</tr>';
@@ -1004,24 +1014,16 @@ function addRow(preset){
   if(preset.tax != null) document.getElementById('tax_'+id).value = preset.tax;
   if(preset.taxAuto != null) document.getElementById('taxAuto_'+id).checked = preset.taxAuto;
 
-  // renew defaults
-  document.getElementById('renew_'+id).checked = !!preset.renew;
-  document.getElementById('renewDays_'+id).value = preset.renewDays != null ? preset.renewDays : 2;
+  if(preset.renew != null) document.getElementById('renew_'+id).checked = preset.renew;
+  if(preset.renewDays != null) document.getElementById('renew_days_'+id).value = preset.renewDays;
 
   applyDefaultsByProduct(id);
 
   document.getElementById('prod_'+id).addEventListener('change', function(){ applyDefaultsByProduct(id); });
+
   document.getElementById('amt_'+id).addEventListener('blur', function(){
     const n = parseAmount(this.value);
     this.value = fmtPlain(n);
-  });
-
-  // UX: renew toggles can optionally force method to SIMPLE to match "bank"
-  document.getElementById('renew_'+id).addEventListener('change', function(){
-    if(this.checked){
-      // Keep dropdown visible but default it to SIMPLE for clarity
-      document.getElementById('method_'+id).value = 'SIMPLE';
-    }
   });
 }
 
@@ -1036,20 +1038,65 @@ function applyDefaultsByProduct(id){
   const methodEl = document.getElementById('method_'+id);
   const r = Number(rateEl.value)||0;
 
-  // B yaklaşımı: default SIMPLE (bank)
   if(prod==='TERM'){
     if(r===0) rateEl.value = 35;
-    methodEl.value = 'SIMPLE';
+    methodEl.value = 'DAILY_COMPOUND';
   } else if(prod==='FUND'){
     if(r===0) rateEl.value = 45;
-    methodEl.value = 'SIMPLE';
+    methodEl.value = 'DAILY_COMPOUND';
   } else if(prod==='SUKUK'){
     if(r===0) rateEl.value = 38;
     methodEl.value = 'SIMPLE';
   } else if(prod==='DPM'){
     if(r===0) rateEl.value = 12;
-    methodEl.value = 'SIMPLE';
+    methodEl.value = 'DAILY_COMPOUND';
   }
+}
+
+/* =========================
+   Rollover math (stopaj each close)
+========================= */
+function computeWithRenewal(P_target, rate, method, daysTotal, taxPct, renewOn, renewDays){
+  const growthFn = (p, d) => (method==='DAILY_COMPOUND') ? fvDailyCompound(p, rate, d) : fvSimple(p, rate, d);
+
+  let P = P_target;
+  let totalTax = 0;
+  let lastGrossEnd = 0;
+
+  if(!renewOn || !renewDays || renewDays <= 0 || renewDays >= daysTotal){
+    const FV_gross = growthFn(P, daysTotal);
+    const grossGain = FV_gross - P;
+    const tax = grossGain * (taxPct/100);
+    const FV_net = FV_gross - tax;
+    totalTax += tax;
+    lastGrossEnd = FV_gross;
+    return { endGross: lastGrossEnd, taxTotal: totalTax, endNet: FV_net };
+  }
+
+  const fullCycles = Math.floor(daysTotal / renewDays);
+  const rem = daysTotal % renewDays;
+
+  for(let i=0;i<fullCycles;i++){
+    const FV_gross = growthFn(P, renewDays);
+    const grossGain = FV_gross - P;
+    const tax = grossGain * (taxPct/100);
+    const FV_net = FV_gross - tax;
+    totalTax += tax;
+    P = FV_net;
+    lastGrossEnd = FV_gross;
+  }
+
+  if(rem > 0){
+    const FV_gross = growthFn(P, rem);
+    const grossGain = FV_gross - P;
+    const tax = grossGain * (taxPct/100);
+    const FV_net = FV_gross - tax;
+    totalTax += tax;
+    lastGrossEnd = FV_gross;
+    return { endGross: lastGrossEnd, taxTotal: totalTax, endNet: FV_net };
+  }
+
+  return { endGross: lastGrossEnd, taxTotal: totalTax, endNet: P };
 }
 
 /* =========================
@@ -1075,13 +1122,11 @@ function calc(){
 
   let usedPrincipal = 0;
 
-  // Totals
   let startTotalReport = 0;
   let endTotalReport = 0;
   let endTotalPrincipal = 0;
   let totalTaxReport = 0;
 
-  // For pie / badges
   const byProductStartReport = { TERM:0, FUND:0, SUKUK:0, DPM:0 };
 
   for(const tr of rows){
@@ -1093,8 +1138,8 @@ function calc(){
     const rate = Number(document.getElementById('rate_'+id).value)||0;
     const method = document.getElementById('method_'+id).value;
 
-    const renewOn = !!document.getElementById('renew_'+id).checked;
-    const renewDays = Math.max(1, Math.floor(Number(document.getElementById('renewDays_'+id).value)||0));
+    const renewOn = document.getElementById('renew_'+id)?.checked ? true : false;
+    const renewDays = Number(document.getElementById('renew_days_'+id).value)||0;
 
     const taxAuto = (document.getElementById('taxAuto_'+id)?.checked) ? true : false;
     let taxPct = Number(document.getElementById('tax_'+id).value)||0;
@@ -1105,66 +1150,40 @@ function calc(){
 
     usedPrincipal += amtBase;
 
-    // principal -> target at START
     const r1 = fxRate(principalCcy, targetCcy, 'start');
     if(r1 === null){ warn.textContent = T('warn_start'); return; }
     const P_target = amtBase * r1;
 
-    // start in report (start FX)
     const rStartToReport = fxRate(targetCcy, reportCcy, 'start');
     if(rStartToReport === null){ warn.textContent = T('warn_start'); return; }
     const P_report_start = P_target * rStartToReport;
     startTotalReport += P_report_start;
     byProductStartReport[prod] = (byProductStartReport[prod]||0) + P_report_start;
 
-    // growth + tax in target
-    let FV_target_net = P_target;
-    let tax_target_total = 0;
+    const out = computeWithRenewal(P_target, rate, method, days, taxPct, renewOn, renewDays);
+    const endGross_target = out.endGross;
+    const tax_target_total = out.taxTotal;
+    const endNet_target = out.endNet;
 
-    if(renewOn){
-      // Rollover: simple per period + tax at each rollover
-      const out = fvRolloverWithTax(P_target, rate, days, renewDays, taxPct);
-      FV_target_net = out.fv;
-      tax_target_total = out.tax;
-    } else {
-      // B default: bank simple (but keep option for daily compound if user explicitly selects)
-      const FV_target_gross = (method === 'DAILY_COMPOUND')
-        ? fvDailyCompound(P_target, rate, days)
-        : fvSimple(P_target, rate, days);
+    const netGain_target = endNet_target - P_target;
 
-      const grossGain_target = FV_target_gross - P_target;
-      const tax_target = grossGain_target * (taxPct/100);
-      const netGain_target = grossGain_target - tax_target;
-
-      tax_target_total = tax_target;
-      FV_target_net = P_target + netGain_target;
-    }
-
-    const netGain_target_total = FV_target_net - P_target;
-
-    // end in principal (end FX)
     const rBack_end = fxRate(targetCcy, principalCcy, 'end');
     if(rBack_end === null){ warn.textContent = T('warn_end'); return; }
-    const end_in_principal = FV_target_net * rBack_end;
-    endTotalPrincipal += end_in_principal;
+    endTotalPrincipal += endNet_target * rBack_end;
 
-    // end in report (end FX)
     const rEndToReport = fxRate(targetCcy, reportCcy, 'end');
     if(rEndToReport === null){ warn.textContent = T('warn_end'); return; }
-    const FV_report_end = FV_target_net * rEndToReport;
-    endTotalReport += FV_report_end;
+    endTotalReport += endNet_target * rEndToReport;
 
-    // tax in report (end FX)
     totalTaxReport += tax_target_total * rEndToReport;
 
-    // write row outputs
     document.getElementById('p_'+id).textContent = fmtMoney(P_target, targetCcy);
-    document.getElementById('fv_'+id).textContent = fmtMoney(FV_target_net, targetCcy);
+    document.getElementById('endgross_'+id).textContent = fmtMoney(endGross_target, targetCcy);
     document.getElementById('taxamt_'+id).textContent = fmtMoney(tax_target_total, targetCcy);
-    document.getElementById('net_'+id).textContent = fmtMoney(netGain_target_total, targetCcy);
+    document.getElementById('endnet_'+id).textContent = fmtMoney(endNet_target, targetCcy);
+    document.getElementById('net_'+id).textContent = fmtMoney(netGain_target, targetCcy);
   }
 
-  // KPIs
   document.getElementById('kpi_used').textContent = fmtMoney(usedPrincipal, principalCcy);
   document.getElementById('kpi_left').textContent = fmtMoney(principalAmt - usedPrincipal, principalCcy);
 
@@ -1179,7 +1198,6 @@ function calc(){
   document.getElementById('kpi_pl_report').textContent = fmtMoney(plReport, reportCcy);
   document.getElementById('kpi_tax_report').textContent = fmtMoney(totalTaxReport, reportCcy);
 
-  // Headline in principal
   const plPrincipal = endTotalPrincipal - principalAmt;
   document.getElementById('headline_pl').textContent = fmtMoney(plPrincipal, principalCcy);
   document.getElementById('headline_detail').textContent =
@@ -1189,13 +1207,11 @@ function calc(){
 
   document.getElementById('pillInfo').textContent = `Principal: ${principalCcy} | Rapor: ${reportCcy}`;
 
-  // Summary boxes (right card)
   document.getElementById('sum_start_pr').textContent = fmtMoney(principalAmt, principalCcy);
   document.getElementById('sum_start_rp').textContent = fmtMoney(startTotalReport, reportCcy);
   document.getElementById('sum_end_pr').textContent = fmtMoney(endTotalPrincipal, principalCcy);
   document.getElementById('sum_end_rp').textContent = fmtMoney(endTotalReport, reportCcy);
 
-  // 3rd set: P/L in TL/USD/EUR/XAUg (principal-based)
   function plIn(ccy){
     const rStart = fxRate(principalCcy, ccy, 'start');
     const rEnd = fxRate(principalCcy, ccy, 'end');
@@ -1210,7 +1226,6 @@ function calc(){
   document.getElementById('pl_eur').textContent = pEUR ? fmtMoney(pEUR.pl,'EUR') : '-';
   document.getElementById('pl_xau').textContent = pXAU ? (fmtPlain(pXAU.pl)+' XAUg') : '-';
 
-  // Product mix badges + donut
   const nameMap = I18N[L()].prod;
   const badgeEl = document.getElementById('risk_badges');
   if(startTotalReport > 0){
@@ -1240,7 +1255,7 @@ function calc(){
 }
 
 /* =========================
-   Scenarios (allocate 100%)
+   Scenarios
 ========================= */
 function applyScenario(weights){
   const totalAmount = parseAmount(document.getElementById('total_amount').value);
@@ -1264,61 +1279,84 @@ function applyScenario(weights){
       method: it.method,
       taxAuto: (it.taxAuto!=null) ? it.taxAuto : true,
       tax: (it.tax!=null) ? it.tax : 0,
-      renew: !!it.renew,
-      renewDays: it.renewDays
+      renew: (it.renew!=null) ? it.renew : false,
+      renewDays: (it.renewDays!=null) ? it.renewDays : 2
     });
   }
 }
 
 function scenario1(){
   applyScenario([
-    { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true },
-    { w:0.35, ccy:'TL',  prod:'FUND',  rate:45, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.15, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 }
+    { w:0.25, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 },
+    { w:0.35, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.15, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
   ]);
 }
 function scenario2(){
   applyScenario([
-    { w:0.45, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true },
-    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 }
+    { w:0.45, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 },
+    { w:0.25, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.20, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
   ]);
 }
 function scenario3(){
   applyScenario([
-    { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true },
-    { w:0.55, ccy:'TL',  prod:'FUND',  rate:48, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 }
+    { w:0.15, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 },
+    { w:0.55, ccy:'TL',  prod:'FUND',  rate:48, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.10, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
   ]);
 }
 function scenario4(){
   applyScenario([
-    { w:0.35, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.35, ccy:'EUR', prod:'SUKUK', rate:6,  method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.15, ccy:'TL',  prod:'FUND',  rate:45, method:'SIMPLE', taxAuto:false, tax:0 }
+    { w:0.35, ccy:'USD', prod:'SUKUK', rate:7,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.35, ccy:'EUR', prod:'SUKUK', rate:6,  method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.15, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 }
   ]);
 }
 function scenario5(){
   applyScenario([
-    { w:0.55, ccy:'USD', prod:'DPM',   rate:12, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.20, ccy:'TL',  prod:'FUND',  rate:45, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE', taxAuto:false, tax:0 },
-    { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'SIMPLE', taxAuto:true }
+    { w:0.55, ccy:'USD', prod:'DPM',   rate:12, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.20, ccy:'TL',  prod:'FUND',  rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0 },
+    { w:0.15, ccy:'TL',  prod:'SUKUK', rate:38, method:'SIMPLE',         taxAuto:false, tax:0 },
+    { w:0.10, ccy:'TL',  prod:'TERM',  rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 }
   ]);
 }
 
 /* =========================
-   Reset + Apply language
+   Language apply (+ redraw rows)
 ========================= */
+function getRowsState(){
+  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
+  return rows.map(tr=>{
+    const id = tr.getAttribute('data-id');
+    return {
+      amt: parseAmount(document.getElementById('amt_'+id).value),
+      prod: document.getElementById('prod_'+id).value,
+      ccy: document.getElementById('ccy_'+id).value,
+      rate: Number(document.getElementById('rate_'+id).value)||0,
+      method: document.getElementById('method_'+id).value,
+      tax: Number(document.getElementById('tax_'+id).value)||0,
+      taxAuto: document.getElementById('taxAuto_'+id).checked,
+      renew: document.getElementById('renew_'+id).checked,
+      renewDays: Number(document.getElementById('renew_days_'+id).value)||2
+    };
+  });
+}
+function rebuildRowsPreserve(state){
+  document.getElementById('allocBody').innerHTML='';
+  state.forEach(r=> addRow(r));
+}
+
 function applyLang(){
   const lang = L();
   const o = I18N[lang];
 
   document.getElementById('hdr_sub').textContent = o.hdr_sub;
+  document.getElementById('hdr_disc').textContent = o.hdr_disc;
   document.getElementById('lbl_lang').textContent = o.Dil;
 
   document.getElementById('sec1').textContent = o.sec1;
@@ -1351,6 +1389,9 @@ function applyLang(){
   document.getElementById('btn_rates').textContent = o.Fetch;
   document.getElementById('btn_use_manual').textContent = o.Manual;
 
+  document.getElementById('btn_calc_bottom').textContent = o.Calc;
+  document.getElementById('btn_reset_bottom').textContent = o.Reset;
+
   document.getElementById('sec_alloc').innerHTML = o.AllocTitle + ' <span class="pill" id="pillInfo">hazır</span>';
   document.getElementById('lbl_headline').textContent = o.Headline;
 
@@ -1370,10 +1411,18 @@ function applyLang(){
 
   document.getElementById('lbl_pie_title').textContent = o.PieTitle;
   document.getElementById('lbl_summary_title').textContent = o.Summary;
+
   document.getElementById('lbl_sum_start_pr').textContent = o.SumStartPr;
   document.getElementById('lbl_sum_start_rp').textContent = o.SumStartRp;
   document.getElementById('lbl_sum_end_pr').textContent = o.SumEndPr;
   document.getElementById('lbl_sum_end_rp').textContent = o.SumEndRp;
+
+  document.getElementById('lbl_pl_block').innerHTML = '<span class="plDot"></span>'+o.PLBlock;
+  document.getElementById('lbl_pl_tl').textContent = o.PLTL;
+  document.getElementById('lbl_pl_usd').textContent = o.PLUSD;
+  document.getElementById('lbl_pl_eur').textContent = o.PLEUR;
+  document.getElementById('lbl_pl_xau').textContent = o.PLXAU;
+
   document.getElementById('txt_pl_note').textContent = o.PLNote;
 
   document.getElementById('hdr_prod').textContent = o.hdr_prod;
@@ -1382,50 +1431,22 @@ function applyLang(){
   document.getElementById('hdr_calc').textContent = o.hdr_calc;
   document.getElementById('hdr_tax').textContent = o.hdr_tax;
   document.getElementById('hdr_p').textContent = o.hdr_p;
-  document.getElementById('hdr_fv').textContent = o.hdr_fv;
+  document.getElementById('hdr_end_gross').textContent = o.hdr_end_gross;
   document.getElementById('hdr_taxamt').textContent = o.hdr_taxamt;
+  document.getElementById('hdr_end_net').textContent = o.hdr_end_net;
   document.getElementById('hdr_net').textContent = o.hdr_net;
 
   setAmtHeader();
 
-  // 🔵 TABLO İÇİ DİNAMİK METİNLERİ GÜNCELLE
-  const rows = Array.from(document.querySelectorAll('#allocBody tr'));
-  rows.forEach(tr=>{
-    const id = tr.getAttribute('data-id');
-    if(!id) return;
-
-    const prodSel = document.getElementById('prod_'+id);
-    if(prodSel){
-      const currentVal = prodSel.value;
-      prodSel.innerHTML = PRODUCT_OPTIONS.map(p=>{
-        return '<option value="'+p.val+'">'+I18N[L()].prod[p.val]+'</option>';
-      }).join('');
-      prodSel.value = currentVal;
-    }
-
-    const methodSel = document.getElementById('method_'+id);
-    if(methodSel){
-      const currentVal = methodSel.value;
-      methodSel.innerHTML =
-        '<option value="DAILY_COMPOUND">'+I18N[L()].method.daily+'</option>'+
-        '<option value="SIMPLE">'+I18N[L()].method.simple+'</option>';
-      methodSel.value = currentVal;
-    }
-
-    const taxAuto = document.getElementById('taxAuto_'+id);
-    if(taxAuto && taxAuto.parentElement){
-      taxAuto.parentElement.lastChild.textContent = I18N[L()].auto;
-    }
-
-    const delBtn = tr.querySelector('.miniBtn');
-    if(delBtn){
-      delBtn.textContent = I18N[L()].del;
-    }
-  });
+  const state = getRowsState();
+  rebuildRowsPreserve(state);
 
   autoFillEndRates();
 }
 
+/* =========================
+   Reset
+========================= */
 function resetAll(){
   document.getElementById('total_amount').value='1.000.000';
   document.getElementById('total_ccy').value='USD';
@@ -1455,14 +1476,15 @@ function resetAll(){
   document.getElementById('headline_pl').textContent='-';
   document.getElementById('headline_detail').textContent='';
 
-  ['kpi_used','kpi_left','kpi_start_report','kpi_end_report','kpi_pl_report','kpi_tax_report',
-   'sum_start_pr','sum_start_rp','sum_end_pr','sum_end_rp',
-   'pl_tl','pl_usd','pl_eur','pl_xau'
+  [
+    'kpi_used','kpi_left','kpi_start_report','kpi_end_report','kpi_pl_report','kpi_tax_report',
+    'sum_start_pr','sum_start_rp','sum_end_pr','sum_end_rp',
+    'pl_tl','pl_usd','pl_eur','pl_xau'
   ].forEach(id=>document.getElementById(id).textContent='-');
 
   document.getElementById('allocBody').innerHTML='';
-  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'SIMPLE', taxAuto:true, renew:false, renewDays:2 });
-  addRow({ amt:0, ccy:'TL', prod:'FUND', rate:45, method:'SIMPLE', taxAuto:false, tax:0, renew:false, renewDays:2 });
+  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 });
+  addRow({ amt:0, ccy:'TL', prod:'FUND', rate:45, method:'DAILY_COMPOUND', taxAuto:false, tax:0, renew:false, renewDays:2 });
 
   document.getElementById('pieLegend').innerHTML='';
   const ctx = document.getElementById('pieStart').getContext('2d');
@@ -1488,7 +1510,7 @@ document.getElementById('btn_use_manual').addEventListener('click', function(){
 });
 
 document.getElementById('btn_add').addEventListener('click', function(){
-  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'SIMPLE', taxAuto:true, renew:false, renewDays:2 });
+  addRow({ amt:0, ccy:'TL', prod:'TERM', rate:35, method:'DAILY_COMPOUND', taxAuto:true, renew:true, renewDays:2 });
 });
 
 document.getElementById('btn_s1').addEventListener('click', scenario1);
